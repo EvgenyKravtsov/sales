@@ -6,4 +6,6 @@ public interface UserLocation {
     double getLatitude();
 
     double getLongitude();
+
+    int distanceToInMeters(double latitude, double longitude);
 }

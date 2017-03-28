@@ -1,6 +1,7 @@
 package kgk.mobile.presentation.view.mainscreen;
 
 import android.Manifest;
+import android.app.Fragment;
 import android.content.pm.PackageManager;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
@@ -13,11 +14,13 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 
-import kgk.mobile.App;
+import java.util.List;
+
+import kgk.mobile.DependencyInjection;
 import kgk.mobile.R;
-import kgk.mobile.domain.UserLocation;
-import kgk.mobile.presentation.view.map.GoogleMapController;
-import kgk.mobile.presentation.view.map.MapController;
+import kgk.mobile.domain.SalesOutlet;
+import kgk.mobile.presentation.view.mainscreen.managerboard.ManagerBoardFragment;
+import kgk.mobile.presentation.view.map.google.GoogleMapController;
 
 
 public final class MainActivity extends AppCompatActivity
@@ -35,8 +38,9 @@ public final class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         setupMap();
+        setupManagerBoard();
 
-        presenter = App.getComponent().mainPresenter();
+        presenter = DependencyInjection.provideMainContractPresenter();
         presenter.attachView(this);
     }
 
@@ -92,5 +96,13 @@ public final class MainActivity extends AppCompatActivity
                 .add(R.id.mainActivity_mapFragmentContainer, fragment)
                 .commit();
         fragment.getMapAsync(this);
+    }
+
+    private void setupManagerBoard() {
+        android.app.FragmentManager fragmentManager = getFragmentManager();
+        Fragment fragment = new ManagerBoardFragment();
+        fragmentManager.beginTransaction()
+                .add(R.id.mainActivity_managerBoardFragmentContainer, fragment)
+                .commit();
     }
 }

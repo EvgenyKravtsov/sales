@@ -1,9 +1,11 @@
 package kgk.mobile.presentation.view.mainscreen;
 
+import android.util.Log;
+
 import java.util.List;
 
-import javax.inject.Inject;
 
+import kgk.mobile.threading.ThreadScheduler;
 import kgk.mobile.domain.SalesOutlet;
 import kgk.mobile.domain.UserLocation;
 import kgk.mobile.presentation.model.SalesOutletStore;
@@ -16,20 +18,26 @@ public final class MainPresenter extends BasePresenterImpl<MainContract.View>
         implements MainContract.Presenter,
         UserStore.LocationListener,
         UserStore.PreferredMapZoomListener,
-        SalesOutletStore.Listener {
+        SalesOutletStore.Listener,
+        MapController.Listener {
 
     private static final String TAG = MainPresenter.class.getSimpleName();
 
     private final UserStore userStore;
     private final SalesOutletStore salesOutletStore;
+    private final ThreadScheduler threadScheduler;
 
     private MapController mapController;
 
     ////
 
-    @Inject MainPresenter(UserStore userStore, SalesOutletStore salesOutletStore) {
+    public MainPresenter(UserStore userStore,
+                         SalesOutletStore salesOutletStore,
+                         ThreadScheduler threadScheduler) {
+
         this.userStore = userStore;
         this.salesOutletStore = salesOutletStore;
+        this.threadScheduler = threadScheduler;
     }
 
     //// MAIN CONTRACT
@@ -37,8 +45,16 @@ public final class MainPresenter extends BasePresenterImpl<MainContract.View>
     @Override
     public void onMapDisplayed(MapController mapController) {
         this.mapController = mapController;
-        userStore.requestPreferredMapZoom(this);
-        salesOutletStore.requestSalesOutlets(this);
+        this.mapController.addListener(this);
+        this.salesOutletStore.addListener(this);
+
+        threadScheduler.executeBackgroundThread(new Runnable() {
+            @Override
+            public void run() {
+                userStore.requestPreferredMapZoom(MainPresenter.this);
+                salesOutletStore.requestSalesOutlets();
+            }
+        });
     }
 
     @Override
@@ -54,22 +70,48 @@ public final class MainPresenter extends BasePresenterImpl<MainContract.View>
         double longitude = userLocation.getLongitude();
         mapController.displayUser(latitude, longitude);
         mapController.centerCameraOnUser(latitude, longitude, true);
+        salesOutletStore.isUserInSalesOutletZone(userLocation);
     }
 
     //// USER PREFERRED MAP ZOOM LISTENER
 
     @Override
-    public void onPreferredMapZoomReceived(float zoom) {
-        mapController.displayZoom(zoom, true);
-        view.requestLocationPermission();
+    public void onPreferredMapZoomReceived(final float zoom) {
+        threadScheduler.executeMainThread(new Runnable() {
+            @Override
+            public void run() {
+                mapController.displayZoom(zoom, true);
+                view.requestLocationPermission();
+            }
+        });
     }
 
     //// SALES OUTLET STORE LISTENER
 
     @Override
-    public void onSalesOutletsReceived(List<SalesOutlet> outlets) {
-        for (SalesOutlet outlet : outlets) {
-            mapController.displaySalesOutlet(outlet.getLatitude(), outlet.getLongitude());
-        }
+    public void onSalesOutletsReceived(final List<SalesOutlet> outlets) {
+        threadScheduler.executeMainThread(new Runnable() {
+            @Override
+            public void run() {
+                mapController.displaySalesOutlets(outlets);
+            }
+        });
+    }
+
+    @Override
+    public void salesOutletsEnteredByUser(List<SalesOutlet> salesOutletsEntered) {
+        mapController.displayEnteredSalesOutlets(salesOutletsEntered);
+    }
+
+    //// MAP CONTROLLER LISTENER
+
+    @Override
+    public void onMapZoomChanged(final float zoom) {
+        threadScheduler.executeBackgroundThread(new Runnable() {
+            @Override
+            public void run() {
+                userStore.savePreferredMapZoom(zoom);
+            }
+        });
     }
 }

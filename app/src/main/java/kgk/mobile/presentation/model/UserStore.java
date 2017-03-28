@@ -18,4 +18,6 @@ public interface UserStore {
     void subscribeForUserLocationUpdate(LocationListener listener);
 
     void requestPreferredMapZoom(PreferredMapZoomListener listener);
+
+    void savePreferredMapZoom(float zoom);
 }
