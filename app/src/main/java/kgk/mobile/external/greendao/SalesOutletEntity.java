@@ -12,42 +12,54 @@ final class SalesOutletEntity {
     private double latitude;
     private double longitude;
     private String code;
+    private String title;
 
     ////
 
-    @Generated(hash = 1983341784)
-    public SalesOutletEntity(double latitude, double longitude, String code) {
+    @Generated(hash = 1497947492)
+    public SalesOutletEntity(double latitude, double longitude, String code,
+            String title) {
         this.latitude = latitude;
         this.longitude = longitude;
         this.code = code;
+        this.title = title;
     }
     @Generated(hash = 1720227137)
     public SalesOutletEntity() {
     }
+    
 
     ////
 
-    public double getLatitude() {
+    double getLatitude() {
     return this.latitude;
 }
 
-    public void setLatitude(double latitude) {
+    void setLatitude(double latitude) {
     this.latitude = latitude;
 }
 
-    public double getLongitude() {
+    double getLongitude() {
     return this.longitude;
 }
 
-    public void setLongitude(double longitude) {
+    void setLongitude(double longitude) {
     this.longitude = longitude;
 }
 
-    public String getCode() {
+    String getCode() {
     return this.code;
 }
 
-    public void setCode(String code) {
+    void setCode(String code) {
     this.code = code;
 }
+
+    String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
 }

@@ -25,4 +25,6 @@ public interface MapController {
     void displaySalesOutlets(List<SalesOutlet> salesOutlets);
 
     void displayEnteredSalesOutlets(List<SalesOutlet> salesOutletsEntered);
+
+    void displaySelectedSalesOutlet(SalesOutlet selectedSalesOutlet);
 }

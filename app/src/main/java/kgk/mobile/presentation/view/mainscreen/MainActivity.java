@@ -14,12 +14,10 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 
-import java.util.List;
-
 import kgk.mobile.DependencyInjection;
 import kgk.mobile.R;
-import kgk.mobile.domain.SalesOutlet;
-import kgk.mobile.presentation.view.mainscreen.managerboard.ManagerBoardFragment;
+import kgk.mobile.presentation.view.mainscreen.managerboard.UserBoardFragment;
+import kgk.mobile.presentation.view.map.MapController;
 import kgk.mobile.presentation.view.map.google.GoogleMapController;
 
 
@@ -38,7 +36,6 @@ public final class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         setupMap();
-        setupManagerBoard();
 
         presenter = DependencyInjection.provideMainContractPresenter();
         presenter.attachView(this);
@@ -67,7 +64,12 @@ public final class MainActivity extends AppCompatActivity
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
-        presenter.onMapDisplayed(new GoogleMapController(googleMap));
+        MapController mapController = new GoogleMapController(googleMap);
+        presenter.onMapDisplayed(mapController);
+        DependencyInjection.setMapController(mapController);
+
+        // Ensure That Map Object Is Ready Before Creating Manager Board Fragment
+        setupManagerBoard();
     }
 
     //// MAIN VIEW
@@ -100,7 +102,7 @@ public final class MainActivity extends AppCompatActivity
 
     private void setupManagerBoard() {
         android.app.FragmentManager fragmentManager = getFragmentManager();
-        Fragment fragment = new ManagerBoardFragment();
+        Fragment fragment = new UserBoardFragment();
         fragmentManager.beginTransaction()
                 .add(R.id.mainActivity_managerBoardFragmentContainer, fragment)
                 .commit();

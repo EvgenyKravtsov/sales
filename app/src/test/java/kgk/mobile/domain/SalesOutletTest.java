@@ -28,7 +28,7 @@ public final class SalesOutletTest {
 
     @Before
     public void setUp() {
-        salesOutlet = new SalesOutlet(55.646138, 37.461989, "test");
+        salesOutlet = new SalesOutlet(55.646138, 37.461989, "test", "test");
     }
 
     ////

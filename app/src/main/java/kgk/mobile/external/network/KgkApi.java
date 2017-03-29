@@ -6,6 +6,7 @@ import android.util.Log;
 import java.util.ArrayList;
 import java.util.List;
 
+import kgk.mobile.domain.UserOperation;
 import kgk.mobile.domain.service.KgkService;
 import kgk.mobile.domain.SalesOutlet;
 import kgk.mobile.external.network.json.JsonAnswer;
@@ -45,15 +46,12 @@ public final class KgkApi implements KgkService, SocketService.Listener {
 
     @Override
     public void requestSalesOutlets() {
-        Log.d(TAG, "getSalesOutlets: Requested");
         socketService.send(jsonProtocol.createGetSalesOutletsMessage().toString().getBytes());
     }
 
     @Override
-    public List<SalesOutlet> getSalesOutlets() {
-        Log.d(TAG, "getSalesOutlets: Requested Sync");
-        socketService.send(jsonProtocol.createGetSalesOutletsMessage().toString().getBytes());
-        return new ArrayList<>();
+    public void requestUserOperations() {
+        socketService.send(jsonProtocol.createGetUserOperationsMessage().toString().getBytes());
     }
 
     //// SOCKET SERVICE LISTENER
@@ -76,7 +74,14 @@ public final class KgkApi implements KgkService, SocketService.Listener {
             case SalesOutlets:
                 List<SalesOutlet> salesOutlets = jsonProtocol
                         .parseSalesOutletsAnswer(jsonAnswer.getMessage());
-                for (Listener listener : listeners) listener.onSalesOutletsReceivedFromRemoteStorage(salesOutlets);
+                for (Listener listener : listeners)
+                    listener.onSalesOutletsReceivedFromRemoteStorage(salesOutlets);
+                break;
+            case UserOperations:
+                List<UserOperation> userOperations = jsonProtocol
+                        .parseUserOperationsAnswer(jsonAnswer.getMessage());
+                for (Listener listener : listeners)
+                    listener.onUserOperationsReceivedFromRemoteStorage(userOperations);
                 break;
         }
     }

@@ -8,13 +8,15 @@ public final class SalesOutlet {
     private final double latitude;
     private final double longitude;
     private final String code;
+    private final String title;
 
     ////
 
-    public SalesOutlet(double latitude, double longitude, String code) {
+    public SalesOutlet(double latitude, double longitude, String code, String title) {
         this.latitude = latitude;
         this.longitude = longitude;
         this.code = code;
+        this.title = title;
     }
 
     ////
@@ -29,6 +31,10 @@ public final class SalesOutlet {
 
     public String getCode() {
         return code;
+    }
+
+    public String getTitle() {
+        return title;
     }
 
     public boolean isUserInZone(UserLocation userLocation) {

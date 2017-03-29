@@ -18,9 +18,10 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
-    greendao {
-        schemaVersion 1
-    }
+}
+
+greendao {
+    schemaVersion 2
 }
 
 dependencies {

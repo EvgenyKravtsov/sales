@@ -43,7 +43,8 @@ public final class GreenDaoSqlite implements DatabaseService {
             SalesOutlet salesOutlet = new SalesOutlet(
                     entity.getLatitude(),
                     entity.getLongitude(),
-                    entity.getCode());
+                    entity.getCode(),
+                    entity.getTitle());
             salesOutlets.add(salesOutlet);
         }
 
@@ -59,7 +60,8 @@ public final class GreenDaoSqlite implements DatabaseService {
             SalesOutletEntity entity = new SalesOutletEntity(
                     salesOutlet.getLatitude(),
                     salesOutlet.getLongitude(),
-                    salesOutlet.getCode());
+                    salesOutlet.getCode(),
+                    salesOutlet.getTitle());
             salesOutletEntityDao.insert(entity);
         }
     }

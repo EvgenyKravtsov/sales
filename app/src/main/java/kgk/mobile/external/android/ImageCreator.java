@@ -73,6 +73,13 @@ public final class ImageCreator {
                 SALES_OUTLET_MARKER_IMAGE_HEIGHT_DP);
     }
 
+    @Nullable
+    public BitmapDescriptor createSalesOutletSelectedMarkerImage() {
+        return createImage(R.drawable.sales_outlet_selected_marker_image,
+                SALES_OUTLET_MARKER_IMAGE_WIDTH_DP,
+                SALES_OUTLET_MARKER_IMAGE_HEIGHT_DP);
+    }
+
     ////
 
     private Bitmap createBitmap(Drawable drawable, int widthDp, int heightDp) {

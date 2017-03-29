@@ -20,15 +20,19 @@ import kgk.mobile.presentation.model.async.SalesOutletStoreAsync;
 import kgk.mobile.presentation.model.async.UserStoreAsync;
 import kgk.mobile.presentation.view.mainscreen.MainContract;
 import kgk.mobile.presentation.view.mainscreen.MainPresenter;
-import kgk.mobile.presentation.view.mainscreen.managerboard.ManagerBoardContract;
-import kgk.mobile.presentation.view.mainscreen.managerboard.ManagerBoardPresenter;
+import kgk.mobile.presentation.view.mainscreen.managerboard.UserBoardContract;
+import kgk.mobile.presentation.view.mainscreen.managerboard.UserBoardPresenter;
+import kgk.mobile.presentation.view.map.MapController;
 import kgk.mobile.threading.ThreadScheduler;
 import kgk.mobile.threading.ThreadSchedulerThreadPool;
 
 public final class DependencyInjection {
 
     private static ThreadScheduler threadScheduler;
+    private static UserStore userStore;
     private static SalesOutletStore salesOutletStore;
+    private static MapController mapController;
+    private static KgkService kgkService;
 
     ////
 
@@ -59,17 +63,36 @@ public final class DependencyInjection {
     }
 
     private static KgkService provideKgkService() {
-        return new KgkApi(new JsonProtocol(), provideSocketService());
+        if (kgkService == null) {
+            kgkService = new KgkApi(new JsonProtocol(), provideSocketService());
+        }
+
+        return kgkService;
     }
 
     private static DatabaseService provideDatabaseService() {
         return new GreenDaoSqlite(provideAppContext());
     }
 
+    public static void setMapController(MapController mapController) {
+        DependencyInjection.mapController = mapController;
+    }
+
+    public static MapController provideMapController() {
+        return mapController;
+    }
+
     //// STORE
 
     private static UserStore provideUserStore() {
-        return new UserStoreAsync(provideLocationService(), provideSettingsStorageService());
+        if (userStore == null) {
+            userStore = new UserStoreAsync(
+                    provideLocationService(),
+                    provideSettingsStorageService(),
+                    provideKgkService());
+        }
+
+        return userStore;
     }
 
     private static SalesOutletStore provideSalesOutletStore() {
@@ -87,7 +110,10 @@ public final class DependencyInjection {
         return new MainPresenter(provideUserStore(), provideSalesOutletStore(), provideThreadScheduler());
     }
 
-    public static ManagerBoardContract.Presenter provideManagerBoardPresenter() {
-        return new ManagerBoardPresenter(provideSalesOutletStore());
+    public static UserBoardContract.Presenter provideManagerBoardPresenter() {
+        return new UserBoardPresenter(
+                provideSalesOutletStore(),
+                provideUserStore(),
+                provideThreadScheduler());
     }
 }

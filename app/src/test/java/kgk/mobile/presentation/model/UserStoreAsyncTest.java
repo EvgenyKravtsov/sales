@@ -9,12 +9,19 @@ import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import kgk.mobile.domain.UserOperation;
+import kgk.mobile.domain.service.KgkService;
 import kgk.mobile.domain.service.LocationService;
 import kgk.mobile.domain.service.SettingsStorageService;
 import kgk.mobile.domain.UserLocation;
 import kgk.mobile.presentation.model.async.UserStoreAsync;
 
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 public final class UserStoreAsyncTest {
 
@@ -22,6 +29,8 @@ public final class UserStoreAsyncTest {
     private LocationService locationServiceMock;
     @Mock
     private SettingsStorageService settingsStorageServiceMock;
+    @Mock
+    private KgkService kgkServiceMock;
 
     @Rule
     public MockitoRule mockitoRule = MockitoJUnit.rule();
@@ -32,7 +41,10 @@ public final class UserStoreAsyncTest {
 
     @Before
     public void setUp() {
-        userStoreAsync = new UserStoreAsync(locationServiceMock, settingsStorageServiceMock);
+        userStoreAsync = new UserStoreAsync(
+                locationServiceMock,
+                settingsStorageServiceMock,
+                kgkServiceMock);
     }
 
     ////
@@ -64,6 +76,25 @@ public final class UserStoreAsyncTest {
         final float zoom = 10.0f;
         userStoreAsync.savePreferredMapZoom(zoom);
         verify(settingsStorageServiceMock).setPreferredMapZoom(zoom);
+    }
+
+    @Test
+    public void userOperationsRequested_kgkServiceAvailable_kgkServiceQueried() {
+        when(kgkServiceMock.isAvailable()).thenReturn(true);
+        userStoreAsync.requestUserOperations();
+        verify(kgkServiceMock).requestUserOperations();
+    }
+
+    @Test
+    public void userOperationsReceivedFromRemoteStorage_listenersNotified() {
+        UserStore.UserOperationsListener userOperationsListenerMock =
+                mock(UserStore.UserOperationsListener.class);
+        userStoreAsync.addUserOperationsListener(userOperationsListenerMock);
+        List<UserOperation> userOperations = new ArrayList<>();
+
+        userStoreAsync.onUserOperationsReceivedFromRemoteStorage(userOperations);
+
+        verify(userOperationsListenerMock).onUserOperationsReceived(userOperations);
     }
 }
 

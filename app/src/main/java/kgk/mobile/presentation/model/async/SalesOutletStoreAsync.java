@@ -1,13 +1,12 @@
 package kgk.mobile.presentation.model.async;
 
-import android.util.Log;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import kgk.mobile.domain.SalesOutlet;
 import kgk.mobile.domain.UserLocation;
+import kgk.mobile.domain.UserOperation;
 import kgk.mobile.domain.service.DatabaseService;
 import kgk.mobile.domain.service.KgkService;
 import kgk.mobile.presentation.model.SalesOutletStore;
@@ -70,6 +69,11 @@ public final class SalesOutletStoreAsync
         for (Listener listener : listeners) listener.onSalesOutletsReceived(salesOutlets);
         databaseService.updateSalesOutlets(salesOutlets);
         updateSalesOutlets(salesOutlets);
+    }
+
+    @Override
+    public void onUserOperationsReceivedFromRemoteStorage(List<UserOperation> userOperations) {
+        // Not Used
     }
 
     //// DATABASE SERVICE LISTENER

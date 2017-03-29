@@ -10,18 +10,18 @@ final class SalesOutletMarker {
 
     ////
 
-    public SalesOutletMarker(Marker marker, String salesOutletCode) {
+    SalesOutletMarker(Marker marker, String salesOutletCode) {
         this.marker = marker;
         this.salesOutletCode = salesOutletCode;
     }
 
     ////
 
-    public Marker getMarker() {
+    Marker getMarker() {
         return marker;
     }
 
-    public String getSalesOutletCode() {
+    String getSalesOutletCode() {
         return salesOutletCode;
     }
 }

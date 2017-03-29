@@ -17,11 +17,11 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.jar.Pack200;
 
 import kgk.mobile.DependencyInjection;
 import kgk.mobile.domain.SalesOutlet;
 import kgk.mobile.external.android.ImageCreator;
-import kgk.mobile.presentation.view.mainscreen.MainContract;
 import kgk.mobile.presentation.view.map.MapController;
 
 public final class GoogleMapController implements MapController, GoogleMap.OnCameraIdleListener {
@@ -36,12 +36,16 @@ public final class GoogleMapController implements MapController, GoogleMap.OnCam
     private final List<MapController.Listener> listeners = new ArrayList<>();
     private final List<SalesOutletMarker> salesOutletMarkers = new ArrayList<>();
     private final List<Circle> salesOutletZones = new ArrayList<>();
+    private final List<String> enteredSalesOutletsCodes = new ArrayList<>();
+
 
     private Marker userMarker;
     private boolean isCameraCenteredOnUser;
     private BitmapDescriptor userMarkerImage;
     private BitmapDescriptor salesOutletMarkerImage;
-    private BitmapDescriptor salesOutletEnteredMarkerImage;
+    private BitmapDescriptor enteredSalesOutletMarkerImage;
+    private BitmapDescriptor selectedSalesOutletMarkerImage;
+    private String selectedSalesOutletCode = "";
 
     ////
 
@@ -95,7 +99,6 @@ public final class GoogleMapController implements MapController, GoogleMap.OnCam
                     .position(new LatLng(latitude, longitude))
                     .anchor(SALES_OUTLET_MARKER_ANCHOR_HORIZONTAL,
                             SALES_OUTLET_MARKER_ANCHOR_VERTICAL));
-            if (salesOutletMarkerImage != null) marker.setIcon(salesOutletMarkerImage);
             salesOutletMarkers.add(new SalesOutletMarker(marker, salesOutlet.getCode()));
 
             Circle circle = googleMap.addCircle(new CircleOptions()
@@ -104,21 +107,30 @@ public final class GoogleMapController implements MapController, GoogleMap.OnCam
                     .strokeWidth(ImageCreator.dpToPx(1)));
             salesOutletZones.add(circle);
         }
+
+        redrawSalesOutletMarkers();
     }
 
     @Override
-    public void displayEnteredSalesOutlets(List<SalesOutlet> salesOutletsEntered) {
-        for (SalesOutlet salesOutlet : salesOutletsEntered)
-            Log.d(TAG, "displayEnteredSalesOutlets: " + salesOutlet.getCode());
+    public void displayEnteredSalesOutlets(List<SalesOutlet> enteredSalesOutlets) {
+        enteredSalesOutletsCodes.clear();
 
-        for (SalesOutletMarker salesOutletMarker : salesOutletMarkers) {
-            for (SalesOutlet salesOutletEntered: salesOutletsEntered) {
-                if (salesOutletEntered.getCode().equals(salesOutletMarker.getSalesOutletCode())) {
-                    Log.d(TAG, "displayEnteredSalesOutlets: ");
-                    salesOutletMarker.getMarker().setIcon(salesOutletEnteredMarkerImage);
-                }
-            }
+        for (SalesOutlet enteredSalesOutlet : enteredSalesOutlets)
+            enteredSalesOutletsCodes.add(enteredSalesOutlet.getCode());
+
+        redrawSalesOutletMarkers();
+    }
+
+    @Override
+    public void displaySelectedSalesOutlet(SalesOutlet selectedSalesOutlet) {
+        if (selectedSalesOutletCode.equals(selectedSalesOutlet.getCode())) {
+            selectedSalesOutletCode = "";
         }
+        else {
+            selectedSalesOutletCode = selectedSalesOutlet.getCode();
+        }
+
+        redrawSalesOutletMarkers();
     }
 
     //// ON CAMERA ZOOM CHANGED LISTENER
@@ -135,7 +147,8 @@ public final class GoogleMapController implements MapController, GoogleMap.OnCam
         ImageCreator imageCreator = new ImageCreator(DependencyInjection.provideAppContext());
         userMarkerImage = imageCreator.createUserMarkerImage();
         salesOutletMarkerImage = imageCreator.createSalesOutletMarkerImage();
-        salesOutletEnteredMarkerImage = imageCreator.createSalesOutletEnteredMarkerImage();
+        enteredSalesOutletMarkerImage = imageCreator.createSalesOutletEnteredMarkerImage();
+        selectedSalesOutletMarkerImage = imageCreator.createSalesOutletSelectedMarkerImage();
     }
 
     private void removeUserMarker() {
@@ -148,6 +161,7 @@ public final class GoogleMapController implements MapController, GoogleMap.OnCam
                 .position(new LatLng(latitude, longitude))
                 .anchor(USER_MARKER_ANCHOR_HORIZONTAL, USER_MARKER_ANCHOR_VERTICAL));
         if (userMarkerImage != null) marker.setIcon(userMarkerImage);
+        userMarker = marker;
     }
 
     private void moveCamera(CameraUpdate cameraUpdate, boolean isAnimated) {
@@ -171,4 +185,26 @@ public final class GoogleMapController implements MapController, GoogleMap.OnCam
             salesOutletZoneIterator.remove();
         }
     }
+
+    private void redrawSalesOutletMarkers() {
+        for (SalesOutletMarker salesOutletMarker : salesOutletMarkers) {
+            if (salesOutletMarker.getSalesOutletCode().equals(selectedSalesOutletCode)) {
+                if (selectedSalesOutletMarkerImage != null)
+                    salesOutletMarker.getMarker().setIcon(selectedSalesOutletMarkerImage);
+                continue;
+            }
+
+            if (enteredSalesOutletsCodes.contains(salesOutletMarker.getSalesOutletCode())) {
+                if (enteredSalesOutletMarkerImage != null)
+                    salesOutletMarker.getMarker().setIcon(enteredSalesOutletMarkerImage);
+                continue;
+            }
+
+            if (salesOutletMarkerImage != null)
+                salesOutletMarker.getMarker().setIcon(salesOutletMarkerImage);
+        }
+    }
+
+    // TODO Test Case: Selected Outlet Gone From User Zone
+    // TODO Test Case: Entered Outlet Gone From User Zone
 }

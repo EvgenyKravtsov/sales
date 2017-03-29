@@ -204,7 +204,7 @@ public final class MainPresenterTest {
     ////
 
     private SalesOutlet createDummySalesOutlet() {
-        return new SalesOutlet(0, 0, "test");
+        return new SalesOutlet(0, 0, "test", "test");
     }
 }
 
