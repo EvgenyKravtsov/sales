@@ -14,7 +14,9 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="16dp"
         android:layout_marginStart="16dp"
-        android:background="@drawable/gray_accent_border_all_sides_white_background" />
+        android:scaleX="0.5"
+        android:scaleY="0.5"
+        android:button="@drawable/gray_accent_checkbox_selector" />
 
     <TextView
         android:id="@+id/userOperationListItem_userOperationTitleTextView"

@@ -1,25 +1,33 @@
 package kgk.mobile.presentation.model.async;
 
 
+import android.util.Log;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import kgk.mobile.domain.SalesOutlet;
 import kgk.mobile.domain.UserLocation;
 import kgk.mobile.domain.UserOperation;
+import kgk.mobile.domain.service.DatabaseService;
 import kgk.mobile.domain.service.KgkService;
 import kgk.mobile.domain.service.LocationService;
 import kgk.mobile.domain.service.SettingsStorageService;
 import kgk.mobile.presentation.model.UserStore;
 
 public final class UserStoreAsync
-        implements UserStore, LocationService.Listener, KgkService.Listener {
+        implements UserStore,
+        LocationService.Listener,
+        KgkService.Listener,
+        DatabaseService.Listener {
 
     private static final String TAG = UserStoreAsync.class.getSimpleName();
 
     private final LocationService locationService;
     private final SettingsStorageService settingsStorageService;
     private final KgkService kgkService;
+    private final DatabaseService databaseService;
     private final List<LocationListener> locationListeners = new ArrayList<>();
     private final List<UserStore.UserOperationsListener> userOperationsListeners = new ArrayList<>();
 
@@ -27,12 +35,15 @@ public final class UserStoreAsync
 
     public UserStoreAsync(LocationService locationService,
                           SettingsStorageService settingsStorageService,
-                          KgkService kgkService) {
+                          KgkService kgkService,
+                          DatabaseService databaseService) {
         this.locationService = locationService;
         this.locationService.addListener(this);
         this.settingsStorageService = settingsStorageService;
         this.kgkService = kgkService;
         this.kgkService.addListener(this);
+        this.databaseService = databaseService;
+        databaseService.addListener(this);
     }
 
     //// USER STORE
@@ -56,7 +67,8 @@ public final class UserStoreAsync
 
     @Override
     public void requestUserOperations() {
-        kgkService.requestUserOperations();
+        databaseService.requestUserOperations();
+        if (kgkService.isAvailable()) kgkService.requestUserOperations();
     }
 
     @Override
@@ -80,6 +92,18 @@ public final class UserStoreAsync
 
     @Override
     public void onUserOperationsReceivedFromRemoteStorage(List<UserOperation> userOperations) {
+        databaseService.updateUserOperations(userOperations);
+    }
+
+    //// DATABASE SERVICE LISTENER
+
+    @Override
+    public void onSalesOutletsReceivedFromLocalStorage(List<SalesOutlet> salesOutlets) {
+        // Not Used
+    }
+
+    @Override
+    public void onUserOperationsReceivedFromLocalStorage(List<UserOperation> userOperations) {
         for (UserOperationsListener listener : userOperationsListeners)
             listener.onUserOperationsReceived(userOperations);
     }

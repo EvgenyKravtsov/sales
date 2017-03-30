@@ -4,14 +4,20 @@ import android.app.Fragment;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import kgk.mobile.DependencyInjection;
 import kgk.mobile.R;
 import kgk.mobile.domain.UserOperation;
@@ -23,8 +29,14 @@ public final class UserBoardFragment extends Fragment implements UserBoardContra
 
     @BindView(R.id.userBoardFragment_enteredSalesOutletsRecyclerView)
     RecyclerView enteredSalesOutletsRecyclerView;
+    @BindView(R.id.userBoardFragment_userOperationsLinearLayout)
+    LinearLayout userOperationsLinearLayout;
+    @BindView(R.id.userBoardFragment_salesOutletTitleTextView)
+    TextView salesOutletTitleTextView;
     @BindView(R.id.userBoardFragment_userOperationsRecyclerView)
     RecyclerView userOperationsRecyclerView;
+    @BindView(R.id.userBoardFragment_userOperationsConfirmButton)
+    Button userOperationsConfirmButton;
 
     private static final String TAG = UserBoardFragment.class.getSimpleName();
     private static final int WRAP_CONTENT_CODE = 10000;
@@ -79,9 +91,37 @@ public final class UserBoardFragment extends Fragment implements UserBoardContra
 
     @Override
     public void displayUserOperations(List<UserOperation> userOperations) {
-        userOperationsRecyclerView.setVisibility(View.VISIBLE);
+        Log.d(TAG, "displayUserOperations: " + userOperations.size());
+
+        if (userOperations.size() > 0) {
+            userOperationsLinearLayout.setVisibility(View.VISIBLE);
+
+            if (userOperations.size() > 4) setHeight(userOperationsRecyclerView, 270);
+            else setHeight(userOperationsRecyclerView, WRAP_CONTENT_CODE);
+        }
+        else {
+            userOperationsRecyclerView.setVisibility(View.GONE);
+        }
+
         userOperationsRecyclerAdapter.setUserOperations(userOperations);
         userOperationsRecyclerAdapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void hideUserOperations() {
+        userOperationsLinearLayout.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void displaySelectedSalesOutlet(SalesOutlet selectedSalesOutlet) {
+        salesOutletTitleTextView.setText(selectedSalesOutlet.getTitle());
+    }
+
+    //// CONTROL CALLBACKS
+
+    @OnClick(R.id.userBoardFragment_userOperationsDropDownImageButton)
+    public void onClickUserOperationsDropDownImageButton() {
+        userOperationsLinearLayout.setVisibility(View.GONE);
     }
 
     //// PRIVATE
@@ -104,6 +144,7 @@ public final class UserBoardFragment extends Fragment implements UserBoardContra
     }
 
     private void setHeight(View view, int heightInDp) {
+        Log.d(TAG, "setHeight: " + heightInDp);
         int height = ImageCreator.dpToPx(heightInDp);
         if (heightInDp == WRAP_CONTENT_CODE) height = ViewGroup.LayoutParams.WRAP_CONTENT;
 

@@ -71,6 +71,12 @@ public final class UserBoardPresenterTest {
     }
 
     @Test
+    public void salesOutletSelected_selectedSalesOutletDisplayedOnBoard() {
+        presenter.salesOutletSelectedByUser(dummySalesOutlet);
+        verify(viewMock).displaySelectedSalesOutlet(dummySalesOutlet);
+    }
+
+    @Test
     public void salesOutletSelected_userOperationsRequested() {
         doAnswer(new Answer() {
             @Override

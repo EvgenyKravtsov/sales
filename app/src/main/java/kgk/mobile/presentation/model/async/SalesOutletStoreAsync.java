@@ -1,5 +1,7 @@
 package kgk.mobile.presentation.model.async;
 
+import android.util.Log;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -22,6 +24,7 @@ public final class SalesOutletStoreAsync
     private static final int REMOTE_STORAGE_SYNCHRONIZATION_INTERVAL_EMERGENCY_SECONDS = 5;
 
     private boolean isSalesOutletsSynchronizedWithRemoteStorage;
+    private boolean isSynchronizationThreadActive;
 
     private final KgkService kgkService;
     private final DatabaseService databaseService;
@@ -35,6 +38,8 @@ public final class SalesOutletStoreAsync
         this.kgkService.addListener(this);
         this.databaseService = databaseService;
         this.databaseService.addListener(this);
+
+        isSynchronizationThreadActive = true;
         startPeriodicSynchronizationWithRemoteStorage();
     }
 
@@ -69,6 +74,7 @@ public final class SalesOutletStoreAsync
         for (Listener listener : listeners) listener.onSalesOutletsReceived(salesOutlets);
         databaseService.updateSalesOutlets(salesOutlets);
         updateSalesOutlets(salesOutlets);
+        isSalesOutletsSynchronizedWithRemoteStorage = true;
     }
 
     @Override
@@ -82,6 +88,11 @@ public final class SalesOutletStoreAsync
     public void onSalesOutletsReceivedFromLocalStorage(List<SalesOutlet> salesOutlets) {
         for (Listener listener : listeners) listener.onSalesOutletsReceived(salesOutlets);
         updateSalesOutlets(salesOutlets);
+    }
+
+    @Override
+    public void onUserOperationsReceivedFromLocalStorage(List<UserOperation> userOperations) {
+        // Not Used
     }
 
     //// PRIVATE
@@ -98,20 +109,25 @@ public final class SalesOutletStoreAsync
         new Thread(new Runnable() {
             @Override
             public void run() {
-                try {
-                    if (isSalesOutletsSynchronizedWithRemoteStorage) {
-                        TimeUnit.MINUTES.sleep(REMOTE_STORAGE_SYNCHRONIZATION_INTERVAL_NORMAL_MINUTES);
-                        isSalesOutletsSynchronizedWithRemoteStorage = false;
-                        requestSalesOutletFromRemoteStorage();
+                Log.d(TAG, "run: ");
+                while (isSynchronizationThreadActive) {
+                    try {
+                        if (isSalesOutletsSynchronizedWithRemoteStorage) {
+                            TimeUnit.MINUTES.sleep(
+                                    REMOTE_STORAGE_SYNCHRONIZATION_INTERVAL_NORMAL_MINUTES);
+                            isSalesOutletsSynchronizedWithRemoteStorage = false;
+                            requestSalesOutletFromRemoteStorage();
+                            Log.d(TAG, "run: IF");
+                        } else {
+                            Log.d(TAG, "run: ELSE");
+                            TimeUnit.SECONDS.sleep(
+                                    REMOTE_STORAGE_SYNCHRONIZATION_INTERVAL_EMERGENCY_SECONDS);
+                            requestSalesOutletFromRemoteStorage();
+                        }
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                        startPeriodicSynchronizationWithRemoteStorage();
                     }
-                    else {
-                        TimeUnit.SECONDS.sleep(REMOTE_STORAGE_SYNCHRONIZATION_INTERVAL_EMERGENCY_SECONDS);
-                        requestSalesOutletFromRemoteStorage();
-                    }
-                }
-                catch (InterruptedException e) {
-                    e.printStackTrace();
-                    startPeriodicSynchronizationWithRemoteStorage();
                 }
             }
         }).start();

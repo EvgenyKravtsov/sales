@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import kgk.mobile.domain.UserOperation;
+import kgk.mobile.domain.service.DatabaseService;
 import kgk.mobile.domain.service.KgkService;
 import kgk.mobile.domain.service.LocationService;
 import kgk.mobile.domain.service.SettingsStorageService;
@@ -20,6 +21,7 @@ import kgk.mobile.domain.UserLocation;
 import kgk.mobile.presentation.model.async.UserStoreAsync;
 
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -31,6 +33,8 @@ public final class UserStoreAsyncTest {
     private SettingsStorageService settingsStorageServiceMock;
     @Mock
     private KgkService kgkServiceMock;
+    @Mock
+    private DatabaseService databaseServiceMock;
 
     @Rule
     public MockitoRule mockitoRule = MockitoJUnit.rule();
@@ -44,7 +48,8 @@ public final class UserStoreAsyncTest {
         userStoreAsync = new UserStoreAsync(
                 locationServiceMock,
                 settingsStorageServiceMock,
-                kgkServiceMock);
+                kgkServiceMock,
+                databaseServiceMock);
     }
 
     ////
@@ -79,22 +84,44 @@ public final class UserStoreAsyncTest {
     }
 
     @Test
-    public void userOperationsRequested_kgkServiceAvailable_kgkServiceQueried() {
+    public void userOperationsRequested_localStorageQueried() {
+        userStoreAsync.requestUserOperations();
+        verify(databaseServiceMock).requestUserOperations();
+    }
+
+    @Test
+    public void userOperationsRequested_remoteStorageAvailable_remoteStorageQueried() {
         when(kgkServiceMock.isAvailable()).thenReturn(true);
         userStoreAsync.requestUserOperations();
         verify(kgkServiceMock).requestUserOperations();
     }
 
     @Test
-    public void userOperationsReceivedFromRemoteStorage_listenersNotified() {
+    public void userOperationsRequested_remoteStorageNotAvailable_remoteStorageNotQueried() {
+        when(kgkServiceMock.isAvailable()).thenReturn(false);
+        userStoreAsync.requestUserOperations();
+        verify(kgkServiceMock, never()).requestUserOperations();
+    }
+
+    @Test
+    public void userOperationsReceivedFromLocalStorage_listenersNotified() {
         UserStore.UserOperationsListener userOperationsListenerMock =
                 mock(UserStore.UserOperationsListener.class);
         userStoreAsync.addUserOperationsListener(userOperationsListenerMock);
         List<UserOperation> userOperations = new ArrayList<>();
 
-        userStoreAsync.onUserOperationsReceivedFromRemoteStorage(userOperations);
+        userStoreAsync.onUserOperationsReceivedFromLocalStorage(userOperations);
 
         verify(userOperationsListenerMock).onUserOperationsReceived(userOperations);
+    }
+
+    @Test
+    public void userOperationsReceivedFromRemoteStorage_localStorageUpdated() {
+        List<UserOperation> userOperations = new ArrayList<>();
+
+        userStoreAsync.onUserOperationsReceivedFromRemoteStorage(userOperations);
+
+        verify(databaseServiceMock).updateUserOperations(userOperations);
     }
 }
 

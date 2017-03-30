@@ -23,5 +23,9 @@ public interface UserBoardContract {
         void displayEnteredSalesOutlets(List<SalesOutlet> salesOutletsEntered);
 
         void displayUserOperations(List<UserOperation> userOperations);
+
+        void hideUserOperations();
+
+        void displaySelectedSalesOutlet(SalesOutlet selectedSalesOutlet);
     }
 }

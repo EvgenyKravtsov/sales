@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">КГК Торговые Представители</string>
+    <string name="content_description">КГК Торговые Представители</string>
+
+    <!-- USER BOARD -->
+    <string name="userBoardFragment_userOperationsConfirmButtonText">OK</string>
 </resources>

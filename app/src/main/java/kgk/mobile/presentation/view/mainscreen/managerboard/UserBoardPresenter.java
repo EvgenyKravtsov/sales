@@ -17,6 +17,7 @@ public final class UserBoardPresenter extends BasePresenterImpl<UserBoardContrac
         UserStore.UserOperationsListener {
 
     private MapController mapController;
+    private String selectedSalesOutletCode = "";
 
     private final UserStore userStore;
     private final ThreadScheduler threadScheduler;
@@ -38,13 +39,23 @@ public final class UserBoardPresenter extends BasePresenterImpl<UserBoardContrac
     @Override
     public void salesOutletSelectedByUser(SalesOutlet selectedSalesOutlet) {
         mapController.displaySelectedSalesOutlet(selectedSalesOutlet);
+        view.displaySelectedSalesOutlet(selectedSalesOutlet);
+        // TODO Center Map Camera On Selected Sales Outlet
 
-        threadScheduler.executeBackgroundThread(new Runnable() {
-            @Override
-            public void run() {
-                userStore.requestUserOperations();
-            }
-        });
+        if (selectedSalesOutletCode.equals(selectedSalesOutlet.getCode())) {
+            selectedSalesOutletCode = "";
+            view.hideUserOperations();
+        }
+        else {
+            selectedSalesOutletCode = selectedSalesOutlet.getCode();
+
+            threadScheduler.executeBackgroundThread(new Runnable() {
+                @Override
+                public void run() {
+                    userStore.requestUserOperations();
+                }
+            });
+        }
     }
 
     @Override

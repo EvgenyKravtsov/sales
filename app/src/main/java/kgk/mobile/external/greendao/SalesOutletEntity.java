@@ -4,6 +4,7 @@ package kgk.mobile.external.greendao;
 import org.greenrobot.greendao.annotation.Entity;
 import org.greenrobot.greendao.annotation.Generated;
 
+@SuppressWarnings("WeakerAccess")
 @Entity(
         generateConstructors = true
 )
@@ -25,9 +26,7 @@ final class SalesOutletEntity {
         this.title = title;
     }
     @Generated(hash = 1720227137)
-    public SalesOutletEntity() {
-    }
-    
+    public SalesOutletEntity() {}
 
     ////
 

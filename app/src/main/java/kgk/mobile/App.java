@@ -6,6 +6,8 @@ import android.content.Context;
 
 public final class App extends Application {
 
+    // TODO Establish Background Service To Persist App
+
     private static Context appContext;
 
     ////

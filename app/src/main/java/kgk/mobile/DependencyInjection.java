@@ -33,6 +33,7 @@ public final class DependencyInjection {
     private static SalesOutletStore salesOutletStore;
     private static MapController mapController;
     private static KgkService kgkService;
+    private static DatabaseService databaseService;
 
     ////
 
@@ -71,7 +72,11 @@ public final class DependencyInjection {
     }
 
     private static DatabaseService provideDatabaseService() {
-        return new GreenDaoSqlite(provideAppContext());
+        if (databaseService == null) {
+            databaseService = new GreenDaoSqlite(provideAppContext());
+        }
+
+        return databaseService;
     }
 
     public static void setMapController(MapController mapController) {
@@ -89,7 +94,8 @@ public final class DependencyInjection {
             userStore = new UserStoreAsync(
                     provideLocationService(),
                     provideSettingsStorageService(),
-                    provideKgkService());
+                    provideKgkService(),
+                    provideDatabaseService());
         }
 
         return userStore;

@@ -8,6 +8,7 @@ import org.greenrobot.greendao.database.Database;
 import java.util.ArrayList;
 import java.util.List;
 
+import kgk.mobile.domain.UserOperation;
 import kgk.mobile.domain.service.DatabaseService;
 import kgk.mobile.domain.SalesOutlet;
 
@@ -63,6 +64,34 @@ public final class GreenDaoSqlite implements DatabaseService {
                     salesOutlet.getCode(),
                     salesOutlet.getTitle());
             salesOutletEntityDao.insert(entity);
+        }
+    }
+
+    @Override
+    public void requestUserOperations() {
+        List<UserOperation> userOperations = new ArrayList<>();
+        List<UserOperationEntity> entities = daoSession.getUserOperationEntityDao().loadAll();
+
+        for (UserOperationEntity entity : entities) {
+            UserOperation userOperation = new UserOperation(
+                    entity.getId(),
+                    entity.getTitle());
+            userOperations.add(userOperation);
+        }
+
+        for (Listener listener : listeners)
+            listener.onUserOperationsReceivedFromLocalStorage(userOperations);
+    }
+
+    @Override
+    public void updateUserOperations(List<UserOperation> userOperations) {
+        daoSession.getUserOperationEntityDao().deleteAll();
+        for (UserOperation userOperation : userOperations) {
+            UserOperationEntityDao userOperationEntityDao = daoSession.getUserOperationEntityDao();
+            UserOperationEntity entity = new UserOperationEntity(
+                    userOperation.getId(),
+                    userOperation.getTitle());
+            userOperationEntityDao.insert(entity);
         }
     }
 }
