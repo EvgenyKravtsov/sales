@@ -16,6 +16,8 @@ public interface UserBoardContract {
         void salesOutletSelectedByUser(SalesOutlet selectedSalesOutlet);
 
         void setMapController(MapController mapController);
+
+        void salesOutletAttended(List<UserOperation> selectedUserOperations, int addedValue);
     }
 
     interface View extends BaseView {

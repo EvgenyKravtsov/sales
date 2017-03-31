@@ -35,6 +35,8 @@ public final class UserStoreAsyncTest {
     private KgkService kgkServiceMock;
     @Mock
     private DatabaseService databaseServiceMock;
+    @Mock
+    private UserStore.UserOperationsListener userOperationsListenerMock;
 
     @Rule
     public MockitoRule mockitoRule = MockitoJUnit.rule();
@@ -104,15 +106,24 @@ public final class UserStoreAsyncTest {
     }
 
     @Test
-    public void userOperationsReceivedFromLocalStorage_listenersNotified() {
-        UserStore.UserOperationsListener userOperationsListenerMock =
-                mock(UserStore.UserOperationsListener.class);
+    public void userOperationsReceivedFromLocalStorage_listNotEmpty_listenersNotified() {
+        userStoreAsync.addUserOperationsListener(userOperationsListenerMock);
+        List<UserOperation> userOperations = new ArrayList<>();
+        userOperations.add(new UserOperation(0, "test"));
+
+        userStoreAsync.onUserOperationsReceivedFromLocalStorage(userOperations);
+
+        verify(userOperationsListenerMock).onUserOperationsReceived(userOperations);
+    }
+
+    @Test
+    public void userOperationsReceivedFromLocalStorage_listEmpty_listenerDidNotNotified() {
         userStoreAsync.addUserOperationsListener(userOperationsListenerMock);
         List<UserOperation> userOperations = new ArrayList<>();
 
         userStoreAsync.onUserOperationsReceivedFromLocalStorage(userOperations);
 
-        verify(userOperationsListenerMock).onUserOperationsReceived(userOperations);
+        verify(userOperationsListenerMock, never()).onUserOperationsReceived(userOperations);
     }
 
     @Test

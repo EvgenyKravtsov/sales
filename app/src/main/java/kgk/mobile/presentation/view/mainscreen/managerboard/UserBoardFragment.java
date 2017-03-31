@@ -4,12 +4,10 @@ import android.app.Fragment;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -23,6 +21,8 @@ import kgk.mobile.R;
 import kgk.mobile.domain.UserOperation;
 import kgk.mobile.domain.SalesOutlet;
 import kgk.mobile.external.android.ImageCreator;
+import kgk.mobile.presentation.view.mainscreen.managerboard.dialog.AttendanceSuccessfulAlert;
+import kgk.mobile.presentation.view.mainscreen.managerboard.dialog.NoOperationSelectedAlert;
 
 
 public final class UserBoardFragment extends Fragment implements UserBoardContract.View {
@@ -44,6 +44,7 @@ public final class UserBoardFragment extends Fragment implements UserBoardContra
     private UserBoardContract.Presenter presenter;
     private EnteredSalesOutletsRecyclerAdapter enteredSalesOutletsRecyclerAdapter;
     private UserOperationsRecyclerAdapter userOperationsRecyclerAdapter;
+    private boolean isUserOperationDroppedDown;
 
     //// FRAGMENT
 
@@ -91,7 +92,7 @@ public final class UserBoardFragment extends Fragment implements UserBoardContra
 
     @Override
     public void displayUserOperations(List<UserOperation> userOperations) {
-        Log.d(TAG, "displayUserOperations: " + userOperations.size());
+        slideUpUserOperations();
 
         if (userOperations.size() > 0) {
             userOperationsLinearLayout.setVisibility(View.VISIBLE);
@@ -121,7 +122,25 @@ public final class UserBoardFragment extends Fragment implements UserBoardContra
 
     @OnClick(R.id.userBoardFragment_userOperationsDropDownImageButton)
     public void onClickUserOperationsDropDownImageButton() {
-        userOperationsLinearLayout.setVisibility(View.GONE);
+        if (!isUserOperationDroppedDown) dropDownUserOperations();
+        else slideUpUserOperations();
+    }
+
+    @OnClick(R.id.userBoardFragment_userOperationsConfirmButton)
+    public void onClickUserOperationsConfirmButton() {
+        List<UserOperation> selectedUserOperations =
+                userOperationsRecyclerAdapter.getSelectedUserOperations();
+
+        if (selectedUserOperations.size() == 0) {
+            displayNoOperationSelectedAlert();
+            return;
+        }
+
+        presenter.salesOutletAttended(selectedUserOperations,
+                userOperationsRecyclerAdapter.getAddedValue());
+
+        displayAttendanceSuccessful();
+        dropDownUserOperations();
     }
 
     //// PRIVATE
@@ -139,17 +158,37 @@ public final class UserBoardFragment extends Fragment implements UserBoardContra
         userOperationsRecyclerView.setHasFixedSize(true);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity());
         userOperationsRecyclerView.setLayoutManager(layoutManager);
-        userOperationsRecyclerAdapter = new UserOperationsRecyclerAdapter();
+        userOperationsRecyclerAdapter =
+                new UserOperationsRecyclerAdapter(userOperationsRecyclerView, getActivity());
         userOperationsRecyclerView.setAdapter(userOperationsRecyclerAdapter);
     }
 
     private void setHeight(View view, int heightInDp) {
-        Log.d(TAG, "setHeight: " + heightInDp);
         int height = ImageCreator.dpToPx(heightInDp);
         if (heightInDp == WRAP_CONTENT_CODE) height = ViewGroup.LayoutParams.WRAP_CONTENT;
 
         ViewGroup.LayoutParams layoutParams = view.getLayoutParams();
         layoutParams.height = height;
         view.setLayoutParams(layoutParams);
+    }
+
+    private void displayNoOperationSelectedAlert() {
+        NoOperationSelectedAlert alert = new NoOperationSelectedAlert(getActivity());
+        alert.show();
+    }
+
+    private void displayAttendanceSuccessful() {
+        AttendanceSuccessfulAlert alert = new AttendanceSuccessfulAlert(getActivity());
+        alert.show();
+    }
+
+    private void dropDownUserOperations() {
+        isUserOperationDroppedDown = true;
+        setHeight(userOperationsLinearLayout, 24);
+    }
+
+    private void slideUpUserOperations() {
+        isUserOperationDroppedDown = false;
+        setHeight(userOperationsLinearLayout, WRAP_CONTENT_CODE);
     }
 }

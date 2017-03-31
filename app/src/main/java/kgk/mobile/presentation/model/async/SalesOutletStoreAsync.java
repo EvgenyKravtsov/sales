@@ -109,7 +109,6 @@ public final class SalesOutletStoreAsync
         new Thread(new Runnable() {
             @Override
             public void run() {
-                Log.d(TAG, "run: ");
                 while (isSynchronizationThreadActive) {
                     try {
                         if (isSalesOutletsSynchronizedWithRemoteStorage) {
@@ -117,9 +116,7 @@ public final class SalesOutletStoreAsync
                                     REMOTE_STORAGE_SYNCHRONIZATION_INTERVAL_NORMAL_MINUTES);
                             isSalesOutletsSynchronizedWithRemoteStorage = false;
                             requestSalesOutletFromRemoteStorage();
-                            Log.d(TAG, "run: IF");
                         } else {
-                            Log.d(TAG, "run: ELSE");
                             TimeUnit.SECONDS.sleep(
                                     REMOTE_STORAGE_SYNCHRONIZATION_INTERVAL_EMERGENCY_SECONDS);
                             requestSalesOutletFromRemoteStorage();

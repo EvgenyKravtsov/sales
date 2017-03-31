@@ -10,13 +10,15 @@
     android:background="@drawable/gray_accent_border_top_side_white_background">
 
     <CheckBox
+        android:id="@+id/userOperationListItem_checkBox"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="16dp"
         android:layout_marginStart="16dp"
         android:scaleX="0.5"
         android:scaleY="0.5"
-        android:button="@drawable/gray_accent_checkbox_selector" />
+        android:button="@drawable/gray_accent_checkbox_selector"
+        android:clickable="false" />
 
     <TextView
         android:id="@+id/userOperationListItem_userOperationTitleTextView"

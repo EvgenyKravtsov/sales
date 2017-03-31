@@ -31,6 +31,8 @@ public final class UserStoreAsync
     private final List<LocationListener> locationListeners = new ArrayList<>();
     private final List<UserStore.UserOperationsListener> userOperationsListeners = new ArrayList<>();
 
+    private boolean userOperationsProvidedFromLocalStorage;
+
     ////
 
     public UserStoreAsync(LocationService locationService,
@@ -93,6 +95,11 @@ public final class UserStoreAsync
     @Override
     public void onUserOperationsReceivedFromRemoteStorage(List<UserOperation> userOperations) {
         databaseService.updateUserOperations(userOperations);
+
+        if (userOperationsProvidedFromLocalStorage) return;
+
+        for (UserOperationsListener listener : userOperationsListeners)
+            listener.onUserOperationsReceived(userOperations);
     }
 
     //// DATABASE SERVICE LISTENER
@@ -104,7 +111,14 @@ public final class UserStoreAsync
 
     @Override
     public void onUserOperationsReceivedFromLocalStorage(List<UserOperation> userOperations) {
+        if (userOperations.size() == 0) {
+            userOperationsProvidedFromLocalStorage = false;
+            return;
+        }
+
         for (UserOperationsListener listener : userOperationsListeners)
             listener.onUserOperationsReceived(userOperations);
+
+        userOperationsProvidedFromLocalStorage = true;
     }
 }

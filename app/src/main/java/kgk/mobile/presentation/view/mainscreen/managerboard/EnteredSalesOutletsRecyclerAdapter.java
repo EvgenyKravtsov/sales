@@ -47,7 +47,7 @@ final class EnteredSalesOutletsRecyclerAdapter
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View recyclerItemView = LayoutInflater.from(parent.getContext())
+        final View recyclerItemView = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.list_item_entered_sales_outlet, parent, false);
         final ViewHolder viewHolder = new ViewHolder(recyclerItemView);
 

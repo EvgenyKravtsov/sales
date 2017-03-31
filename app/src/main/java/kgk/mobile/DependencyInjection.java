@@ -14,8 +14,10 @@ import kgk.mobile.external.network.KgkApi;
 import kgk.mobile.external.network.json.JsonProtocol;
 import kgk.mobile.external.network.socket.SocketNio;
 import kgk.mobile.external.network.socket.SocketService;
+import kgk.mobile.presentation.model.SalesOutletAttendanceStore;
 import kgk.mobile.presentation.model.SalesOutletStore;
 import kgk.mobile.presentation.model.UserStore;
+import kgk.mobile.presentation.model.async.SalesOutletAttendanceStoreAsync;
 import kgk.mobile.presentation.model.async.SalesOutletStoreAsync;
 import kgk.mobile.presentation.model.async.UserStoreAsync;
 import kgk.mobile.presentation.view.mainscreen.MainContract;
@@ -34,6 +36,7 @@ public final class DependencyInjection {
     private static MapController mapController;
     private static KgkService kgkService;
     private static DatabaseService databaseService;
+    private static SalesOutletAttendanceStore salesOutletAttendanceStore;
 
     ////
 
@@ -110,6 +113,14 @@ public final class DependencyInjection {
         return salesOutletStore;
     }
 
+    private static SalesOutletAttendanceStore provideSalesOutletAttendanceStore() {
+        if (salesOutletAttendanceStore == null) {
+            salesOutletAttendanceStore = new SalesOutletAttendanceStoreAsync();
+        }
+
+        return salesOutletAttendanceStore;
+    }
+
     //// PRESENTER
 
     public static MainContract.Presenter provideMainContractPresenter() {
@@ -120,6 +131,7 @@ public final class DependencyInjection {
         return new UserBoardPresenter(
                 provideSalesOutletStore(),
                 provideUserStore(),
-                provideThreadScheduler());
+                provideThreadScheduler(),
+                provideSalesOutletAttendanceStore());
     }
 }

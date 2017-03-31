@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingTop="24dp"
+    android:paddingLeft="24dp"
+    android:paddingStart="24dp"
+    android:paddingBottom="8dp"
+    android:paddingRight="24dp"
+    android:paddingEnd="24dp"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/simpleAlertDialog_messageTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:textColor="@android:color/black"
+        android:textSize="17sp" />
+
+    <Button
+        android:id="@+id/simpleAlertDialog_confirmButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:layout_gravity="end"
+        android:textColor="@android:color/black"
+        android:textSize="14sp"
+        android:text="@string/addedValueDialog_confirmButtonText"
+        android:background="@drawable/gray_accent_border_all_sides_white_background"
+        tools:ignore="ButtonStyle" />
+
+</LinearLayout>

@@ -4,7 +4,9 @@ package kgk.mobile.presentation.view.mainscreen.managerboard;
 import java.util.List;
 
 import kgk.mobile.domain.SalesOutlet;
+import kgk.mobile.domain.SalesOutletAttendance;
 import kgk.mobile.domain.UserOperation;
+import kgk.mobile.presentation.model.SalesOutletAttendanceStore;
 import kgk.mobile.presentation.model.SalesOutletStore;
 import kgk.mobile.presentation.model.UserStore;
 import kgk.mobile.presentation.view.base.BasePresenterImpl;
@@ -21,17 +23,21 @@ public final class UserBoardPresenter extends BasePresenterImpl<UserBoardContrac
 
     private final UserStore userStore;
     private final ThreadScheduler threadScheduler;
+    private final SalesOutletAttendanceStore salesOutletAttendanceStore;
 
     ////
 
     public UserBoardPresenter(
             SalesOutletStore salesOutletStore,
             UserStore userStore,
-            ThreadScheduler threadScheduler) {
+            ThreadScheduler threadScheduler,
+            SalesOutletAttendanceStore salesOutletAttendanceStore) {
+
         this.userStore = userStore;
         this.userStore.addUserOperationsListener(this);
         salesOutletStore.addListener(this);
         this.threadScheduler = threadScheduler;
+        this.salesOutletAttendanceStore = salesOutletAttendanceStore;
     }
 
     //// MANAGER BOARD PRESENTER
@@ -61,6 +67,17 @@ public final class UserBoardPresenter extends BasePresenterImpl<UserBoardContrac
     @Override
     public void setMapController(MapController mapController) {
         this.mapController = mapController;
+    }
+
+    @Override
+    public void salesOutletAttended(List<UserOperation> selectedUserOperations, int addedValue) {
+        threadScheduler.executeBackgroundThread(new Runnable() {
+            @Override
+            public void run() {
+                SalesOutletAttendance attendance = new SalesOutletAttendance();
+                salesOutletAttendanceStore.put(attendance);
+            }
+        });
     }
 
     //// SALES OUTLET STORE LISTENER

@@ -13,8 +13,10 @@ import org.mockito.stubbing.Answer;
 import java.util.ArrayList;
 import java.util.List;
 
+import kgk.mobile.domain.SalesOutletAttendance;
 import kgk.mobile.domain.UserOperation;
 import kgk.mobile.domain.SalesOutlet;
+import kgk.mobile.presentation.model.SalesOutletAttendanceStore;
 import kgk.mobile.presentation.model.SalesOutletStore;
 import kgk.mobile.presentation.model.UserStore;
 import kgk.mobile.presentation.view.mainscreen.managerboard.UserBoardContract;
@@ -37,6 +39,8 @@ public final class UserBoardPresenterTest {
     private UserStore userStoreMock;
     @Mock
     private ThreadScheduler threadSchedulerMock;
+    @Mock
+    private SalesOutletAttendanceStore salesOutletAttendanceStoreMock;
 
     @Rule
     public MockitoRule mockitoRule = MockitoJUnit.rule();
@@ -49,7 +53,8 @@ public final class UserBoardPresenterTest {
     @Before
     public void setUp() {
         SalesOutletStore salesOutletStoreMock = mock(SalesOutletStore.class);
-        presenter = new UserBoardPresenter(salesOutletStoreMock, userStoreMock, threadSchedulerMock);
+        presenter = new UserBoardPresenter(salesOutletStoreMock,
+                userStoreMock, threadSchedulerMock, salesOutletAttendanceStoreMock);
         presenter.setMapController(mapControllerMock);
         presenter.attachView(viewMock);
         dummySalesOutlet = createDummySalesOutlet();
@@ -106,6 +111,23 @@ public final class UserBoardPresenterTest {
         presenter.onUserOperationsReceived(userOperations);
 
         verify(viewMock).displayUserOperations(userOperations);
+    }
+
+    @Test
+    public void salesOutletAttended_salesOutletAttendanceStored() {
+        List<UserOperation> selectedUserOperations = new ArrayList<>();
+
+        doAnswer(new Answer() {
+            @Override
+            public Object answer(InvocationOnMock invocation) throws Throwable {
+                salesOutletAttendanceStoreMock.put(any(SalesOutletAttendance.class));
+                return null;
+            }
+        }).when(threadSchedulerMock).executeBackgroundThread(any(Runnable.class));
+
+        presenter.salesOutletAttended(selectedUserOperations, any(Integer.class));
+
+        verify(salesOutletAttendanceStoreMock).put(any(SalesOutletAttendance.class));
     }
 
     ////

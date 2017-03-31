@@ -7,6 +7,7 @@ import android.content.Context;
 public final class App extends Application {
 
     // TODO Establish Background Service To Persist App
+    // TODO Establish Periodic Location Sending
 
     private static Context appContext;
 
