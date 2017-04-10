@@ -1,16 +1,19 @@
-package kgk.mobile.presentation.view.mainscreen.managerboard;
+package kgk.mobile.presentation.view.mainscreen.userboard;
 
 
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.BindColor;
 import butterknife.BindDrawable;
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -79,10 +82,12 @@ final class EnteredSalesOutletsRecyclerAdapter
         SalesOutlet salesOutlet = salesOutletsEntered.get(position);
         holder.salesOutletTitleTextView.setText(salesOutlet.getTitle());
 
-        if (salesOutlet.getCode().equals(selectedSalesOutletCode))
-            holder.itemView.setBackgroundDrawable(holder.selectedItemBackgroundDrawable);
-        else
-            holder.itemView.setBackgroundDrawable(holder.itemBackgroundDrawable);
+        if (salesOutlet.getCode().equals(selectedSalesOutletCode)) {
+            holder.parentLinearLayout.setBackgroundColor(holder.colorAccentOrangeTransparent);
+        }
+        else {
+            holder.parentLinearLayout.setBackgroundColor(holder.colorWhiteTransparent);
+        }
     }
 
     @Override
@@ -94,11 +99,13 @@ final class EnteredSalesOutletsRecyclerAdapter
 
     static class ViewHolder extends RecyclerView.ViewHolder {
 
-        @BindDrawable(R.drawable.gray_accent_border_top_side_white_background)
-        Drawable itemBackgroundDrawable;
-        @BindDrawable(R.drawable.gray_accent_border_top_side_orange_accent_background)
-        Drawable selectedItemBackgroundDrawable;
+        @BindColor(R.color.white_transparent)
+        int colorWhiteTransparent;
+        @BindColor(R.color.accent_orange_transparent)
+        int colorAccentOrangeTransparent;
 
+        @BindView(R.id.enteredSalesOutletListItem_parentLinearLayout)
+        LinearLayout parentLinearLayout;
         @BindView(R.id.enteredSalesOutletListItem_salesOutletTitleTextView)
         TextView salesOutletTitleTextView;
 

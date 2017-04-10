@@ -16,7 +16,7 @@ import com.google.android.gms.maps.SupportMapFragment;
 
 import kgk.mobile.DependencyInjection;
 import kgk.mobile.R;
-import kgk.mobile.presentation.view.mainscreen.managerboard.UserBoardFragment;
+import kgk.mobile.presentation.view.mainscreen.userboard.UserBoardFragment;
 import kgk.mobile.presentation.view.map.MapController;
 import kgk.mobile.presentation.view.map.google.GoogleMapController;
 
@@ -26,6 +26,7 @@ public final class MainActivity extends AppCompatActivity
 
     private static final String TAG = "MainActivity";
     private static final int REQUEST_FINE_LOCATION_ID = 10;
+    private static final int REQUEST_PHONE_STATE_ID = 20;
 
     private MainContract.Presenter presenter;
 
@@ -51,12 +52,26 @@ public final class MainActivity extends AppCompatActivity
     public void onRequestPermissionsResult(int requestCode,
                                            @NonNull String permissions[],
                                            @NonNull int[] grantResults) {
-        if (grantResults.length > 0
-                && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-            presenter.onLocationPermissionGranted();
-        }
-        else {
-            // TODO Handle Permission Deny
+
+        switch (requestCode) {
+            case REQUEST_FINE_LOCATION_ID:
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    presenter.onLocationPermissionGranted();
+                }
+                else {
+                    // TODO Handle Permission Deny
+                }
+
+                break;
+
+            case REQUEST_PHONE_STATE_ID:
+                if (!(grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
+                    presenter.onPhoneStatePermissionNotGranted();
+                }
+
+                break;
         }
     }
 
@@ -87,6 +102,23 @@ public final class MainActivity extends AppCompatActivity
         else {
             presenter.onLocationPermissionGranted();
         }
+    }
+
+    @Override
+    public void requestPhoneStatePermission() {
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.READ_PHONE_STATE)
+                != PackageManager.PERMISSION_GRANTED) {
+
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.READ_PHONE_STATE},
+                    REQUEST_PHONE_STATE_ID);
+        }
+    }
+
+    @Override
+    public void exit() {
+        finish();
     }
 
     //// PRIVATE

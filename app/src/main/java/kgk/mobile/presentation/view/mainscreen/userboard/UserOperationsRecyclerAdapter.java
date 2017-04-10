@@ -1,4 +1,4 @@
-package kgk.mobile.presentation.view.mainscreen.managerboard;
+package kgk.mobile.presentation.view.mainscreen.userboard;
 
 
 import android.app.Activity;
@@ -17,7 +17,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import kgk.mobile.R;
 import kgk.mobile.domain.UserOperation;
-import kgk.mobile.presentation.view.mainscreen.managerboard.dialog.AddedValueDialog;
+import kgk.mobile.presentation.view.mainscreen.userboard.dialog.AddedValueDialog;
 
 final class UserOperationsRecyclerAdapter
         extends RecyclerView.Adapter<UserOperationsRecyclerAdapter.ViewHolder> {

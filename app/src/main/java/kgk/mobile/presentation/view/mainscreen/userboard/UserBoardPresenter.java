@@ -1,6 +1,7 @@
-package kgk.mobile.presentation.view.mainscreen.managerboard;
+package kgk.mobile.presentation.view.mainscreen.userboard;
 
 
+import java.util.Calendar;
 import java.util.List;
 
 import kgk.mobile.domain.SalesOutlet;
@@ -19,7 +20,8 @@ public final class UserBoardPresenter extends BasePresenterImpl<UserBoardContrac
         UserStore.UserOperationsListener {
 
     private MapController mapController;
-    private String selectedSalesOutletCode = "";
+    private SalesOutlet selectedSalesOutlet;
+    private long salesOutletAttendanceBeginDateUnixSeconds;
 
     private final UserStore userStore;
     private final ThreadScheduler threadScheduler;
@@ -48,12 +50,16 @@ public final class UserBoardPresenter extends BasePresenterImpl<UserBoardContrac
         view.displaySelectedSalesOutlet(selectedSalesOutlet);
         // TODO Center Map Camera On Selected Sales Outlet
 
-        if (selectedSalesOutletCode.equals(selectedSalesOutlet.getCode())) {
-            selectedSalesOutletCode = "";
+        if (this.selectedSalesOutlet != null &&
+                this.selectedSalesOutlet.equals(selectedSalesOutlet)) {
+
+            this.selectedSalesOutlet = null;
             view.hideUserOperations();
         }
         else {
-            selectedSalesOutletCode = selectedSalesOutlet.getCode();
+            this.selectedSalesOutlet = selectedSalesOutlet;
+            salesOutletAttendanceBeginDateUnixSeconds =
+                    Calendar.getInstance().getTimeInMillis() / 1000;
 
             threadScheduler.executeBackgroundThread(new Runnable() {
                 @Override
@@ -70,11 +76,21 @@ public final class UserBoardPresenter extends BasePresenterImpl<UserBoardContrac
     }
 
     @Override
-    public void salesOutletAttended(List<UserOperation> selectedUserOperations, int addedValue) {
+    public void salesOutletAttended(final List<UserOperation> selectedUserOperations,
+                                    final int addedValue,
+                                    final long salesOutletAttendanceEndDateUnixSeconds) {
+
+        if (selectedSalesOutlet == null) return;
+
         threadScheduler.executeBackgroundThread(new Runnable() {
             @Override
             public void run() {
-                SalesOutletAttendance attendance = new SalesOutletAttendance();
+                SalesOutletAttendance attendance = new SalesOutletAttendance(
+                        salesOutletAttendanceBeginDateUnixSeconds,
+                        salesOutletAttendanceEndDateUnixSeconds,
+                        selectedSalesOutlet,
+                        selectedUserOperations,
+                        addedValue);
                 salesOutletAttendanceStore.put(attendance);
             }
         });

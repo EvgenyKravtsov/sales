@@ -34,4 +34,24 @@ final class UserLocationAndroid implements UserLocation {
         destination.setLongitude(longitude);
         return (int) location.distanceTo(destination);
     }
+
+    @Override
+    public long getLocationTime() {
+        return location.getTime() / 1000;
+    }
+
+    @Override
+    public int getAltitude() {
+        return (int) location.getAltitude();
+    }
+
+    @Override
+    public int getAzimut() {
+        return (int) location.getBearing();
+    }
+
+    @Override
+    public double getSpeed() {
+        return location.getSpeed();
+    }
 }

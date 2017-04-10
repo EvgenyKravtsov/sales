@@ -70,11 +70,15 @@ public final class SocketNio implements Runnable, SocketService {
                 selector.select(SELECTOR_TIMEOUT_MILLISECONDS);
                 Iterator<SelectionKey> keys = selector.selectedKeys().iterator();
 
+                Log.d(TAG, "run: Number Of Keys = " + keys.hasNext() + "====" + writeQueue.size());
+
                 while (keys.hasNext()) {
                     SelectionKey selectionKey = keys.next();
-                    keys.remove();
 
-                    if (!selectionKey.isValid()) continue;
+                    if (!selectionKey.isValid()) {
+                        Log.d(TAG, "run: Selection Key Is Not Valid");
+                        continue;
+                    }
 
                     if (selectionKey.isConnectable()) {
                         Log.d(TAG, "run: Connection Established");
@@ -93,9 +97,12 @@ public final class SocketNio implements Runnable, SocketService {
                         read(selectionKey);
                     }
 
+                    keys.remove();
                     TimeUnit.MILLISECONDS.sleep(SOCKET_THREAD_SLEEP_TIME_MILLISECONDS);
                 }
             }
+
+            Log.d(TAG, "run: Socket Loop Stopped");
         }
         catch (IOException e) {
             e.printStackTrace();
@@ -103,9 +110,11 @@ public final class SocketNio implements Runnable, SocketService {
         }
         catch (InterruptedException ie) {
             ie.printStackTrace();
+            Log.d(TAG, "run: Socket Thread Interrupted");
         }
         finally {
             close();
+            Log.d(TAG, "run: Socket Closed");
         }
     }
 
@@ -132,13 +141,14 @@ public final class SocketNio implements Runnable, SocketService {
         }
 
         socketChannel.configureBlocking(false);
-        socketChannel.register(selector, SelectionKey.OP_WRITE);
+        int interestedSet = SelectionKey.OP_READ | SelectionKey.OP_WRITE;
+        socketChannel.register(selector, interestedSet);
     }
 
     private void write(SelectionKey selectionKey, byte[] data) throws IOException {
         SocketChannel socketChannel = (SocketChannel) selectionKey.channel();
         socketChannel.write(ByteBuffer.wrap(data));
-        selectionKey.interestOps(SelectionKey.OP_READ);
+        Log.d(TAG, "write: " + new String(data));
     }
 
     private void read(SelectionKey selectionKey) throws IOException {
@@ -149,6 +159,7 @@ public final class SocketNio implements Runnable, SocketService {
 
         try {
             length = socketChannel.read(readBuffer);
+            Log.d(TAG, "read: length = " + length);
         }
         catch (IOException e) {
             Log.d(TAG, "read: Exception During Socket Reading");
@@ -167,9 +178,8 @@ public final class SocketNio implements Runnable, SocketService {
         readBuffer.flip();
         byte[] buffer = new byte[READ_BUFFER_SIZE_BYTES];
         readBuffer.get(buffer, 0, length);
-        Log.d(TAG, "read: Form Server: " + new String(buffer).trim());
+        Log.d(TAG, "read: From Server: " + new String(buffer).trim());
         for (Listener listener : listeners) listener.onDataReceived(buffer);
-        selectionKey.interestOps(SelectionKey.OP_WRITE);
     }
 }
 

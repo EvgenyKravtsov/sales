@@ -1,13 +1,17 @@
 package kgk.mobile;
 
+import android.annotation.SuppressLint;
 import android.app.Application;
 import android.content.Context;
+import android.location.LocationManager;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.telephony.TelephonyManager;
 
 
 public final class App extends Application {
 
     // TODO Establish Background Service To Persist App
-    // TODO Establish Periodic Location Sending
 
     private static Context appContext;
 

@@ -1,19 +1,29 @@
 package kgk.mobile.external.network;
 
 
+
 import android.util.Log;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
+import kgk.mobile.domain.SalesOutletAttendance;
+import kgk.mobile.domain.UserLocation;
 import kgk.mobile.domain.UserOperation;
 import kgk.mobile.domain.service.KgkService;
 import kgk.mobile.domain.SalesOutlet;
+import kgk.mobile.domain.service.LocationService;
 import kgk.mobile.external.network.json.JsonAnswer;
 import kgk.mobile.external.network.json.JsonProtocol;
 import kgk.mobile.external.network.socket.SocketService;
 
-public final class KgkApi implements KgkService, SocketService.Listener {
+public final class KgkApi implements KgkService, SocketService.Listener, LocationService.Listener {
 
     private static final String TAG = KgkApi.class.getSimpleName();
 
@@ -25,11 +35,16 @@ public final class KgkApi implements KgkService, SocketService.Listener {
 
     ////
 
-    public KgkApi(JsonProtocol jsonProtocol, SocketService socketService) {
+    public KgkApi(JsonProtocol jsonProtocol,
+                  SocketService socketService,
+                  LocationService locationService) {
+
         this.jsonProtocol = jsonProtocol;
         this.socketService = socketService;
         this.socketService.addListener(this);
         this.socketService.connect();
+
+        locationService.addListener(this);
     }
 
     //// KGK SERVICE
@@ -52,6 +67,16 @@ public final class KgkApi implements KgkService, SocketService.Listener {
     @Override
     public void requestUserOperations() {
         socketService.send(jsonProtocol.createGetUserOperationsMessage().toString().getBytes());
+    }
+
+    @Override
+    public void sendSalesOutletAttendances(List<String> attendanceMessages) {
+        for (String attendanceMessage : attendanceMessages) {
+            socketService.send(attendanceMessage.getBytes());
+        }
+
+        for (Listener listener : listeners)
+            listener.onPointExitIdReceivedFromRemoteStorage("14915720633022606286");
     }
 
     //// SOCKET SERVICE LISTENER
@@ -83,6 +108,19 @@ public final class KgkApi implements KgkService, SocketService.Listener {
                 for (Listener listener : listeners)
                     listener.onUserOperationsReceivedFromRemoteStorage(userOperations);
                 break;
+            case PointExit:
+                String eventId = jsonProtocol.parsePointExitAnswer(jsonAnswer.getMessage());
+                for (Listener listener : listeners)
+                    listener.onPointExitIdReceivedFromRemoteStorage(eventId);
+                break;
         }
+    }
+
+    //// LOCATION SERVICE LISTENER
+
+    @Override
+    public void onLocationChanged(UserLocation userLocation) {
+        if (socketService.isConnected() && isAuthenticated)
+            socketService.send(jsonProtocol.createLocationMessage(userLocation).toString().getBytes());
     }
 }

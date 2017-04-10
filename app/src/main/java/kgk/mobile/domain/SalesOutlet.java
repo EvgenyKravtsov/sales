@@ -41,4 +41,13 @@ public final class SalesOutlet {
         return userLocation.distanceToInMeters(latitude, longitude) <=
                 USER_IN_ZONE_DETECTION_DISTANCE_METERS;
     }
+
+    //// OBJECT
+
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof SalesOutlet)) return false;
+        SalesOutlet salesOutlet = (SalesOutlet) obj;
+        return code.equals(salesOutlet.code);
+    }
 }

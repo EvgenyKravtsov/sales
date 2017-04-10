@@ -1,4 +1,4 @@
-package kgk.mobile.presentation.model;
+package kgk.mobile.presentation.model.async;
 
 
 import org.junit.Before;
@@ -15,6 +15,7 @@ import kgk.mobile.domain.SalesOutlet;
 import kgk.mobile.domain.UserLocation;
 import kgk.mobile.domain.service.DatabaseService;
 import kgk.mobile.domain.service.KgkService;
+import kgk.mobile.presentation.model.SalesOutletStore;
 import kgk.mobile.presentation.model.async.SalesOutletStoreAsync;
 
 import static org.mockito.Mockito.verify;

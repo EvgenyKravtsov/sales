@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import kgk.mobile.domain.SalesOutlet;
+import kgk.mobile.domain.SalesOutletAttendance;
 import kgk.mobile.domain.UserLocation;
 import kgk.mobile.domain.UserOperation;
 import kgk.mobile.domain.service.DatabaseService;
@@ -82,6 +83,11 @@ public final class SalesOutletStoreAsync
         // Not Used
     }
 
+    @Override
+    public void onPointExitIdReceivedFromRemoteStorage(String eventId) {
+        // Not Used
+    }
+
     //// DATABASE SERVICE LISTENER
 
     @Override
@@ -92,6 +98,12 @@ public final class SalesOutletStoreAsync
 
     @Override
     public void onUserOperationsReceivedFromLocalStorage(List<UserOperation> userOperations) {
+        // Not Used
+    }
+
+    @Override
+    public void onNonSynchronizedSalesOutletAttendanceMessagesReceivedFromLocalStorage(
+            List<String> attendanceMessages) {
         // Not Used
     }
 

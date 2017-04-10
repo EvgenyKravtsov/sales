@@ -4,6 +4,7 @@ package kgk.mobile.domain.service;
 import java.util.List;
 
 import kgk.mobile.domain.SalesOutlet;
+import kgk.mobile.domain.SalesOutletAttendance;
 import kgk.mobile.domain.UserOperation;
 
 public interface KgkService {
@@ -13,6 +14,8 @@ public interface KgkService {
         void onSalesOutletsReceivedFromRemoteStorage(List<SalesOutlet> salesOutlets);
 
         void onUserOperationsReceivedFromRemoteStorage(List<UserOperation> userOperations);
+
+        void onPointExitIdReceivedFromRemoteStorage(String eventId);
     }
 
     ////
@@ -24,4 +27,6 @@ public interface KgkService {
     void requestSalesOutlets();
 
     void requestUserOperations();
+
+    void sendSalesOutletAttendances(List<String> attendanceMessages);
 }

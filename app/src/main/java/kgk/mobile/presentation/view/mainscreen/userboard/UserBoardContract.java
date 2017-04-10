@@ -1,4 +1,4 @@
-package kgk.mobile.presentation.view.mainscreen.managerboard;
+package kgk.mobile.presentation.view.mainscreen.userboard;
 
 
 import java.util.List;
@@ -17,7 +17,9 @@ public interface UserBoardContract {
 
         void setMapController(MapController mapController);
 
-        void salesOutletAttended(List<UserOperation> selectedUserOperations, int addedValue);
+        void salesOutletAttended(List<UserOperation> selectedUserOperations,
+                                 int addedValue,
+                                 long salesOutletAttendanceEndDateUnixSeconds);
     }
 
     interface View extends BaseView {

@@ -4,13 +4,20 @@ import android.content.Context;
 import android.util.Log;
 
 import org.greenrobot.greendao.database.Database;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import kgk.mobile.App;
+import kgk.mobile.DependencyInjection;
+import kgk.mobile.domain.SalesOutletAttendance;
 import kgk.mobile.domain.UserOperation;
 import kgk.mobile.domain.service.DatabaseService;
 import kgk.mobile.domain.SalesOutlet;
+import kgk.mobile.domain.service.SystemService;
+import kgk.mobile.external.network.json.JsonProtocol;
 
 
 public final class GreenDaoSqlite implements DatabaseService {
@@ -19,13 +26,16 @@ public final class GreenDaoSqlite implements DatabaseService {
 
     private final DaoSession daoSession;
     private final List<Listener> listeners = new ArrayList<>();
+    private final SystemService systemService;
 
     ////
 
-    public GreenDaoSqlite(Context context) {
+    public GreenDaoSqlite(Context context, SystemService systemService) {
         DaoMaster.DevOpenHelper helper = new DaoMaster.DevOpenHelper(context, "sqlite_database");
         Database database = helper.getWritableDb();
         daoSession = new DaoMaster(database).newSession();
+
+        this.systemService = systemService;
     }
 
     //// DATABASE SERVICE
@@ -49,8 +59,9 @@ public final class GreenDaoSqlite implements DatabaseService {
             salesOutlets.add(salesOutlet);
         }
 
-        for (Listener listener : listeners)
+        for (Listener listener : listeners) {
             listener.onSalesOutletsReceivedFromLocalStorage(salesOutlets);
+        }
     }
 
     @Override
@@ -92,6 +103,65 @@ public final class GreenDaoSqlite implements DatabaseService {
                     userOperation.getId(),
                     userOperation.getTitle());
             userOperationEntityDao.insert(entity);
+        }
+    }
+
+    @Override
+    public void insertSalesOutletAttendance(SalesOutletAttendance attendance) {
+        SalesOutletAttendanceEntityDao salesOutletAttendanceEntityDao =
+                daoSession.getSalesOutletAttendanceEntityDao();
+        SalesOutletAttendanceEntity entity = new SalesOutletAttendanceEntity(
+                new JsonProtocol(DependencyInjection.provideSystemService())
+                        .createSalesOutletAttendanceMessage(attendance).toString(),
+                false);
+        salesOutletAttendanceEntityDao.insert(entity);
+    }
+
+    @Override
+    public void requestNonSynchronizedSalesOutletAttendances() {
+        List<String> attendanceMessages = new ArrayList<>();
+
+        List<SalesOutletAttendanceEntity> entities = daoSession
+                .getSalesOutletAttendanceEntityDao().loadAll();
+
+        for (SalesOutletAttendanceEntity entity : entities) {
+            if (!entity.getIsSynchronized()) {
+                attendanceMessages.add(entity.getAttendanceJson());
+            }
+        }
+
+        for (Listener listener : listeners) {
+            listener.onNonSynchronizedSalesOutletAttendanceMessagesReceivedFromLocalStorage(attendanceMessages);
+        }
+    }
+
+    @Override
+    public void confirmSalesOutletAttendance(String eventId) {
+        List<SalesOutletAttendanceEntity> entities = daoSession
+                .getSalesOutletAttendanceEntityDao().loadAll();
+
+        for (SalesOutletAttendanceEntity entity : entities) {
+            try {
+                JSONObject messageJson = new JSONObject(entity.getAttendanceJson());
+                String exitTime = messageJson.getJSONObject("EVENT").getString("TIME");
+                String deviceId = systemService.getDeviceId().substring(5);
+
+                if ((exitTime + deviceId).equals(eventId)) {
+                    entity.setIsSynchronized(true);
+                }
+
+                Log.d(TAG, "confirmSalesOutletAttendance: " + (exitTime + deviceId) + "    " + eventId);
+
+                daoSession.update(entity);
+            }
+            catch (JSONException e) {
+                e.printStackTrace();
+                Log.d(TAG, "confirmSalesOutletAttendance: JSON Exception");
+            }
+            catch (SecurityException e) {
+                e.printStackTrace();
+                Log.d(TAG, "confirmSalesOutletAttendance: Security Exception");
+            }
         }
     }
 }

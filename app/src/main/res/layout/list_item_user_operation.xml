@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/enteredSalesOutletListItem_parentLinearLayout"
     android:layout_width="match_parent"
-    android:layout_height="60dp"
+    android:layout_height="52dp"
     android:gravity="center_vertical"
     android:orientation="horizontal"
     android:background="@drawable/gray_accent_border_top_side_white_background">
@@ -28,6 +28,6 @@
         android:layout_marginStart="8dp"
         android:textSize="20sp"
         android:textColor="@android:color/black"
-        tools:text="Sales Outlet Title"/>
+        tools:text="User Operation Title"/>
 
 </LinearLayout>

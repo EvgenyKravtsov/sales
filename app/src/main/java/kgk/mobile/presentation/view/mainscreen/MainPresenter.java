@@ -62,6 +62,11 @@ public final class MainPresenter extends BasePresenterImpl<MainContract.View>
         userStore.subscribeForUserLocationUpdate(this);
     }
 
+    @Override
+    public void onPhoneStatePermissionNotGranted() {
+        view.exit();
+    }
+
     //// USER LOCATION LISTENER
 
     @Override
@@ -82,6 +87,7 @@ public final class MainPresenter extends BasePresenterImpl<MainContract.View>
             public void run() {
                 mapController.displayZoom(zoom, true);
                 view.requestLocationPermission();
+                view.requestPhoneStatePermission();
             }
         });
     }

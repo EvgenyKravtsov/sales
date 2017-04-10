@@ -1,4 +1,4 @@
-package kgk.mobile.presentation.model;
+package kgk.mobile.presentation.model.async;
 
 
 import org.junit.Before;
@@ -18,6 +18,7 @@ import kgk.mobile.domain.service.KgkService;
 import kgk.mobile.domain.service.LocationService;
 import kgk.mobile.domain.service.SettingsStorageService;
 import kgk.mobile.domain.UserLocation;
+import kgk.mobile.presentation.model.UserStore;
 import kgk.mobile.presentation.model.async.UserStoreAsync;
 
 import static org.mockito.Mockito.mock;

@@ -1,6 +1,5 @@
 package kgk.mobile.external.greendao;
 
-
 import org.greenrobot.greendao.annotation.Entity;
 import org.greenrobot.greendao.annotation.Generated;
 
@@ -25,6 +24,7 @@ final class SalesOutletEntity {
         this.code = code;
         this.title = title;
     }
+
     @Generated(hash = 1720227137)
     public SalesOutletEntity() {}
 

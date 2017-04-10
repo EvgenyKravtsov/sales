@@ -1,4 +1,4 @@
-package kgk.mobile.presentation.view.mainscreen.managerboard;
+package kgk.mobile.presentation.view.mainscreen.userboard;
 
 import android.app.Fragment;
 import android.os.Bundle;
@@ -11,6 +11,7 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import java.util.Calendar;
 import java.util.List;
 
 import butterknife.BindView;
@@ -21,8 +22,8 @@ import kgk.mobile.R;
 import kgk.mobile.domain.UserOperation;
 import kgk.mobile.domain.SalesOutlet;
 import kgk.mobile.external.android.ImageCreator;
-import kgk.mobile.presentation.view.mainscreen.managerboard.dialog.AttendanceSuccessfulAlert;
-import kgk.mobile.presentation.view.mainscreen.managerboard.dialog.NoOperationSelectedAlert;
+import kgk.mobile.presentation.view.mainscreen.userboard.dialog.AttendanceSuccessfulAlert;
+import kgk.mobile.presentation.view.mainscreen.userboard.dialog.NoOperationSelectedAlert;
 
 
 public final class UserBoardFragment extends Fragment implements UserBoardContract.View {
@@ -137,7 +138,8 @@ public final class UserBoardFragment extends Fragment implements UserBoardContra
         }
 
         presenter.salesOutletAttended(selectedUserOperations,
-                userOperationsRecyclerAdapter.getAddedValue());
+                userOperationsRecyclerAdapter.getAddedValue(),
+                Calendar.getInstance().getTimeInMillis() / 1000);
 
         displayAttendanceSuccessful();
         dropDownUserOperations();

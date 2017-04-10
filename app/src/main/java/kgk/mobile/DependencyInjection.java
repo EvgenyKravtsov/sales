@@ -7,6 +7,8 @@ import kgk.mobile.domain.service.DatabaseService;
 import kgk.mobile.domain.service.KgkService;
 import kgk.mobile.domain.service.LocationService;
 import kgk.mobile.domain.service.SettingsStorageService;
+import kgk.mobile.domain.service.SystemService;
+import kgk.mobile.external.android.SystemServiceAndroid;
 import kgk.mobile.external.greendao.GreenDaoSqlite;
 import kgk.mobile.external.android.LocationServiceGoogleFusedApi;
 import kgk.mobile.external.android.SharedPreferencesStorage;
@@ -22,8 +24,8 @@ import kgk.mobile.presentation.model.async.SalesOutletStoreAsync;
 import kgk.mobile.presentation.model.async.UserStoreAsync;
 import kgk.mobile.presentation.view.mainscreen.MainContract;
 import kgk.mobile.presentation.view.mainscreen.MainPresenter;
-import kgk.mobile.presentation.view.mainscreen.managerboard.UserBoardContract;
-import kgk.mobile.presentation.view.mainscreen.managerboard.UserBoardPresenter;
+import kgk.mobile.presentation.view.mainscreen.userboard.UserBoardContract;
+import kgk.mobile.presentation.view.mainscreen.userboard.UserBoardPresenter;
 import kgk.mobile.presentation.view.map.MapController;
 import kgk.mobile.threading.ThreadScheduler;
 import kgk.mobile.threading.ThreadSchedulerThreadPool;
@@ -37,6 +39,8 @@ public final class DependencyInjection {
     private static KgkService kgkService;
     private static DatabaseService databaseService;
     private static SalesOutletAttendanceStore salesOutletAttendanceStore;
+    private static LocationService locationService;
+    private static SystemService systemService;
 
     ////
 
@@ -55,7 +59,11 @@ public final class DependencyInjection {
     //// SERVICE
 
     private static LocationService provideLocationService() {
-        return new LocationServiceGoogleFusedApi(provideAppContext());
+        if (locationService == null) {
+            locationService = new LocationServiceGoogleFusedApi(provideAppContext());
+        }
+
+        return locationService;
     }
 
     private static SettingsStorageService provideSettingsStorageService() {
@@ -68,7 +76,9 @@ public final class DependencyInjection {
 
     private static KgkService provideKgkService() {
         if (kgkService == null) {
-            kgkService = new KgkApi(new JsonProtocol(), provideSocketService());
+            kgkService = new KgkApi(new JsonProtocol(provideSystemService()),
+                                    provideSocketService(),
+                                    provideLocationService());
         }
 
         return kgkService;
@@ -76,7 +86,7 @@ public final class DependencyInjection {
 
     private static DatabaseService provideDatabaseService() {
         if (databaseService == null) {
-            databaseService = new GreenDaoSqlite(provideAppContext());
+            databaseService = new GreenDaoSqlite(provideAppContext(), provideSystemService());
         }
 
         return databaseService;
@@ -88,6 +98,14 @@ public final class DependencyInjection {
 
     public static MapController provideMapController() {
         return mapController;
+    }
+
+    public static SystemService provideSystemService() {
+        if (systemService == null) {
+            systemService = new SystemServiceAndroid(provideAppContext());
+        }
+
+        return systemService;
     }
 
     //// STORE
@@ -115,7 +133,9 @@ public final class DependencyInjection {
 
     private static SalesOutletAttendanceStore provideSalesOutletAttendanceStore() {
         if (salesOutletAttendanceStore == null) {
-            salesOutletAttendanceStore = new SalesOutletAttendanceStoreAsync();
+            salesOutletAttendanceStore = new SalesOutletAttendanceStoreAsync(
+                    provideDatabaseService(),
+                    provideKgkService());
         }
 
         return salesOutletAttendanceStore;

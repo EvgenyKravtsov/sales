@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <color name="white_transparent">#90FFFFFF</color>
     <color name="accent_gray">#B5B5B5</color>
+    <color name="accent_gray_transparent">#88B5B5B5</color>
     <color name="accent_orange">#FCA550</color>
+    <color name="accent_orange_transparent">#90FCA550</color>
     <color name="accent_light_gray">#ECECEC</color>
 </resources>

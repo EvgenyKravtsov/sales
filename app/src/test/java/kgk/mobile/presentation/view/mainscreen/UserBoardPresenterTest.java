@@ -19,14 +19,15 @@ import kgk.mobile.domain.SalesOutlet;
 import kgk.mobile.presentation.model.SalesOutletAttendanceStore;
 import kgk.mobile.presentation.model.SalesOutletStore;
 import kgk.mobile.presentation.model.UserStore;
-import kgk.mobile.presentation.view.mainscreen.managerboard.UserBoardContract;
-import kgk.mobile.presentation.view.mainscreen.managerboard.UserBoardPresenter;
+import kgk.mobile.presentation.view.mainscreen.userboard.UserBoardContract;
+import kgk.mobile.presentation.view.mainscreen.userboard.UserBoardPresenter;
 import kgk.mobile.presentation.view.map.MapController;
 import kgk.mobile.threading.ThreadScheduler;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 
 public final class UserBoardPresenterTest {
@@ -116,23 +117,48 @@ public final class UserBoardPresenterTest {
     @Test
     public void salesOutletAttended_salesOutletAttendanceStored() {
         List<UserOperation> selectedUserOperations = new ArrayList<>();
+        final SalesOutletAttendance attendance = createDummySalesOutletAttendance();
+        presenter.salesOutletSelectedByUser(createDummySalesOutlet());
 
         doAnswer(new Answer() {
             @Override
             public Object answer(InvocationOnMock invocation) throws Throwable {
-                salesOutletAttendanceStoreMock.put(any(SalesOutletAttendance.class));
+                salesOutletAttendanceStoreMock.put(attendance);
                 return null;
             }
         }).when(threadSchedulerMock).executeBackgroundThread(any(Runnable.class));
 
-        presenter.salesOutletAttended(selectedUserOperations, any(Integer.class));
+        presenter.salesOutletAttended(selectedUserOperations, 0, 0);
 
-        verify(salesOutletAttendanceStoreMock).put(any(SalesOutletAttendance.class));
+        verify(salesOutletAttendanceStoreMock).put(attendance);
     }
 
-    ////
+    @Test
+    public void salesOutletAttended_noSalesOutletSelected_salesOutletAttendanceNotStored() {
+        List<UserOperation> selectedUserOperations = new ArrayList<>();
+        final SalesOutletAttendance attendance = createDummySalesOutletAttendance();
+        presenter.salesOutletSelectedByUser(null);
+
+        doAnswer(new Answer() {
+            @Override
+            public Object answer(InvocationOnMock invocation) throws Throwable {
+                salesOutletAttendanceStoreMock.put(attendance);
+                return null;
+            }
+        }).when(threadSchedulerMock).executeBackgroundThread(any(Runnable.class));
+
+        presenter.salesOutletAttended(selectedUserOperations, 0, 0);
+
+        verify(salesOutletAttendanceStoreMock, never()).put(attendance);
+    }
+
+    //// PRIVATE
 
     private SalesOutlet createDummySalesOutlet() {
         return new SalesOutlet(0, 0, "test", "test");
+    }
+
+    private SalesOutletAttendance createDummySalesOutletAttendance() {
+        return new SalesOutletAttendance(0, 0, null, null, 0);
     }
 }

@@ -8,4 +8,12 @@ public interface UserLocation {
     double getLongitude();
 
     int distanceToInMeters(double latitude, double longitude);
+
+    long getLocationTime();
+
+    int getAltitude();
+
+    int getAzimut();
+
+    double getSpeed();
 }

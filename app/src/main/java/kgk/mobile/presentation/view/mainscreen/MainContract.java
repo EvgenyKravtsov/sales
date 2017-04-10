@@ -17,10 +17,16 @@ public interface MainContract {
         void onLocationPermissionGranted();
 
         void onMapZoomChanged(float zoom);
+
+        void onPhoneStatePermissionNotGranted();
     }
 
     interface View extends BaseView {
 
         void requestLocationPermission();
+
+        void requestPhoneStatePermission();
+
+        void exit();
     }
 }
