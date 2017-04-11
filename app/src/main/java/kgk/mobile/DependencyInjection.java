@@ -24,11 +24,13 @@ import kgk.mobile.presentation.model.async.SalesOutletStoreAsync;
 import kgk.mobile.presentation.model.async.UserStoreAsync;
 import kgk.mobile.presentation.view.mainscreen.MainContract;
 import kgk.mobile.presentation.view.mainscreen.MainPresenter;
+import kgk.mobile.presentation.view.mainscreen.menu.MenuContract;
+import kgk.mobile.presentation.view.mainscreen.menu.MenuPresenter;
 import kgk.mobile.presentation.view.mainscreen.userboard.UserBoardContract;
 import kgk.mobile.presentation.view.mainscreen.userboard.UserBoardPresenter;
 import kgk.mobile.presentation.view.map.MapController;
-import kgk.mobile.threading.ThreadScheduler;
-import kgk.mobile.threading.ThreadSchedulerThreadPool;
+import kgk.mobile.external.threading.ThreadScheduler;
+import kgk.mobile.external.threading.ThreadSchedulerThreadPool;
 
 public final class DependencyInjection {
 
@@ -143,7 +145,7 @@ public final class DependencyInjection {
 
     //// PRESENTER
 
-    public static MainContract.Presenter provideMainContractPresenter() {
+    public static MainContract.Presenter provideMainPresenter() {
         return new MainPresenter(provideUserStore(), provideSalesOutletStore(), provideThreadScheduler());
     }
 
@@ -153,5 +155,9 @@ public final class DependencyInjection {
                 provideUserStore(),
                 provideThreadScheduler(),
                 provideSalesOutletAttendanceStore());
+    }
+
+    public static MenuContract.Presenter provideMenuPresenter() {
+        return new MenuPresenter(provideLocationService());
     }
 }

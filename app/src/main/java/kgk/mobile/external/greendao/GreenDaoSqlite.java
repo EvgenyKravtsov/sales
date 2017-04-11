@@ -110,7 +110,7 @@ public final class GreenDaoSqlite implements DatabaseService {
     public void insertSalesOutletAttendance(SalesOutletAttendance attendance) {
         SalesOutletAttendanceEntityDao salesOutletAttendanceEntityDao =
                 daoSession.getSalesOutletAttendanceEntityDao();
-        SalesOutletAttendanceEntity entity = new SalesOutletAttendanceEntity(
+        SalesOutletAttendanceEntity entity = new SalesOutletAttendanceEntity(0L,
                 new JsonProtocol(DependencyInjection.provideSystemService())
                         .createSalesOutletAttendanceMessage(attendance).toString(),
                 false);
@@ -149,8 +149,6 @@ public final class GreenDaoSqlite implements DatabaseService {
                 if ((exitTime + deviceId).equals(eventId)) {
                     entity.setIsSynchronized(true);
                 }
-
-                Log.d(TAG, "confirmSalesOutletAttendance: " + (exitTime + deviceId) + "    " + eventId);
 
                 daoSession.update(entity);
             }

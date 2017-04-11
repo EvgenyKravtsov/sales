@@ -22,7 +22,7 @@ import kgk.mobile.presentation.model.UserStore;
 import kgk.mobile.presentation.view.mainscreen.userboard.UserBoardContract;
 import kgk.mobile.presentation.view.mainscreen.userboard.UserBoardPresenter;
 import kgk.mobile.presentation.view.map.MapController;
-import kgk.mobile.threading.ThreadScheduler;
+import kgk.mobile.external.threading.ThreadScheduler;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doAnswer;

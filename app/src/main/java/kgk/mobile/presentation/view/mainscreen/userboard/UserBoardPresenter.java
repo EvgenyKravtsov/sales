@@ -12,7 +12,7 @@ import kgk.mobile.presentation.model.SalesOutletStore;
 import kgk.mobile.presentation.model.UserStore;
 import kgk.mobile.presentation.view.base.BasePresenterImpl;
 import kgk.mobile.presentation.view.map.MapController;
-import kgk.mobile.threading.ThreadScheduler;
+import kgk.mobile.external.threading.ThreadScheduler;
 
 public final class UserBoardPresenter extends BasePresenterImpl<UserBoardContract.View>
         implements UserBoardContract.Presenter,

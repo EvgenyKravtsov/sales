@@ -1,7 +1,6 @@
 package kgk.mobile.presentation.view.mainscreen;
 
 import android.Manifest;
-import android.app.Fragment;
 import android.content.pm.PackageManager;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
@@ -14,12 +13,14 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 import kgk.mobile.DependencyInjection;
 import kgk.mobile.R;
+import kgk.mobile.presentation.view.mainscreen.menu.MenuFragment;
 import kgk.mobile.presentation.view.mainscreen.userboard.UserBoardFragment;
 import kgk.mobile.presentation.view.map.MapController;
 import kgk.mobile.presentation.view.map.google.GoogleMapController;
-
 
 public final class MainActivity extends AppCompatActivity
         implements OnMapReadyCallback, MainContract.View {
@@ -27,6 +28,8 @@ public final class MainActivity extends AppCompatActivity
     private static final String TAG = "MainActivity";
     private static final int REQUEST_FINE_LOCATION_ID = 10;
     private static final int REQUEST_PHONE_STATE_ID = 20;
+    private static final String USER_BOARD_FRAGMENT_BACKSTACK_ID = "UserBoardFragment";
+    private static final String MENU_FRAGMENT_BACKSTACK_ID = "MenuFragment";
 
     private MainContract.Presenter presenter;
 
@@ -36,9 +39,10 @@ public final class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        ButterKnife.bind(this);
         setupMap();
 
-        presenter = DependencyInjection.provideMainContractPresenter();
+        presenter = DependencyInjection.provideMainPresenter();
         presenter.attachView(this);
     }
 
@@ -72,6 +76,26 @@ public final class MainActivity extends AppCompatActivity
                 }
 
                 break;
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        int count = getSupportFragmentManager().getBackStackEntryCount();
+
+        if (count == 0) {
+            super.onBackPressed();
+        }
+        else {
+            getSupportFragmentManager().popBackStack();
+
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            UserBoardFragment userBoardFragment = (UserBoardFragment) fragmentManager
+                    .findFragmentByTag(USER_BOARD_FRAGMENT_BACKSTACK_ID);
+
+            fragmentManager.beginTransaction()
+                    .show(userBoardFragment)
+                    .commit();
         }
     }
 
@@ -121,6 +145,21 @@ public final class MainActivity extends AppCompatActivity
         finish();
     }
 
+    @Override
+    public void navigateToMenu() {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        MenuFragment menuFragment = new MenuFragment();
+
+        UserBoardFragment userBoardFragment = (UserBoardFragment) fragmentManager
+                .findFragmentByTag(USER_BOARD_FRAGMENT_BACKSTACK_ID);
+
+        fragmentManager.beginTransaction()
+                .hide(userBoardFragment)
+                .add(R.id.mainActivity_contentFragmentContainer, menuFragment)
+                .addToBackStack(MENU_FRAGMENT_BACKSTACK_ID)
+                .commit();
+    }
+
     //// PRIVATE
 
     private void setupMap() {
@@ -133,10 +172,17 @@ public final class MainActivity extends AppCompatActivity
     }
 
     private void setupManagerBoard() {
-        android.app.FragmentManager fragmentManager = getFragmentManager();
-        Fragment fragment = new UserBoardFragment();
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        UserBoardFragment fragment = new UserBoardFragment();
         fragmentManager.beginTransaction()
-                .add(R.id.mainActivity_managerBoardFragmentContainer, fragment)
+                .add(R.id.mainActivity_contentFragmentContainer, fragment, USER_BOARD_FRAGMENT_BACKSTACK_ID)
                 .commit();
+    }
+
+    //// CONTROL CALLBACKS
+
+    @OnClick(R.id.mainActivity_menuImageButton)
+    public void onClick() {
+        presenter.onMenuButtonClicked();
     }
 }

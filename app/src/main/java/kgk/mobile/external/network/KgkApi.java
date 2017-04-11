@@ -74,9 +74,6 @@ public final class KgkApi implements KgkService, SocketService.Listener, Locatio
         for (String attendanceMessage : attendanceMessages) {
             socketService.send(attendanceMessage.getBytes());
         }
-
-        for (Listener listener : listeners)
-            listener.onPointExitIdReceivedFromRemoteStorage("14915720633022606286");
     }
 
     //// SOCKET SERVICE LISTENER

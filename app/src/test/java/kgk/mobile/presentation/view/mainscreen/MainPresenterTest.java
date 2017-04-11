@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import kgk.mobile.threading.ThreadScheduler;
+import kgk.mobile.external.threading.ThreadScheduler;
 import kgk.mobile.domain.SalesOutlet;
 import kgk.mobile.domain.UserLocation;
 import kgk.mobile.presentation.model.SalesOutletStore;
@@ -199,6 +199,12 @@ public final class MainPresenterTest {
         mainPresenter.onMapZoomChanged(PREFERRED_ZOOM);
 
         verify(userStoreMock).savePreferredMapZoom(PREFERRED_ZOOM);
+    }
+
+    @Test
+    public void menuButtonClicked_navigationToMenuPerformed() {
+        mainPresenter.onMenuButtonClicked();
+        verify(viewMock).navigateToMenu();
     }
 
     ////

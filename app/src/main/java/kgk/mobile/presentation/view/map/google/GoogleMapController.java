@@ -38,7 +38,6 @@ public final class GoogleMapController implements MapController, GoogleMap.OnCam
     private final List<Circle> salesOutletZones = new ArrayList<>();
     private final List<String> enteredSalesOutletsCodes = new ArrayList<>();
 
-
     private Marker userMarker;
     private boolean isCameraCenteredOnUser;
     private BitmapDescriptor userMarkerImage;

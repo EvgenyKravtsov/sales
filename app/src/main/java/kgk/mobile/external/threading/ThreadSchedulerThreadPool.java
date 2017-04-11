@@ -1,14 +1,11 @@
-package kgk.mobile.threading;
+package kgk.mobile.external.threading;
 
 
 import android.content.Context;
 import android.os.Handler;
-import android.util.Log;
 
-import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadPoolExecutor;
 
 public final class ThreadSchedulerThreadPool implements ThreadScheduler {
 

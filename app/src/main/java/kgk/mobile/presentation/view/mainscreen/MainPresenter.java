@@ -1,11 +1,9 @@
 package kgk.mobile.presentation.view.mainscreen;
 
-import android.util.Log;
-
 import java.util.List;
 
 
-import kgk.mobile.threading.ThreadScheduler;
+import kgk.mobile.external.threading.ThreadScheduler;
 import kgk.mobile.domain.SalesOutlet;
 import kgk.mobile.domain.UserLocation;
 import kgk.mobile.presentation.model.SalesOutletStore;
@@ -40,7 +38,7 @@ public final class MainPresenter extends BasePresenterImpl<MainContract.View>
         this.threadScheduler = threadScheduler;
     }
 
-    //// MAIN CONTRACT
+    //// MAIN PRESENTER
 
     @Override
     public void onMapDisplayed(MapController mapController) {
@@ -65,6 +63,11 @@ public final class MainPresenter extends BasePresenterImpl<MainContract.View>
     @Override
     public void onPhoneStatePermissionNotGranted() {
         view.exit();
+    }
+
+    @Override
+    public void onMenuButtonClicked() {
+        view.navigateToMenu();
     }
 
     //// USER LOCATION LISTENER

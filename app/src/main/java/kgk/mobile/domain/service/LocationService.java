@@ -15,4 +15,8 @@ public interface LocationService {
     void startLocationUpdate();
 
     void addListener(Listener listener);
+
+    void removeListener(Listener listener);
+
+    UserLocation getLastKnownUserLocation();
 }

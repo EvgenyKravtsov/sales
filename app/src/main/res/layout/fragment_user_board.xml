@@ -13,8 +13,7 @@
         android:layout_marginLeft="56dp"
         android:layout_marginStart="56dp"
         android:layout_alignParentTop="true"
-        android:padding="1dp"
-        android:background="@drawable/gray_accent_border_all_sides_transparent_background"
+        android:paddingTop="-1dp"
         android:visibility="gone"
         tools:visibility="visible" />
 

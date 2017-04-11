@@ -1,4 +1,4 @@
-package kgk.mobile.threading;
+package kgk.mobile.external.threading;
 
 
 public interface ThreadScheduler {

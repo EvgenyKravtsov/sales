@@ -37,6 +37,7 @@ public final class LocationServiceGoogleFusedApi implements
     private LocationRequest locationRequest;
     private boolean isLocationUpdateRequested;
     private List<Listener> listeners = new ArrayList<>();
+    private UserLocation lastKnownUserLocation;
 
     private final Context context;
 
@@ -84,6 +85,7 @@ public final class LocationServiceGoogleFusedApi implements
         Log.d(TAG, "onLocationChanged: ");
         UserLocation userLocation = new UserLocationAndroid(location); // TODO Inject Object Instead Of Creation
         for (Listener listener : listeners) listener.onLocationChanged(userLocation);
+        this.lastKnownUserLocation = userLocation;
     }
 
     //// LOCATION SERVICE
@@ -97,6 +99,16 @@ public final class LocationServiceGoogleFusedApi implements
     @Override
     public void addListener(Listener listener) {
         listeners.add(listener);
+    }
+
+    @Override
+    public void removeListener(Listener listener) {
+        listeners.remove(listener);
+    }
+
+    @Override
+    public UserLocation getLastKnownUserLocation() {
+        return lastKnownUserLocation;
     }
 
     //// PRIVATE

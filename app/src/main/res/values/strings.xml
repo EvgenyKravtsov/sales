@@ -11,4 +11,9 @@
     <string name="noOperationSelectedAlert_messageText">Невозможно сохранить - Вы не выбрали ни одного действия</string>
     <string name="attendanceSuccessfulAlert_messageText">Посещение сохранено</string>
 
+    <!-- MENU -->
+    <string name="menuFragment_technicalInformationText">Техническая информация</string>
+    <string name="menuFragment_lastLocationDateText">Посл.данные положения: %s</string>
+    <string name="menuFragment_invalidLastLocationDateText">Загрузка…</string>
+
 </resources>

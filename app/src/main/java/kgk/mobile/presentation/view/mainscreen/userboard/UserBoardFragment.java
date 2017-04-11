@@ -26,7 +26,7 @@ import kgk.mobile.presentation.view.mainscreen.userboard.dialog.AttendanceSucces
 import kgk.mobile.presentation.view.mainscreen.userboard.dialog.NoOperationSelectedAlert;
 
 
-public final class UserBoardFragment extends Fragment implements UserBoardContract.View {
+public final class UserBoardFragment extends android.support.v4.app.Fragment implements UserBoardContract.View {
 
     @BindView(R.id.userBoardFragment_enteredSalesOutletsRecyclerView)
     RecyclerView enteredSalesOutletsRecyclerView;
