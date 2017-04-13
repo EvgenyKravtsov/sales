@@ -15,7 +15,11 @@ public interface SalesOutletStore {
         void salesOutletsEnteredByUser(List<SalesOutlet> salesOutletsEntered);
     }
 
+    ////
+
     void addListener(Listener listener);
+
+    void removeListener(Listener listener);
 
     void requestSalesOutlets();
 

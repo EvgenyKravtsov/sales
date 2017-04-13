@@ -15,6 +15,7 @@ import kgk.mobile.domain.service.DatabaseService;
 import kgk.mobile.domain.service.KgkService;
 import kgk.mobile.domain.service.LocationService;
 import kgk.mobile.domain.service.SettingsStorageService;
+import kgk.mobile.domain.service.SystemService;
 import kgk.mobile.presentation.model.UserStore;
 
 public final class UserStoreAsync
@@ -29,7 +30,9 @@ public final class UserStoreAsync
     private final SettingsStorageService settingsStorageService;
     private final KgkService kgkService;
     private final DatabaseService databaseService;
+    private final SystemService systemService;
     private final List<LocationListener> locationListeners = new ArrayList<>();
+    private final List<UserLoginListener> userLoginListeners = new ArrayList<>();
     private final List<UserStore.UserOperationsListener> userOperationsListeners = new ArrayList<>();
 
     private boolean userOperationsProvidedFromLocalStorage;
@@ -39,13 +42,15 @@ public final class UserStoreAsync
     public UserStoreAsync(LocationService locationService,
                           SettingsStorageService settingsStorageService,
                           KgkService kgkService,
-                          DatabaseService databaseService) {
+                          DatabaseService databaseService,
+                          SystemService systemService) {
         this.locationService = locationService;
         this.locationService.addListener(this);
         this.settingsStorageService = settingsStorageService;
         this.kgkService = kgkService;
         this.kgkService.addListener(this);
         this.databaseService = databaseService;
+        this.systemService = systemService;
         databaseService.addListener(this);
     }
 
@@ -79,6 +84,26 @@ public final class UserStoreAsync
         userOperationsListeners.add(listener);
     }
 
+    @Override
+    public void removeUserOperationsListener(UserOperationsListener listener) {
+        userOperationsListeners.remove(listener);
+    }
+
+    @Override
+    public void requestUserLogin(String login, String password) {
+        kgkService.requestUserLogin(login, password, systemService.getDeviceId());
+    }
+
+    @Override
+    public void addUserLoginListener(UserLoginListener listener) {
+        userLoginListeners.add(listener);
+    }
+
+    @Override
+    public void removeUserLoginListener(UserLoginListener listener) {
+        userLoginListeners.remove(listener);
+    }
+
     //// LOCATION SERVICE LISTENER
 
     @Override
@@ -108,6 +133,32 @@ public final class UserStoreAsync
 
     }
 
+    @Override
+    public void onLastSendingDateChanged(long lastSendingDateUnixSeconds) {
+        // Not Used
+    }
+
+    @Override
+    public void onLoginAnswerReceived(KgkService.LoginAnswerType answerType) {
+        switch (answerType) {
+            case Success:
+                for (UserLoginListener listener : userLoginListeners)
+                    listener.onLoginSuccess();
+                return;
+            case NoUserFound:
+                for (UserLoginListener listener : userLoginListeners)
+                    listener.onUserNotFound();
+                return;
+            case DeviceNotAllowed:
+                for (UserLoginListener listener : userLoginListeners)
+                    listener.onDeviceNotAllowed();
+                return;
+            case Error:
+                for (UserLoginListener listener : userLoginListeners)
+                    listener.onLoginError();
+        }
+    }
+
     //// DATABASE SERVICE LISTENER
 
     @Override
@@ -129,8 +180,13 @@ public final class UserStoreAsync
     }
 
     @Override
-    public void onNonSynchronizedSalesOutletAttendanceMessagesReceivedFromLocalStorage(
-            List<String> attendanceMessages) {
+    public void onNonSynchronizedSalesOutletAttendancesReceivedFromLocalStorage(
+            List<SalesOutletAttendance> attendances) {
+        // Not Used
+    }
+
+    @Override
+    public void onSalesOutletAttendancesReceivedFromLocalStorage(List<SalesOutletAttendance> attendances) {
         // Not Used
     }
 }

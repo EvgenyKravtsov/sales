@@ -1,4 +1,4 @@
-package kgk.mobile.presentation.view.mainscreen.userboard.dialog;
+package kgk.mobile.presentation.view.mainscreen.dialog;
 
 import android.app.Activity;
 import android.app.Dialog;

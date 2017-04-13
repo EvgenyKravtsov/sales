@@ -1,8 +1,11 @@
 package kgk.mobile.presentation.view.mainscreen;
 
+import android.util.Log;
+
 import java.util.List;
 
 
+import kgk.mobile.domain.service.SystemService;
 import kgk.mobile.external.threading.ThreadScheduler;
 import kgk.mobile.domain.SalesOutlet;
 import kgk.mobile.domain.UserLocation;
@@ -17,13 +20,15 @@ public final class MainPresenter extends BasePresenterImpl<MainContract.View>
         UserStore.LocationListener,
         UserStore.PreferredMapZoomListener,
         SalesOutletStore.Listener,
-        MapController.Listener {
+        MapController.Listener,
+        SystemService.Listener {
 
     private static final String TAG = MainPresenter.class.getSimpleName();
 
     private final UserStore userStore;
     private final SalesOutletStore salesOutletStore;
     private final ThreadScheduler threadScheduler;
+    private final SystemService systemService;
 
     private MapController mapController;
 
@@ -31,11 +36,22 @@ public final class MainPresenter extends BasePresenterImpl<MainContract.View>
 
     public MainPresenter(UserStore userStore,
                          SalesOutletStore salesOutletStore,
-                         ThreadScheduler threadScheduler) {
+                         ThreadScheduler threadScheduler,
+                         SystemService systemService) {
 
         this.userStore = userStore;
         this.salesOutletStore = salesOutletStore;
         this.threadScheduler = threadScheduler;
+        this.systemService = systemService;
+        this.systemService.addListener(this);
+    }
+
+    //// BASE PRESENTER
+
+    @Override
+    public void detachView() {
+        super.detachView();
+        this.systemService.removeListener(this);
     }
 
     //// MAIN PRESENTER
@@ -53,6 +69,8 @@ public final class MainPresenter extends BasePresenterImpl<MainContract.View>
                 salesOutletStore.requestSalesOutlets();
             }
         });
+
+        view.displayFetchingLocationAlert();
     }
 
     @Override
@@ -67,7 +85,22 @@ public final class MainPresenter extends BasePresenterImpl<MainContract.View>
 
     @Override
     public void onMenuButtonClicked() {
-        view.navigateToMenu();
+        view.displayNavigationMenu();
+    }
+
+    @Override
+    public void onNavigateToTechnicalInformationButtonClicked() {
+        view.navigateToTechnicalInformation();
+    }
+
+    @Override
+    public void onNavigateToLastActionsButtonClicked() {
+        view.navigateToLastActions();
+    }
+
+    @Override
+    public void onClickHardwareBack() {
+        mapController.redrawMapObjects();
     }
 
     //// USER LOCATION LISTENER
@@ -77,8 +110,9 @@ public final class MainPresenter extends BasePresenterImpl<MainContract.View>
         double latitude = userLocation.getLatitude();
         double longitude = userLocation.getLongitude();
         mapController.displayUser(latitude, longitude);
-        mapController.centerCameraOnUser(latitude, longitude, true);
+        mapController.centerCameraOnUser(latitude, longitude, false);
         salesOutletStore.isUserInSalesOutletZone(userLocation);
+        if (view != null) view.hideFetchingLocationAlert();
     }
 
     //// USER PREFERRED MAP ZOOM LISTENER
@@ -120,6 +154,25 @@ public final class MainPresenter extends BasePresenterImpl<MainContract.View>
             @Override
             public void run() {
                 userStore.savePreferredMapZoom(zoom);
+            }
+        });
+    }
+
+    //// SYSTEM SERVICE LISTENER // TODO Write Test For This Functions
+
+    @Override
+    public void onInternetConnectionStatusChanged(final boolean status) {
+        threadScheduler.executeMainThread(new Runnable() {
+            @Override
+            public void run() {
+                if (status) {
+                    view.displayKgkServiceOfflineAlert();
+                    view.displayInternetServiceOfflineAlert();
+                }
+                else {
+                    view.hideKgkServiceOfflineAlert();
+                    view.hideInternetServiceOfflineAlert();
+                }
             }
         });
     }

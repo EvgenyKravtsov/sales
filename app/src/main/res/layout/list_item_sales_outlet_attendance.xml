@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingBottom="4dp">
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:layout_marginBottom="4dp"
+        android:background="@color/accent_gray" />
+
+    <TextView
+        android:id="@+id/salesOutletAttendanceListItem_salesOutletTitleTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginEnd="8dp"
+        android:textSize="16sp"
+        android:textColor="@android:color/black"
+        tools:text="Визит в точку ИП Аксенов Сергей Анатольевич" />
+
+    <TextView
+        android:id="@+id/salesOutletAttendanceListItem_salesOutletCodeTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginEnd="8dp"
+        android:textSize="16sp"
+        android:textColor="@android:color/black"
+        tools:text="(СТЛ000120993)" />
+
+    <TextView
+        android:id="@+id/salesOutletAttendanceListItem_attendanceDateTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginEnd="8dp"
+        android:textSize="16sp"
+        android:textColor="@android:color/black"
+        tools:text="с 2017-01-26 08:49:51 до 2017-01-26 09:12:04" />
+
+</LinearLayout>

@@ -10,14 +10,11 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
-import kgk.mobile.App;
-import kgk.mobile.DependencyInjection;
 import kgk.mobile.domain.SalesOutletAttendance;
 import kgk.mobile.domain.UserOperation;
 import kgk.mobile.domain.service.DatabaseService;
 import kgk.mobile.domain.SalesOutlet;
 import kgk.mobile.domain.service.SystemService;
-import kgk.mobile.external.network.json.JsonProtocol;
 
 
 public final class GreenDaoSqlite implements DatabaseService {
@@ -27,15 +24,17 @@ public final class GreenDaoSqlite implements DatabaseService {
     private final DaoSession daoSession;
     private final List<Listener> listeners = new ArrayList<>();
     private final SystemService systemService;
+    private final JsonSerializer jsonSerializer;
 
     ////
 
-    public GreenDaoSqlite(Context context, SystemService systemService) {
+    public GreenDaoSqlite(Context context, SystemService systemService, JsonSerializer jsonSerializer) {
         DaoMaster.DevOpenHelper helper = new DaoMaster.DevOpenHelper(context, "sqlite_database");
         Database database = helper.getWritableDb();
         daoSession = new DaoMaster(database).newSession();
 
         this.systemService = systemService;
+        this.jsonSerializer = jsonSerializer;
     }
 
     //// DATABASE SERVICE
@@ -43,6 +42,11 @@ public final class GreenDaoSqlite implements DatabaseService {
     @Override
     public void addListener(Listener listener) {
         listeners.add(listener);
+    }
+
+    @Override
+    public void removeListener(Listener listener) {
+        listeners.remove(listener);
     }
 
     @Override
@@ -108,30 +112,45 @@ public final class GreenDaoSqlite implements DatabaseService {
 
     @Override
     public void insertSalesOutletAttendance(SalesOutletAttendance attendance) {
-        SalesOutletAttendanceEntityDao salesOutletAttendanceEntityDao =
-                daoSession.getSalesOutletAttendanceEntityDao();
-        SalesOutletAttendanceEntity entity = new SalesOutletAttendanceEntity(0L,
-                new JsonProtocol(DependencyInjection.provideSystemService())
-                        .createSalesOutletAttendanceMessage(attendance).toString(),
-                false);
-        salesOutletAttendanceEntityDao.insert(entity);
+        try {
+            Log.d(TAG, "insertSalesOutletAttendance: ");
+            JSONObject attendanceJson = jsonSerializer.serializeSaleOutletAttendance(attendance);
+
+            SalesOutletAttendanceEntityDao salesOutletAttendanceEntityDao =
+                    daoSession.getSalesOutletAttendanceEntityDao();
+            SalesOutletAttendanceEntity entity = new SalesOutletAttendanceEntity(
+                    attendanceJson.toString(), false);
+            salesOutletAttendanceEntityDao.insert(entity);
+        }
+        catch (JSONException e) {
+            e.printStackTrace();
+            Log.d(TAG, "insertSalesOutletAttendance: Exception");
+        }
     }
 
     @Override
     public void requestNonSynchronizedSalesOutletAttendances() {
-        List<String> attendanceMessages = new ArrayList<>();
+        List<SalesOutletAttendance> attendances = new ArrayList<>();
 
         List<SalesOutletAttendanceEntity> entities = daoSession
                 .getSalesOutletAttendanceEntityDao().loadAll();
 
         for (SalesOutletAttendanceEntity entity : entities) {
             if (!entity.getIsSynchronized()) {
-                attendanceMessages.add(entity.getAttendanceJson());
+                try {
+                    attendances.add(jsonSerializer
+                            .deserializeSalesOutletAttendance(
+                                    new JSONObject(entity.getAttendanceJson())));
+                }
+                catch (JSONException e) {
+                    e.printStackTrace();
+                    Log.d(TAG, "requestNonSynchronizedSalesOutletAttendances: Exception");
+                }
             }
         }
 
         for (Listener listener : listeners) {
-            listener.onNonSynchronizedSalesOutletAttendanceMessagesReceivedFromLocalStorage(attendanceMessages);
+            listener.onNonSynchronizedSalesOutletAttendancesReceivedFromLocalStorage(attendances);
         }
     }
 
@@ -142,8 +161,9 @@ public final class GreenDaoSqlite implements DatabaseService {
 
         for (SalesOutletAttendanceEntity entity : entities) {
             try {
-                JSONObject messageJson = new JSONObject(entity.getAttendanceJson());
-                String exitTime = messageJson.getJSONObject("EVENT").getString("TIME");
+                JSONObject attendanceJson = new JSONObject(entity.getAttendanceJson());
+                SalesOutletAttendance attendance = jsonSerializer.deserializeSalesOutletAttendance(attendanceJson);
+                String exitTime = String.valueOf(attendance.getEndDateUnixSeconds());
                 String deviceId = systemService.getDeviceId().substring(5);
 
                 if ((exitTime + deviceId).equals(eventId)) {
@@ -160,6 +180,32 @@ public final class GreenDaoSqlite implements DatabaseService {
                 e.printStackTrace();
                 Log.d(TAG, "confirmSalesOutletAttendance: Security Exception");
             }
+        }
+    }
+
+    @Override
+    public void requestSalesOutletAttendances() {
+        List<SalesOutletAttendance> attendances = new ArrayList<>();
+
+        List<SalesOutletAttendanceEntity> entities = daoSession
+                .getSalesOutletAttendanceEntityDao().loadAll();
+
+        Log.d(TAG, "requestSalesOutletAttendances: ENTITIES SIZE " + entities.size());
+
+        for (SalesOutletAttendanceEntity entity : entities) {
+            try {
+                attendances.add(jsonSerializer
+                        .deserializeSalesOutletAttendance(
+                                new JSONObject(entity.getAttendanceJson())));
+            }
+            catch (JSONException e) {
+                e.printStackTrace();
+                Log.d(TAG, "requestSalesOutletAttendances: Exception");
+            }
+        }
+
+        for (Listener listener : listeners) {
+            listener.onSalesOutletAttendancesReceivedFromLocalStorage(attendances);
         }
     }
 }

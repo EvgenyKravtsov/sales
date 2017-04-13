@@ -2,10 +2,13 @@ package kgk.mobile.external.android;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.telephony.TelephonyManager;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,6 +19,8 @@ import static android.content.Context.LOCATION_SERVICE;
 
 
 public final class SystemServiceAndroid implements SystemService {
+
+    private static final String TAG = SystemServiceAndroid.class.getSimpleName();
 
     private final Context context;
     private final List<Listener> listeners = new ArrayList<>();
@@ -34,11 +39,17 @@ public final class SystemServiceAndroid implements SystemService {
     }
 
     @Override
+    public void removeListener(Listener listener) {
+        listeners.remove(listener);
+    }
+
+    @Override
     public boolean getInternetConnectionStatus() {
         ConnectivityManager connectivityManager = (ConnectivityManager)
                 context.getSystemService(Context.CONNECTIVITY_SERVICE);
 
         NetworkInfo activeNetwork = connectivityManager.getActiveNetworkInfo();
+        if (activeNetwork == null) return false;
         return activeNetwork.isConnectedOrConnecting();
     }
 
@@ -63,5 +74,18 @@ public final class SystemServiceAndroid implements SystemService {
     public void internetConnectionStatusChanged(boolean status) {
         for (Listener listener : listeners)
             listener.onInternetConnectionStatusChanged(status);
+    }
+
+    @Override
+    public String getAppVersion() {
+        try {
+            PackageInfo pInfo = context.getPackageManager()
+                    .getPackageInfo(context.getPackageName(), 0);
+            return pInfo.versionName;
+        }
+        catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+            return "";
+        }
     }
 }

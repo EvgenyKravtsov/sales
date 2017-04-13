@@ -18,6 +18,7 @@ import kgk.mobile.domain.service.KgkService;
 import kgk.mobile.domain.service.LocationService;
 import kgk.mobile.domain.service.SettingsStorageService;
 import kgk.mobile.domain.UserLocation;
+import kgk.mobile.domain.service.SystemService;
 import kgk.mobile.presentation.model.UserStore;
 import kgk.mobile.presentation.model.async.UserStoreAsync;
 
@@ -34,6 +35,8 @@ public final class UserStoreAsyncTest {
     private SettingsStorageService settingsStorageServiceMock;
     @Mock
     private KgkService kgkServiceMock;
+    @Mock
+    SystemService systemServiceMock;
     @Mock
     private DatabaseService databaseServiceMock;
     @Mock
@@ -52,7 +55,8 @@ public final class UserStoreAsyncTest {
                 locationServiceMock,
                 settingsStorageServiceMock,
                 kgkServiceMock,
-                databaseServiceMock);
+                databaseServiceMock,
+                systemServiceMock);
     }
 
     ////

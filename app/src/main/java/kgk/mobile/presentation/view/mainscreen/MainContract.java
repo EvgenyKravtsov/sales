@@ -17,6 +17,12 @@ public interface MainContract {
         void onPhoneStatePermissionNotGranted();
 
         void onMenuButtonClicked();
+
+        void onNavigateToTechnicalInformationButtonClicked();
+
+        void onNavigateToLastActionsButtonClicked();
+
+        void onClickHardwareBack();
     }
 
     interface View extends BaseView {
@@ -27,6 +33,22 @@ public interface MainContract {
 
         void exit();
 
-        void navigateToMenu();
+        void displayNavigationMenu();
+
+        void navigateToTechnicalInformation();
+
+        void navigateToLastActions();
+
+        void displayFetchingLocationAlert();
+
+        void hideFetchingLocationAlert();
+
+        void displayKgkServiceOfflineAlert();
+
+        void hideKgkServiceOfflineAlert();
+
+        void displayInternetServiceOfflineAlert();
+
+        void hideInternetServiceOfflineAlert();
     }
 }

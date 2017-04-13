@@ -8,6 +8,8 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
 
+import kgk.mobile.domain.service.SettingsStorageService;
+
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertTrue;
@@ -18,6 +20,8 @@ public final class SalesOutletTest {
 
     @Mock
     private UserLocation userLocationMock;
+    @Mock
+    private SettingsStorageService settingsStorageServiceMock;
 
     @Rule
     public MockitoRule mockitoRule = MockitoJUnit.rule();
@@ -35,13 +39,15 @@ public final class SalesOutletTest {
 
     @Test
     public void isUserInZoneChecked_userIsNotInZone_falseReturned() {
+        when(settingsStorageServiceMock.getSalesOutletEntranceRadius()).thenReturn(250);
         when(userLocationMock.distanceToInMeters(anyDouble(), anyDouble())).thenReturn(350);
-        assertFalse(salesOutlet.isUserInZone(userLocationMock));
+        assertFalse(salesOutlet.isUserInZone(userLocationMock, settingsStorageServiceMock));
     }
 
     @Test
     public void isUserInZoneChecked_userIsInZone_trueReturned() {
+        when(settingsStorageServiceMock.getSalesOutletEntranceRadius()).thenReturn(250);
         when(userLocationMock.distanceToInMeters(anyDouble(), anyDouble())).thenReturn(150);
-        assertTrue(salesOutlet.isUserInZone(userLocationMock));
+        assertTrue(salesOutlet.isUserInZone(userLocationMock, settingsStorageServiceMock));
     }
 }

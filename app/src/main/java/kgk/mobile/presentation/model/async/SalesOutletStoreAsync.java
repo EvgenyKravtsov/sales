@@ -12,6 +12,7 @@ import kgk.mobile.domain.UserLocation;
 import kgk.mobile.domain.UserOperation;
 import kgk.mobile.domain.service.DatabaseService;
 import kgk.mobile.domain.service.KgkService;
+import kgk.mobile.domain.service.SettingsStorageService;
 import kgk.mobile.presentation.model.SalesOutletStore;
 
 
@@ -29,16 +30,20 @@ public final class SalesOutletStoreAsync
 
     private final KgkService kgkService;
     private final DatabaseService databaseService;
+    private final SettingsStorageService settingsStorageService;
     private final List<Listener> listeners = new ArrayList<>();
     private final List<SalesOutlet> salesOutlets = new ArrayList<>();
 
     ////
 
-    public SalesOutletStoreAsync(KgkService kgkService, DatabaseService databaseService) {
+    public SalesOutletStoreAsync(KgkService kgkService,
+                                 DatabaseService databaseService,
+                                 SettingsStorageService settingsStorageService) {
         this.kgkService = kgkService;
         this.kgkService.addListener(this);
         this.databaseService = databaseService;
         this.databaseService.addListener(this);
+        this.settingsStorageService = settingsStorageService;
 
         isSynchronizationThreadActive = true;
         startPeriodicSynchronizationWithRemoteStorage();
@@ -52,6 +57,11 @@ public final class SalesOutletStoreAsync
     }
 
     @Override
+    public void removeListener(Listener listener) {
+        listeners.remove(listener);
+    }
+
+    @Override
     public void requestSalesOutlets() {
         if (kgkService.isAvailable()) requestSalesOutletFromRemoteStorage();
         else requestSalesOutletFromLocalStorage();
@@ -62,7 +72,8 @@ public final class SalesOutletStoreAsync
         List<SalesOutlet> salesOutletsEntered = new ArrayList<>();
 
         for (SalesOutlet salesOutlet : salesOutlets) {
-            if (salesOutlet.isUserInZone(userLocation)) salesOutletsEntered.add(salesOutlet);
+            if (salesOutlet.isUserInZone(userLocation, settingsStorageService))
+                salesOutletsEntered.add(salesOutlet);
         }
 
         for (Listener listener : listeners) listener.salesOutletsEnteredByUser(salesOutletsEntered);
@@ -88,6 +99,16 @@ public final class SalesOutletStoreAsync
         // Not Used
     }
 
+    @Override
+    public void onLastSendingDateChanged(long lastSendingDateUnixSeconds) {
+        // Not Used
+    }
+
+    @Override
+    public void onLoginAnswerReceived(KgkService.LoginAnswerType answerType) {
+        // Not Used
+    }
+
     //// DATABASE SERVICE LISTENER
 
     @Override
@@ -102,8 +123,13 @@ public final class SalesOutletStoreAsync
     }
 
     @Override
-    public void onNonSynchronizedSalesOutletAttendanceMessagesReceivedFromLocalStorage(
-            List<String> attendanceMessages) {
+    public void onNonSynchronizedSalesOutletAttendancesReceivedFromLocalStorage(
+            List<SalesOutletAttendance> attendances) {
+        // Not Used
+    }
+
+    @Override
+    public void onSalesOutletAttendancesReceivedFromLocalStorage(List<SalesOutletAttendance> attendances) {
         // Not Used
     }
 

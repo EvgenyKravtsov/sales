@@ -97,6 +97,12 @@ public final class MainPresenterTest {
     }
 
     @Test
+    public void mapDisplayed_fetchingLocationAlertDisplayed() {
+        mainPresenter.onMapDisplayed(mapControllerMock);
+        verify(viewMock).displayFetchingLocationAlert();
+    }
+
+    @Test
     public void mapPreferredZoomReceived_preferredZoomDisplayed() {
         doAnswer(new Answer() {
             @Override
@@ -140,6 +146,14 @@ public final class MainPresenterTest {
         mainPresenter.onLocationReceived(Mockito.mock(UserLocation.class));
 
         verify(mapControllerMock).displayUser(anyDouble(), anyDouble());
+    }
+
+    @Test
+    public void userLocationReceived_fetchingLocationAlertHidden() {
+        mainPresenter.onMapDisplayed(mapControllerMock);
+        mainPresenter.onLocationReceived(Mockito.mock(UserLocation.class));
+
+        verify(viewMock).hideFetchingLocationAlert();
     }
 
     @Test
@@ -202,9 +216,29 @@ public final class MainPresenterTest {
     }
 
     @Test
-    public void menuButtonClicked_navigationToMenuPerformed() {
+    public void menuButtonClicked_navigationMenuDisplayed() {
         mainPresenter.onMenuButtonClicked();
-        verify(viewMock).navigateToMenu();
+        verify(viewMock).displayNavigationMenu();
+    }
+
+    @Test
+    public void navigateToTechnicalInformationButtonClicked_navigatedToTechnicalInformation() {
+        mainPresenter.onNavigateToTechnicalInformationButtonClicked();
+        verify(viewMock).navigateToTechnicalInformation();
+    }
+
+    @Test
+    public void navigateToLastActionsButtonClicked_navigatedToLastActions() {
+        mainPresenter.onNavigateToLastActionsButtonClicked();
+        verify(viewMock).navigateToLastActions();
+    }
+
+    @Test
+    public void backHardwareButtonPressed_mapObjectsRedrawn() {
+        mainPresenter.onMapDisplayed(mapControllerMock);
+        mainPresenter.onClickHardwareBack();
+
+        verify(mapControllerMock).redrawMapObjects();
     }
 
     ////

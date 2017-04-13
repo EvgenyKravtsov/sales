@@ -9,6 +9,10 @@ import kgk.mobile.domain.UserOperation;
 
 public interface KgkService {
 
+    enum LoginAnswerType {
+        Success, NoUserFound, DeviceNotAllowed, Error
+    }
+
     interface Listener {
 
         void onSalesOutletsReceivedFromRemoteStorage(List<SalesOutlet> salesOutlets);
@@ -16,6 +20,10 @@ public interface KgkService {
         void onUserOperationsReceivedFromRemoteStorage(List<UserOperation> userOperations);
 
         void onPointExitIdReceivedFromRemoteStorage(String eventId);
+
+        void onLastSendingDateChanged(long lastSendingDateUnixSeconds);
+
+        void onLoginAnswerReceived(LoginAnswerType answerType);
     }
 
     ////
@@ -24,9 +32,15 @@ public interface KgkService {
 
     void addListener(Listener listener);
 
+    void removeListener(Listener listener);
+
     void requestSalesOutlets();
 
     void requestUserOperations();
 
-    void sendSalesOutletAttendances(List<String> attendanceMessages);
+    void sendSalesOutletAttendances(List<SalesOutletAttendance> attendances);
+
+    long getLastSendingDate();
+
+    void requestUserLogin(String login, String password, String deviceId);
 }

@@ -33,7 +33,7 @@
             android:layout_height="24dp"
             android:background="@color/accent_light_gray"
             android:src="@drawable/drop_down_image"
-            android:contentDescription="@string/content_description" />
+            tools:ignore="ContentDescription" />
 
         <TextView
             android:id="@+id/userBoardFragment_salesOutletTitleTextView"
@@ -69,7 +69,7 @@
             android:textColor="@android:color/black"
             android:textSize="20sp"
             android:text="@string/userBoardFragment_userOperationsConfirmButtonText"
-            android:background="@drawable/gray_accent_border_all_sides_white_background"/>
+            android:background="@drawable/general_button_selector"/>
 
     </LinearLayout>
 

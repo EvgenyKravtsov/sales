@@ -15,6 +15,7 @@ import kgk.mobile.domain.SalesOutlet;
 import kgk.mobile.domain.UserLocation;
 import kgk.mobile.domain.service.DatabaseService;
 import kgk.mobile.domain.service.KgkService;
+import kgk.mobile.domain.service.SettingsStorageService;
 import kgk.mobile.presentation.model.SalesOutletStore;
 import kgk.mobile.presentation.model.async.SalesOutletStoreAsync;
 
@@ -27,6 +28,8 @@ public final class SalesOutletStoreAsyncTest {
     private KgkService kgkServiceMock;
     @Mock
     private DatabaseService databaseServiceMock;
+    @Mock
+    private SettingsStorageService settingsStorageServiceMock;
     @Mock
     private SalesOutletStore.Listener salesOutletStoreListenerMock;
     @Mock
@@ -41,7 +44,9 @@ public final class SalesOutletStoreAsyncTest {
 
     @Before
     public void setUp() {
-        salesOutletStoreAsync = new SalesOutletStoreAsync(kgkServiceMock, databaseServiceMock);
+        salesOutletStoreAsync = new SalesOutletStoreAsync(kgkServiceMock,
+                                                          databaseServiceMock,
+                                                          settingsStorageServiceMock);
     }
 
     ////

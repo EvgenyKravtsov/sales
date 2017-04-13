@@ -17,8 +17,8 @@
         android:layout_marginStart="16dp"
         android:scaleX="0.5"
         android:scaleY="0.5"
-        android:button="@drawable/gray_accent_checkbox_selector"
-        android:clickable="false" />
+        android:clickable="false"
+        android:button="@drawable/gray_accent_checkbox_selector" />
 
     <TextView
         android:id="@+id/userOperationListItem_userOperationTitleTextView"

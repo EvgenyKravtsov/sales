@@ -5,11 +5,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.util.Log;
 
 import kgk.mobile.DependencyInjection;
 import kgk.mobile.domain.service.SystemService;
 
 public final class InternetConnectionStatusReceiver extends BroadcastReceiver {
+
+    private static final String TAG = InternetConnectionStatusReceiver.class.getSimpleName();
 
     private final SystemService systemService;
 

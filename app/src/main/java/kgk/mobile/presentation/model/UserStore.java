@@ -13,15 +13,34 @@ public interface UserStore {
         void onLocationReceived(UserLocation userLocation);
     }
 
+    ////
+
     interface PreferredMapZoomListener {
 
         void onPreferredMapZoomReceived(float zoom);
     }
 
+    ////
+
     interface UserOperationsListener {
 
         void onUserOperationsReceived(List<UserOperation> userOperations);
     }
+
+    ////
+
+    interface UserLoginListener {
+
+        void onLoginSuccess();
+
+        void onUserNotFound();
+
+        void onDeviceNotAllowed();
+
+        void onLoginError();
+    }
+
+    ////
 
     void subscribeForUserLocationUpdate(LocationListener listener);
 
@@ -32,4 +51,12 @@ public interface UserStore {
     void requestUserOperations();
 
     void addUserOperationsListener(UserOperationsListener listener);
+
+    void removeUserOperationsListener(UserOperationsListener listener);
+
+    void requestUserLogin(String login, String password);
+
+    void addUserLoginListener(UserLoginListener listener);
+
+    void removeUserLoginListener(UserLoginListener listener);
 }

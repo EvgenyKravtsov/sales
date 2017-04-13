@@ -21,6 +21,7 @@ import java.util.jar.Pack200;
 
 import kgk.mobile.DependencyInjection;
 import kgk.mobile.domain.SalesOutlet;
+import kgk.mobile.domain.service.SettingsStorageService;
 import kgk.mobile.external.android.ImageCreator;
 import kgk.mobile.presentation.view.map.MapController;
 
@@ -32,6 +33,7 @@ public final class GoogleMapController implements MapController, GoogleMap.OnCam
     private static final float SALES_OUTLET_MARKER_ANCHOR_HORIZONTAL = 0.5f;
     private static final float SALES_OUTLET_MARKER_ANCHOR_VERTICAL = 0.5f;
 
+    private final SettingsStorageService settingsStorageService;
     private final GoogleMap googleMap;
     private final List<MapController.Listener> listeners = new ArrayList<>();
     private final List<SalesOutletMarker> salesOutletMarkers = new ArrayList<>();
@@ -48,7 +50,8 @@ public final class GoogleMapController implements MapController, GoogleMap.OnCam
 
     ////
 
-    public GoogleMapController(GoogleMap googleMap) {
+    public GoogleMapController(GoogleMap googleMap, SettingsStorageService settingsStorageService) {
+        this.settingsStorageService = settingsStorageService;
         this.googleMap = googleMap;
         this.googleMap.setOnCameraIdleListener(this);
         prepareImages();
@@ -102,7 +105,7 @@ public final class GoogleMapController implements MapController, GoogleMap.OnCam
 
             Circle circle = googleMap.addCircle(new CircleOptions()
                     .center(new LatLng(latitude, longitude))
-                    .radius(250).strokeColor(Color.BLACK)
+                    .radius(settingsStorageService.getSalesOutletEntranceRadius()).strokeColor(Color.BLACK)
                     .strokeWidth(ImageCreator.dpToPx(1)));
             salesOutletZones.add(circle);
         }
@@ -132,6 +135,11 @@ public final class GoogleMapController implements MapController, GoogleMap.OnCam
         redrawSalesOutletMarkers();
     }
 
+    @Override
+    public void redrawMapObjects() {
+        redrawSalesOutletMarkers();
+    }
+
     //// ON CAMERA ZOOM CHANGED LISTENER
 
     @Override
@@ -158,7 +166,8 @@ public final class GoogleMapController implements MapController, GoogleMap.OnCam
     private void displayUserMarker(double latitude, double longitude) {
         Marker marker = googleMap.addMarker(new MarkerOptions()
                 .position(new LatLng(latitude, longitude))
-                .anchor(USER_MARKER_ANCHOR_HORIZONTAL, USER_MARKER_ANCHOR_VERTICAL));
+                .anchor(USER_MARKER_ANCHOR_HORIZONTAL, USER_MARKER_ANCHOR_VERTICAL)
+                .zIndex(100));
         if (userMarkerImage != null) marker.setIcon(userMarkerImage);
         userMarker = marker;
     }
@@ -201,6 +210,10 @@ public final class GoogleMapController implements MapController, GoogleMap.OnCam
 
             if (salesOutletMarkerImage != null)
                 salesOutletMarker.getMarker().setIcon(salesOutletMarkerImage);
+        }
+
+        for (Circle zone : salesOutletZones) {
+            zone.setRadius(settingsStorageService.getSalesOutletEntranceRadius());
         }
     }
 

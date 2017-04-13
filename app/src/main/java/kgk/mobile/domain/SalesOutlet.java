@@ -1,9 +1,10 @@
 package kgk.mobile.domain;
 
 
-public final class SalesOutlet {
+import kgk.mobile.DependencyInjection;
+import kgk.mobile.domain.service.SettingsStorageService;
 
-    private static final int USER_IN_ZONE_DETECTION_DISTANCE_METERS = 250;
+public final class SalesOutlet {
 
     private final double latitude;
     private final double longitude;
@@ -37,9 +38,9 @@ public final class SalesOutlet {
         return title;
     }
 
-    public boolean isUserInZone(UserLocation userLocation) {
+    public boolean isUserInZone(UserLocation userLocation, SettingsStorageService settingsStorageService) {
         return userLocation.distanceToInMeters(latitude, longitude) <=
-                USER_IN_ZONE_DETECTION_DISTANCE_METERS;
+                settingsStorageService.getSalesOutletEntranceRadius();
     }
 
     //// OBJECT

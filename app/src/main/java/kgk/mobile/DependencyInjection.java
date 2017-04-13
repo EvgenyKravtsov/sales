@@ -12,6 +12,7 @@ import kgk.mobile.external.android.SystemServiceAndroid;
 import kgk.mobile.external.greendao.GreenDaoSqlite;
 import kgk.mobile.external.android.LocationServiceGoogleFusedApi;
 import kgk.mobile.external.android.SharedPreferencesStorage;
+import kgk.mobile.external.greendao.JsonSerializer;
 import kgk.mobile.external.network.KgkApi;
 import kgk.mobile.external.network.json.JsonProtocol;
 import kgk.mobile.external.network.socket.SocketNio;
@@ -22,10 +23,14 @@ import kgk.mobile.presentation.model.UserStore;
 import kgk.mobile.presentation.model.async.SalesOutletAttendanceStoreAsync;
 import kgk.mobile.presentation.model.async.SalesOutletStoreAsync;
 import kgk.mobile.presentation.model.async.UserStoreAsync;
+import kgk.mobile.presentation.view.loginscreen.LoginContract;
+import kgk.mobile.presentation.view.loginscreen.LoginPresenter;
 import kgk.mobile.presentation.view.mainscreen.MainContract;
 import kgk.mobile.presentation.view.mainscreen.MainPresenter;
-import kgk.mobile.presentation.view.mainscreen.menu.MenuContract;
-import kgk.mobile.presentation.view.mainscreen.menu.MenuPresenter;
+import kgk.mobile.presentation.view.mainscreen.lastactions.LastActionsContract;
+import kgk.mobile.presentation.view.mainscreen.lastactions.LastActionsPresenter;
+import kgk.mobile.presentation.view.mainscreen.technicalinformation.TechnicalInformationContract;
+import kgk.mobile.presentation.view.mainscreen.technicalinformation.TechnicalInformationPresenter;
 import kgk.mobile.presentation.view.mainscreen.userboard.UserBoardContract;
 import kgk.mobile.presentation.view.mainscreen.userboard.UserBoardPresenter;
 import kgk.mobile.presentation.view.map.MapController;
@@ -68,7 +73,7 @@ public final class DependencyInjection {
         return locationService;
     }
 
-    private static SettingsStorageService provideSettingsStorageService() {
+    public static SettingsStorageService provideSettingsStorageService() {
         return new SharedPreferencesStorage(provideAppContext());
     }
 
@@ -88,7 +93,9 @@ public final class DependencyInjection {
 
     private static DatabaseService provideDatabaseService() {
         if (databaseService == null) {
-            databaseService = new GreenDaoSqlite(provideAppContext(), provideSystemService());
+            databaseService = new GreenDaoSqlite(provideAppContext(),
+                                                 provideSystemService(),
+                                                 new JsonSerializer());
         }
 
         return databaseService;
@@ -118,7 +125,8 @@ public final class DependencyInjection {
                     provideLocationService(),
                     provideSettingsStorageService(),
                     provideKgkService(),
-                    provideDatabaseService());
+                    provideDatabaseService(),
+                    provideSystemService());
         }
 
         return userStore;
@@ -127,7 +135,7 @@ public final class DependencyInjection {
     private static SalesOutletStore provideSalesOutletStore() {
         if (salesOutletStore == null) {
             salesOutletStore = new SalesOutletStoreAsync(
-                    provideKgkService(), provideDatabaseService());
+                    provideKgkService(), provideDatabaseService(), provideSettingsStorageService());
         }
 
         return salesOutletStore;
@@ -146,7 +154,10 @@ public final class DependencyInjection {
     //// PRESENTER
 
     public static MainContract.Presenter provideMainPresenter() {
-        return new MainPresenter(provideUserStore(), provideSalesOutletStore(), provideThreadScheduler());
+        return new MainPresenter(provideUserStore(),
+                                 provideSalesOutletStore(),
+                                 provideThreadScheduler(),
+                                 provideSystemService());
     }
 
     public static UserBoardContract.Presenter provideManagerBoardPresenter() {
@@ -157,7 +168,21 @@ public final class DependencyInjection {
                 provideSalesOutletAttendanceStore());
     }
 
-    public static MenuContract.Presenter provideMenuPresenter() {
-        return new MenuPresenter(provideLocationService());
+    public static TechnicalInformationContract.Presenter provideTechnicalInformationPresenter() {
+        return new TechnicalInformationPresenter(provideLocationService(),
+                                 provideKgkService(),
+                                 provideThreadScheduler(),
+                                 provideSettingsStorageService());
+    }
+
+    public static LastActionsContract.Presenter provideLastActionsPresenter() {
+        return new LastActionsPresenter(provideDatabaseService(), provideThreadScheduler());
+    }
+
+    public static LoginContract.Presenter provideLoginPresenter() {
+        return new LoginPresenter(provideUserStore(),
+                                  provideThreadScheduler(),
+                                  provideSettingsStorageService(),
+                                  provideSystemService());
     }
 }

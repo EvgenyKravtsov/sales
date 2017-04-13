@@ -1,6 +1,5 @@
 package kgk.mobile.presentation.view.mainscreen.userboard;
 
-
 import java.util.Calendar;
 import java.util.List;
 
@@ -19,11 +18,14 @@ public final class UserBoardPresenter extends BasePresenterImpl<UserBoardContrac
         SalesOutletStore.Listener,
         UserStore.UserOperationsListener {
 
+    private static final String TAG = UserBoardPresenter.class.getSimpleName();
+
     private MapController mapController;
     private SalesOutlet selectedSalesOutlet;
     private long salesOutletAttendanceBeginDateUnixSeconds;
 
     private final UserStore userStore;
+    private final SalesOutletStore salesOutletStore;
     private final ThreadScheduler threadScheduler;
     private final SalesOutletAttendanceStore salesOutletAttendanceStore;
 
@@ -37,9 +39,19 @@ public final class UserBoardPresenter extends BasePresenterImpl<UserBoardContrac
 
         this.userStore = userStore;
         this.userStore.addUserOperationsListener(this);
-        salesOutletStore.addListener(this);
+        this.salesOutletStore = salesOutletStore;
+        this.salesOutletStore.addListener(this);
         this.threadScheduler = threadScheduler;
         this.salesOutletAttendanceStore = salesOutletAttendanceStore;
+    }
+
+    //// BASE PRESENTER
+
+    @Override
+    public void detachView() {
+        super.detachView();
+        this.userStore.removeUserOperationsListener(this);
+        this.salesOutletStore.removeListener(this);
     }
 
     //// MANAGER BOARD PRESENTER
@@ -80,7 +92,9 @@ public final class UserBoardPresenter extends BasePresenterImpl<UserBoardContrac
                                     final int addedValue,
                                     final long salesOutletAttendanceEndDateUnixSeconds) {
 
-        if (selectedSalesOutlet == null) return;
+        if (selectedSalesOutlet == null) {
+            return;
+        }
 
         threadScheduler.executeBackgroundThread(new Runnable() {
             @Override

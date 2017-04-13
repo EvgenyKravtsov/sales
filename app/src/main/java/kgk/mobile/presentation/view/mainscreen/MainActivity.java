@@ -8,16 +8,23 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import kgk.mobile.DependencyInjection;
 import kgk.mobile.R;
-import kgk.mobile.presentation.view.mainscreen.menu.MenuFragment;
+import kgk.mobile.presentation.view.mainscreen.dialog.FetchingLocationAlert;
+import kgk.mobile.presentation.view.mainscreen.lastactions.LastActionsFragment;
+import kgk.mobile.presentation.view.mainscreen.technicalinformation.TechnicalInformationFragment;
 import kgk.mobile.presentation.view.mainscreen.userboard.UserBoardFragment;
 import kgk.mobile.presentation.view.map.MapController;
 import kgk.mobile.presentation.view.map.google.GoogleMapController;
@@ -25,13 +32,22 @@ import kgk.mobile.presentation.view.map.google.GoogleMapController;
 public final class MainActivity extends AppCompatActivity
         implements OnMapReadyCallback, MainContract.View {
 
-    private static final String TAG = "MainActivity";
+    @BindView(R.id.mainActivity_navigationMenuLinearLayout)
+    LinearLayout navigationMenuLinearLayout;
+    @BindView(R.id.mainActivity_kgkServiceOfflineImageView)
+    ImageView kgkServiceOfflineImageView;
+    @BindView(R.id.mainActivity_internetServiceOfflineImageView)
+    ImageView internetServiceOfflineImageView;
+
+    private static final String TAG = MainActivity.class.getSimpleName();
     private static final int REQUEST_FINE_LOCATION_ID = 10;
     private static final int REQUEST_PHONE_STATE_ID = 20;
     private static final String USER_BOARD_FRAGMENT_BACKSTACK_ID = "UserBoardFragment";
-    private static final String MENU_FRAGMENT_BACKSTACK_ID = "MenuFragment";
+    private static final String TECHNICAL_INFORMATION_FRAGMENT_BACKSTACK_ID = "TechnicalInformationFragment";
+    private static final String LAST_ACTIONS_FRAGMENT_BACKSTACK_ID = "LastActionsFragment";
 
     private MainContract.Presenter presenter;
+    private FetchingLocationAlert fetchingLocationAlert;
 
     //// ACTIVITY
 
@@ -97,13 +113,19 @@ public final class MainActivity extends AppCompatActivity
                     .show(userBoardFragment)
                     .commit();
         }
+
+        presenter.onClickHardwareBack();
     }
 
     //// ON MAP READY
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
-        MapController mapController = new GoogleMapController(googleMap);
+        googleMap.getUiSettings().setMapToolbarEnabled(false);
+        googleMap.getUiSettings().setZoomControlsEnabled(false);
+
+        MapController mapController = new GoogleMapController(googleMap,
+                                DependencyInjection.provideSettingsStorageService());
         presenter.onMapDisplayed(mapController);
         DependencyInjection.setMapController(mapController);
 
@@ -146,18 +168,80 @@ public final class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void navigateToMenu() {
+    public void displayNavigationMenu() {
+        navigationMenuLinearLayout.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void navigateToTechnicalInformation() {
+        navigationMenuLinearLayout.setVisibility(View.GONE);
+
         FragmentManager fragmentManager = getSupportFragmentManager();
-        MenuFragment menuFragment = new MenuFragment();
+        TechnicalInformationFragment technicalInformationFragment = new TechnicalInformationFragment();
 
         UserBoardFragment userBoardFragment = (UserBoardFragment) fragmentManager
                 .findFragmentByTag(USER_BOARD_FRAGMENT_BACKSTACK_ID);
 
         fragmentManager.beginTransaction()
                 .hide(userBoardFragment)
-                .add(R.id.mainActivity_contentFragmentContainer, menuFragment)
-                .addToBackStack(MENU_FRAGMENT_BACKSTACK_ID)
+                .add(R.id.mainActivity_contentFragmentContainer, technicalInformationFragment)
+                .addToBackStack(TECHNICAL_INFORMATION_FRAGMENT_BACKSTACK_ID)
                 .commit();
+    }
+
+    @Override
+    public void navigateToLastActions() {
+        navigationMenuLinearLayout.setVisibility(View.GONE);
+
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        LastActionsFragment lastActionsFragment = new LastActionsFragment();
+
+        UserBoardFragment userBoardFragment = (UserBoardFragment) fragmentManager
+                .findFragmentByTag(USER_BOARD_FRAGMENT_BACKSTACK_ID);
+
+        fragmentManager.beginTransaction()
+                .hide(userBoardFragment)
+                .add(R.id.mainActivity_contentFragmentContainer, lastActionsFragment)
+                .addToBackStack(LAST_ACTIONS_FRAGMENT_BACKSTACK_ID)
+                .commit();
+    }
+
+    @Override
+    public void displayFetchingLocationAlert() {
+        fetchingLocationAlert = new FetchingLocationAlert(this);
+        fetchingLocationAlert.show();
+    }
+
+    @Override
+    public void hideFetchingLocationAlert() {
+        if (fetchingLocationAlert != null) {
+            fetchingLocationAlert.dismiss();
+            fetchingLocationAlert = null;
+        }
+    }
+
+    @Override
+    public void displayKgkServiceOfflineAlert() {
+        Log.d(TAG, "displayKgkServiceOfflineAlert: ");
+        kgkServiceOfflineImageView.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void hideKgkServiceOfflineAlert() {
+        Log.d(TAG, "hideKgkServiceOfflineAlert: ");
+        kgkServiceOfflineImageView.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void displayInternetServiceOfflineAlert() {
+        Log.d(TAG, "displayInternetServiceOfflineAlert: ");
+        internetServiceOfflineImageView.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void hideInternetServiceOfflineAlert() {
+        Log.d(TAG, "hideInternetServiceOfflineAlert: ");
+        internetServiceOfflineImageView.setVisibility(View.GONE);
     }
 
     //// PRIVATE
@@ -182,7 +266,22 @@ public final class MainActivity extends AppCompatActivity
     //// CONTROL CALLBACKS
 
     @OnClick(R.id.mainActivity_menuImageButton)
-    public void onClick() {
+    public void onClickMenuButton() {
         presenter.onMenuButtonClicked();
+    }
+
+    @OnClick(R.id.mainActivity_navigationMenuDropDownImageButton)
+    public void onClickNavigationMenuDropDownButton() {
+        navigationMenuLinearLayout.setVisibility(View.GONE);
+    }
+
+    @OnClick(R.id.mainActivity_navigateToTechnicalInformationButton)
+    public void onClickNavigateToTechnicalInformationButton() {
+        presenter.onNavigateToTechnicalInformationButtonClicked();
+    }
+
+    @OnClick(R.id.mainActivity_navigateToLastActionsButton)
+    public void onClickNavigateToLastActionsButton() {
+        presenter.onNavigateToLastActionsButtonClicked();
     }
 }

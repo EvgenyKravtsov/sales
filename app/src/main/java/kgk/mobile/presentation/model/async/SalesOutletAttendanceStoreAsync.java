@@ -58,11 +58,17 @@ public final class SalesOutletAttendanceStoreAsync
     }
 
     @Override
-    public void onNonSynchronizedSalesOutletAttendanceMessagesReceivedFromLocalStorage(
-            List<String> attendanceMessages) {
+    public void onNonSynchronizedSalesOutletAttendancesReceivedFromLocalStorage(
+            List<SalesOutletAttendance> attendances) {
         if (kgkService.isAvailable()) {
-            kgkService.sendSalesOutletAttendances(attendanceMessages);
+            kgkService.sendSalesOutletAttendances(attendances);
         }
+    }
+
+    @Override
+    public void onSalesOutletAttendancesReceivedFromLocalStorage(
+            List<SalesOutletAttendance> attendances) {
+        // Not Used
     }
 
     //// KGK SERVICE LISTENER
@@ -80,6 +86,16 @@ public final class SalesOutletAttendanceStoreAsync
     @Override
     public void onPointExitIdReceivedFromRemoteStorage(String eventId) {
         databaseService.confirmSalesOutletAttendance(eventId);
+    }
+
+    @Override
+    public void onLastSendingDateChanged(long lastSendingDateUnixSeconds) {
+        // Not Used
+    }
+
+    @Override
+    public void onLoginAnswerReceived(KgkService.LoginAnswerType answerType) {
+        // Not Used
     }
 
     //// PRIVATE

@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/white">
+
+    <TextView
+        android:id="@+id/inner_appName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="24dp"
+        android:layout_centerHorizontal="true"
+        android:layout_above="@+id/loginActivity_loginEditText"
+        android:text="@string/loginActivity_appName"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:textColor="@android:color/black" />
+
+    <EditText
+        android:id="@+id/loginActivity_loginEditText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/loginActivity_passwordEditText"
+        android:layout_marginLeft="56dp"
+        android:layout_marginRight="56dp"
+        android:paddingTop="4dp"
+        android:paddingBottom="4dp"
+        android:gravity="center_horizontal"
+        android:textColorHint="@color/accent_gray_dark"
+        android:textSize="14sp"
+        android:hint="@string/loginActivity_loginTextHint"
+        android:background="@drawable/green_accent_border_bottom_white_background" />
+
+    <EditText
+        android:id="@+id/loginActivity_passwordEditText"
+        android:layout_above="@+id/loginActivity_rememberMeCheckBox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="56dp"
+        android:layout_marginRight="56dp"
+        android:paddingTop="4dp"
+        android:paddingBottom="4dp"
+        android:gravity="center_horizontal"
+        android:textColorHint="@color/accent_gray_dark"
+        android:textSize="14sp"
+        android:hint="@string/loginActivity_passwordTextHint"
+        android:inputType="textPassword"
+        android:background="@drawable/green_accent_border_bottom_white_background" />
+
+    <CheckBox
+        android:id="@+id/loginActivity_rememberMeCheckBox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_marginTop="24dp"
+        android:layout_alignLeft="@+id/loginActivity_passwordEditText"
+        android:layout_alignStart="@+id/loginActivity_passwordEditText"
+        android:button="@drawable/green_accent_checkbox_selector" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_toRightOf="@+id/loginActivity_rememberMeCheckBox"
+        android:layout_toEndOf="@+id/loginActivity_rememberMeCheckBox"
+        android:layout_marginLeft="10dp"
+        android:textColor="@color/accent_gray_dark"
+        android:textSize="14sp"
+        android:text="@string/loginActivity_rememberMeText"
+        tools:ignore="RtlHardcoded" />
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/inner_appName"
+        android:layout_alignRight="@+id/loginActivity_loginEditText"
+        android:layout_alignEnd="@+id/loginActivity_loginEditText"
+        android:layout_alignLeft="@+id/loginActivity_loginEditText"
+        android:layout_alignStart="@+id/loginActivity_loginEditText"
+        android:layout_marginBottom="4dp"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:paddingTop="16dp"
+        android:src="@drawable/kgk_logo"
+        tools:ignore="ContentDescription" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/loginActivity_rememberMeCheckBox"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="24dp"
+        android:gravity="center_horizontal"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/loginActivity_loginButton"
+            android:layout_width="124dp"
+            android:layout_height="40dp"
+            android:background="@drawable/green_button_selector"
+            android:textColor="@drawable/green_button_text_selector"
+            android:textAllCaps="false"
+            android:textSize="17sp"
+            android:text="@string/loginActivity_loginButtonText"
+            tools:ignore="ButtonStyle,RtlHardcoded" />
+
+        <Button
+            android:id="@+id/fragmentLogin_demoButton"
+            android:layout_width="120dp"
+            android:layout_height="40dp"
+            android:background="@drawable/green_button_selector"
+            android:textColor="@drawable/green_button_text_selector"
+            android:textAllCaps="false"
+            android:text="@string/loginActivity_passwordButtonText"
+            android:textSize="17sp"
+            android:visibility="gone"
+            tools:ignore="ButtonStyle,UnusedAttribute" />
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/loginActivity_appVersionTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:layout_alignParentBottom="true"
+        android:textSize="12sp"
+        tools:text="1.7.0.8" />
+
+</RelativeLayout>

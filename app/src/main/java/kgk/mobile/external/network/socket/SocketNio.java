@@ -104,17 +104,10 @@ public final class SocketNio implements Runnable, SocketService {
 
             Log.d(TAG, "run: Socket Loop Stopped");
         }
-        catch (IOException e) {
+        catch (Exception e) {
             e.printStackTrace();
             Log.d(TAG, "run: Exception Socket Client Routine");
-        }
-        catch (InterruptedException ie) {
-            ie.printStackTrace();
-            Log.d(TAG, "run: Socket Thread Interrupted");
-        }
-        finally {
             close();
-            Log.d(TAG, "run: Socket Closed");
         }
     }
 
@@ -183,6 +176,8 @@ public final class SocketNio implements Runnable, SocketService {
     }
 }
 
+// {"EVENT":{"TIME":1492006217,"TYPE":"POINT_EXIT","PARAMS":{"HISTORY":true,"TASKS":[{"ID":7}],"POINT_ID":111148,"DATA":{},"ENTER_TIME":1492006213}}}
+// {"EVENT":{"TIME":1492004718,"TYPE":"POINT_EXIT","PARAMS":{"POINT_ID":100503,"TASKS":[{"ID":1}],"HISTORY":true,"ENTER_TIME":1492004712,"DATA":{}}}}
 
 
 

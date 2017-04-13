@@ -17,7 +17,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import kgk.mobile.R;
 import kgk.mobile.domain.UserOperation;
-import kgk.mobile.presentation.view.mainscreen.userboard.dialog.AddedValueDialog;
+import kgk.mobile.presentation.view.mainscreen.dialog.AddedValueDialog;
 
 final class UserOperationsRecyclerAdapter
         extends RecyclerView.Adapter<UserOperationsRecyclerAdapter.ViewHolder> {

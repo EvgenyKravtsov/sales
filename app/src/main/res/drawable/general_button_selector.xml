@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_pressed="false"
+        android:drawable="@drawable/gray_accent_border_all_sides_white_background" />
+    <item android:state_pressed="true"
+        android:drawable="@drawable/gray_accent_border_all_sides_light_gray_background" />
+</selector>

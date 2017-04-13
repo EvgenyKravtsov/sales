@@ -1,6 +1,5 @@
 package kgk.mobile.presentation.view.mainscreen.userboard;
 
-import android.app.Fragment;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -22,8 +21,8 @@ import kgk.mobile.R;
 import kgk.mobile.domain.UserOperation;
 import kgk.mobile.domain.SalesOutlet;
 import kgk.mobile.external.android.ImageCreator;
-import kgk.mobile.presentation.view.mainscreen.userboard.dialog.AttendanceSuccessfulAlert;
-import kgk.mobile.presentation.view.mainscreen.userboard.dialog.NoOperationSelectedAlert;
+import kgk.mobile.presentation.view.mainscreen.dialog.AttendanceSuccessfulAlert;
+import kgk.mobile.presentation.view.mainscreen.dialog.NoOperationSelectedAlert;
 
 
 public final class UserBoardFragment extends android.support.v4.app.Fragment implements UserBoardContract.View {

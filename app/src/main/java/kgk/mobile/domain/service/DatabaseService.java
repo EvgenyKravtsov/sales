@@ -16,13 +16,17 @@ public interface DatabaseService {
 
         void onUserOperationsReceivedFromLocalStorage(List<UserOperation> userOperations);
 
-        void onNonSynchronizedSalesOutletAttendanceMessagesReceivedFromLocalStorage(
-                List<String> attendanceMessages);
+        void onNonSynchronizedSalesOutletAttendancesReceivedFromLocalStorage(
+                List<SalesOutletAttendance> attendances);
+        void onSalesOutletAttendancesReceivedFromLocalStorage(
+                List<SalesOutletAttendance> attendances);
     }
 
     ////
 
     void addListener(Listener listener);
+
+    void removeListener(Listener listener);
 
     void requestSalesOutlets();
 
@@ -37,4 +41,6 @@ public interface DatabaseService {
     void requestNonSynchronizedSalesOutletAttendances();
 
     void confirmSalesOutletAttendance(String eventId);
+
+    void requestSalesOutletAttendances();
 }

@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:paddingTop="8dp"
+    android:background="@android:color/white"
+    tools:ignore="RtlSymmetry">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingLeft="16dp"
+        android:paddingStart="16dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="24sp"
+            android:textColor="@android:color/black"
+            android:textStyle="bold"
+            android:text="@string/technicalInformationFragment_technicalInformationText" />
+
+        <TextView
+            android:id="@+id/technicalInformationFragment_lastLocationDateTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:textSize="14sp"
+            android:textColor="@android:color/black"
+            tools:text="Посл.данные положения: 2017-01-26 14:58:12" />
+
+        <TextView
+            android:id="@+id/technicalInformationFragment_lastCoordinatesTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:textSize="14sp"
+            android:textColor="@android:color/black"
+            tools:text="Посл.координаты: LAT: 55.3254538 LNG: 39.196689" />
+
+        <TextView
+            android:id="@+id/technicalInformationFragment_speedTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:textSize="14sp"
+            android:textColor="@android:color/black"
+            tools:text="Скорость: 0.00 км/ч" />
+
+        <TextView
+            android:id="@+id/technicalInformationFragment_lastSendingDateTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:textSize="14sp"
+            android:textColor="@android:color/black"
+            tools:text="Посл.отправка: 2017-01-26 14:58:12" />
+
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        android:background="@color/accent_gray" />
+
+    <!-- SALES OUTLET ENTRANCE RADIUS -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingLeft="16dp"
+        android:paddingStart="16dp"
+        android:paddingRight="16dp"
+        android:paddingEnd="16dp">
+
+        <TextView
+            android:id="@+id/technicalInformationFragment_salesOutletEntranceTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="24sp"
+            android:textColor="@android:color/black"
+            android:textStyle="bold"
+            tools:text="Радиус входа в ТТ - 25 м"/>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginTop="16dp">
+
+            <TextView
+                android:id="@+id/inner_minValueTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:textSize="12sp"
+                android:textColor="@color/accent_gray"
+                android:gravity="center"
+                android:text="25"
+                tools:ignore="HardcodedText" />
+
+            <SeekBar
+                android:id="@+id/technicalInformationFragment_salesOutletEntranceRadiusSeekBar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@+id/inner_minValueTextView"
+                android:layout_toEndOf="@+id/inner_minValueTextView"
+                android:layout_toLeftOf="@+id/inner_maxValueTextView"
+                android:layout_toStartOf="@+id/inner_maxValueTextView" />
+
+            <TextView
+                android:id="@+id/inner_maxValueTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true"
+                android:textSize="12sp"
+                android:textColor="@color/accent_gray"
+                android:gravity="center"
+                android:text="500"
+                tools:ignore="HardcodedText" />
+
+        </RelativeLayout>
+
+    </LinearLayout>
+
+</LinearLayout>

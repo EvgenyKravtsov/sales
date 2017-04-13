@@ -10,6 +10,8 @@ public interface SystemService {
 
     void addListener(Listener listener);
 
+    void removeListener(Listener listener);
+
     boolean getInternetConnectionStatus();
 
     boolean getGpsModuleStatus();
@@ -17,4 +19,6 @@ public interface SystemService {
     String getDeviceId();
 
     void internetConnectionStatusChanged(boolean status);
+
+    String getAppVersion();
 }

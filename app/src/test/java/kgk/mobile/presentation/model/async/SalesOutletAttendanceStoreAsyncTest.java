@@ -54,25 +54,25 @@ public final class SalesOutletAttendanceStoreAsyncTest {
 
     @Test
     public void nonSynchronizedSalesOutletAttendancesReceivedFromLocalStorage_kgkServiceAvailable_nonSynchronizedSalesOutletAttendancesSentToRemoteStorage() {
-        List<String> attendanceMessages = new ArrayList<>();
+        List<SalesOutletAttendance> attendances = new ArrayList<>();
         when(kgkService.isAvailable()).thenReturn(true);
 
         salesOutletAttendanceStoreAsync
-                .onNonSynchronizedSalesOutletAttendanceMessagesReceivedFromLocalStorage(attendanceMessages);
+                .onNonSynchronizedSalesOutletAttendancesReceivedFromLocalStorage(attendances);
 
-        verify(kgkService).sendSalesOutletAttendances(attendanceMessages);
+        verify(kgkService).sendSalesOutletAttendances(attendances);
 
     }
 
     @Test
     public void nonSynchronizedSalesOutletAttendancesReceivedFromLocalStorage_kgkServiceNotAvailable_nonSynchronizedSalesOutletAttendancesNotSentToRemoteStorage() {
-        List<String> attendanceMessages = new ArrayList<>();
+        List<SalesOutletAttendance> attendances = new ArrayList<>();
         when(kgkService.isAvailable()).thenReturn(false);
 
         salesOutletAttendanceStoreAsync
-                .onNonSynchronizedSalesOutletAttendanceMessagesReceivedFromLocalStorage(attendanceMessages);
+                .onNonSynchronizedSalesOutletAttendancesReceivedFromLocalStorage(attendances);
 
-        verify(kgkService, never()).sendSalesOutletAttendances(attendanceMessages);
+        verify(kgkService, never()).sendSalesOutletAttendances(attendances);
     }
 
     //// PRIVATE

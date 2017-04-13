@@ -1,8 +1,5 @@
 package kgk.mobile.external.network.json;
 
-
-
-import android.support.annotation.Nullable;
 import android.util.Log;
 
 import org.json.JSONArray;
@@ -13,11 +10,11 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
-import kgk.mobile.App;
 import kgk.mobile.domain.SalesOutlet;
 import kgk.mobile.domain.SalesOutletAttendance;
 import kgk.mobile.domain.UserLocation;
 import kgk.mobile.domain.UserOperation;
+import kgk.mobile.domain.service.KgkService.LoginAnswerType;
 import kgk.mobile.domain.service.SystemService;
 
 public final class JsonProtocol {
@@ -112,7 +109,7 @@ public final class JsonProtocol {
                 userOperations.put(userOperationJson);
             }
 
-            additionalParameters.put("POINT_ID", Integer.parseInt(attendance.getAttendedSalesOutlet().getCode()));
+            additionalParameters.put("POINT_ID", attendance.getAttendedSalesOutlet().getCode());
             additionalParameters.put("TASKS", userOperations);
             additionalParameters.put("HISTORY", true);
             additionalParameters.put("ENTER_TIME", attendance.getBeginDateUnixSeconds());
@@ -257,6 +254,22 @@ public final class JsonProtocol {
         }
 
         return eventId;
+    }
+
+    public LoginAnswerType parseLoginAnswer(JSONObject responseJson) {
+        try {
+            boolean status = responseJson.getBoolean("status");
+            if (status) return LoginAnswerType.Success;
+            else {
+                if (responseJson.getString("error").equals("Device is not allowed for that user")) return LoginAnswerType.DeviceNotAllowed;
+                return LoginAnswerType.NoUserFound;
+            }
+        }
+        catch (JSONException e) {
+            e.printStackTrace();
+            Log.d(TAG, "parseLoginResponse: Exception");
+            return LoginAnswerType.Error;
+        }
     }
 
     ////

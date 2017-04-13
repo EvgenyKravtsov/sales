@@ -1,19 +1,44 @@
 <resources>
-    <string name="app_name">КГК Торговые Представители</string>
-    <string name="content_description">КГК Торговые Представители</string>
+    <string name="app_name">КГК Мобильные Сотрудники</string>
+
+    <!-- LOGIN -->
+    <string name="loginActivity_appName">Мобильные Сотрудники</string>
+    <string name="loginActivity_loginTextHint">Пользователь</string>
+    <string name="loginActivity_passwordTextHint">Пароль</string>
+    <string name="loginActivity_rememberMeText">Запомнить пользователя</string>
+    <string name="loginActivity_loginButtonText">Вход</string>
+    <string name="loginActivity_passwordButtonText">Демо</string>
+    <string name="wrongCredentialsAlert_messageText">Указаны неверные данные</string>
+    <string name="userNotFoundAlert_messageText">Пользователь не найден</string>
+    <string name="deviceNotAllowedAlert_messageText">Данное устройство не числится за указанным аккаунтом</string>
+    <string name="internetErrorAlert_messageText">Ошибка соединения с сервером</string>
+    <string name="noInternetConnectionAlert_messageText">Отсутствует интернет-соединение</string>
+
+    <!-- MAIN SCREEN -->
+    <string name="noValueEnteredAlert_messageText">Вы не указали сумму</string>
+    <string name="noOperationSelectedAlert_messageText">Невозможно сохранить - Вы не выбрали ни одного действия</string>
+    <string name="attendanceSuccessfulAlert_messageText">Посещение сохранено</string>
+    <string name="fetchingLocationAlert_messageText">Поиск местоположения…</string>
 
     <!-- USER BOARD -->
     <string name="userBoardFragment_userOperationsConfirmButtonText">OK</string>
     <string name="addedValueDialog_messageText">Укажите сумму в рублях</string>
     <string name="addedValueDialog_confirmButtonText">OK</string>
     <string name="addedValueDialog_cancelButtonText">Отмена</string>
-    <string name="noValueEnteredAlert_messageText">Вы не указали сумму</string>
-    <string name="noOperationSelectedAlert_messageText">Невозможно сохранить - Вы не выбрали ни одного действия</string>
-    <string name="attendanceSuccessfulAlert_messageText">Посещение сохранено</string>
 
-    <!-- MENU -->
-    <string name="menuFragment_technicalInformationText">Техническая информация</string>
-    <string name="menuFragment_lastLocationDateText">Посл.данные положения: %s</string>
-    <string name="menuFragment_invalidLastLocationDateText">Загрузка…</string>
+    <!-- TECHNICAL INFORMATION -->
+    <string name="technicalInformationFragment_technicalInformationText">Техническая информация</string>
+    <string name="technicalInformationFragment_lastLocationDateText">Посл.данные положения: %s</string>
+    <string name="technicalInformationFragment_loadingDataText">Загрузка…</string>
+    <string name="technicalInformationFragment_lastCoordinatesText">Посл.координаты: %s</string>
+    <string name="technicalInformationFragment_speedText">Скорость: %s</string>
+    <string name="technicalInformationFragment_lastSendingDateText">Посл.отправка: %s</string>
+    <string name="technicalInformationFragment_salesOutletEntranceRadiusText">Радиус входа в ТТ - %s м</string>
+
+    <!-- LAST ACTIONS -->
+    <string name="lastActionsFragment_lastActionsText">Последние действия</string>
+    <string name="lastActionsFragment_salesOutletTitleText">Визит в точку %s</string>
+    <string name="lastActionsFragment_salesOutletCodeText">(%s)</string>
+    <string name="lastActionsFragment_attendanceDateText" formatted="false">с %s до %s</string>
 
 </resources>

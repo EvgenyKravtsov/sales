@@ -1,6 +1,5 @@
 package kgk.mobile.presentation.view.base;
 
-
 import android.app.Activity;
 import android.app.Dialog;
 import android.os.Bundle;
