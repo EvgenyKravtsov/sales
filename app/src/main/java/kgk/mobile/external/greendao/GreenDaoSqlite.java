@@ -56,6 +56,7 @@ public final class GreenDaoSqlite implements DatabaseService {
 
         for (SalesOutletEntity entity : entities) {
             SalesOutlet salesOutlet = new SalesOutlet(
+                    entity.getId(),
                     entity.getLatitude(),
                     entity.getLongitude(),
                     entity.getCode(),
@@ -74,6 +75,7 @@ public final class GreenDaoSqlite implements DatabaseService {
         for (SalesOutlet salesOutlet : salesOutlets) {
             SalesOutletEntityDao salesOutletEntityDao = daoSession.getSalesOutletEntityDao();
             SalesOutletEntity entity = new SalesOutletEntity(
+                    salesOutlet.getId(),
                     salesOutlet.getLatitude(),
                     salesOutlet.getLongitude(),
                     salesOutlet.getCode(),
@@ -119,7 +121,7 @@ public final class GreenDaoSqlite implements DatabaseService {
             SalesOutletAttendanceEntityDao salesOutletAttendanceEntityDao =
                     daoSession.getSalesOutletAttendanceEntityDao();
             SalesOutletAttendanceEntity entity = new SalesOutletAttendanceEntity(
-                    attendanceJson.toString(), false);
+                    attendance.getEndDateUnixSeconds(), attendanceJson.toString(), false);
             salesOutletAttendanceEntityDao.insert(entity);
         }
         catch (JSONException e) {
@@ -163,10 +165,10 @@ public final class GreenDaoSqlite implements DatabaseService {
             try {
                 JSONObject attendanceJson = new JSONObject(entity.getAttendanceJson());
                 SalesOutletAttendance attendance = jsonSerializer.deserializeSalesOutletAttendance(attendanceJson);
-                String exitTime = String.valueOf(attendance.getEndDateUnixSeconds());
-                String deviceId = systemService.getDeviceId().substring(5);
+                String time = String.valueOf(attendance.getBeginDateUnixSeconds());
+                String deviceId = systemService.getDeviceId();
 
-                if ((exitTime + deviceId).equals(eventId)) {
+                if ((time + deviceId).equals(eventId)) {
                     entity.setIsSynchronized(true);
                 }
 

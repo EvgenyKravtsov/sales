@@ -40,8 +40,6 @@ public final class MainActivity extends AppCompatActivity
     ImageView internetServiceOfflineImageView;
 
     private static final String TAG = MainActivity.class.getSimpleName();
-    private static final int REQUEST_FINE_LOCATION_ID = 10;
-    private static final int REQUEST_PHONE_STATE_ID = 20;
     private static final String USER_BOARD_FRAGMENT_BACKSTACK_ID = "UserBoardFragment";
     private static final String TECHNICAL_INFORMATION_FRAGMENT_BACKSTACK_ID = "TechnicalInformationFragment";
     private static final String LAST_ACTIONS_FRAGMENT_BACKSTACK_ID = "LastActionsFragment";
@@ -66,33 +64,6 @@ public final class MainActivity extends AppCompatActivity
     protected void onDestroy() {
         super.onDestroy();
         presenter.detachView();
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode,
-                                           @NonNull String permissions[],
-                                           @NonNull int[] grantResults) {
-
-        switch (requestCode) {
-            case REQUEST_FINE_LOCATION_ID:
-                if (grantResults.length > 0
-                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    presenter.onLocationPermissionGranted();
-                }
-                else {
-                    // TODO Handle Permission Deny
-                }
-
-                break;
-
-            case REQUEST_PHONE_STATE_ID:
-                if (!(grantResults.length > 0
-                        && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
-                    presenter.onPhoneStatePermissionNotGranted();
-                }
-
-                break;
-        }
     }
 
     @Override
@@ -134,38 +105,6 @@ public final class MainActivity extends AppCompatActivity
     }
 
     //// MAIN VIEW
-
-    @Override
-    public void requestLocationPermission() {
-        if (ContextCompat.checkSelfPermission(this,
-                Manifest.permission.ACCESS_FINE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED) {
-
-            ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                    REQUEST_FINE_LOCATION_ID);
-        }
-        else {
-            presenter.onLocationPermissionGranted();
-        }
-    }
-
-    @Override
-    public void requestPhoneStatePermission() {
-        if (ContextCompat.checkSelfPermission(this,
-                Manifest.permission.READ_PHONE_STATE)
-                != PackageManager.PERMISSION_GRANTED) {
-
-            ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.READ_PHONE_STATE},
-                    REQUEST_PHONE_STATE_ID);
-        }
-    }
-
-    @Override
-    public void exit() {
-        finish();
-    }
 
     @Override
     public void displayNavigationMenu() {

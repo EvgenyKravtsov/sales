@@ -6,6 +6,7 @@ import kgk.mobile.domain.service.SettingsStorageService;
 
 public final class SalesOutlet {
 
+    private final int id;
     private final double latitude;
     private final double longitude;
     private final String code;
@@ -13,7 +14,8 @@ public final class SalesOutlet {
 
     ////
 
-    public SalesOutlet(double latitude, double longitude, String code, String title) {
+    public SalesOutlet(int id, double latitude, double longitude, String code, String title) {
+        this.id = id;
         this.latitude = latitude;
         this.longitude = longitude;
         this.code = code;
@@ -21,6 +23,10 @@ public final class SalesOutlet {
     }
 
     ////
+
+    public int getId() {
+        return id;
+    }
 
     public double getLatitude() {
         return latitude;

@@ -3,6 +3,7 @@ package kgk.mobile.presentation.view.mainscreen.userboard;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,6 +24,7 @@ import kgk.mobile.domain.SalesOutlet;
 import kgk.mobile.external.android.ImageCreator;
 import kgk.mobile.presentation.view.mainscreen.dialog.AttendanceSuccessfulAlert;
 import kgk.mobile.presentation.view.mainscreen.dialog.NoOperationSelectedAlert;
+import kgk.mobile.presentation.view.mainscreen.dialog.SalesOutletNotInRadiusAlert;
 
 
 public final class UserBoardFragment extends android.support.v4.app.Fragment implements UserBoardContract.View {
@@ -118,6 +120,17 @@ public final class UserBoardFragment extends android.support.v4.app.Fragment imp
         salesOutletTitleTextView.setText(selectedSalesOutlet.getTitle());
     }
 
+    @Override
+    public void displaySalesOutletNotInRadius() {
+        new SalesOutletNotInRadiusAlert(getActivity()).show();
+    }
+
+    @Override
+    public void displayAttendanceSuccessful() {
+        AttendanceSuccessfulAlert alert = new AttendanceSuccessfulAlert(getActivity());
+        alert.show();
+    }
+
     //// CONTROL CALLBACKS
 
     @OnClick(R.id.userBoardFragment_userOperationsDropDownImageButton)
@@ -136,11 +149,11 @@ public final class UserBoardFragment extends android.support.v4.app.Fragment imp
             return;
         }
 
+        long time = Calendar.getInstance().getTimeInMillis() / 1000;
         presenter.salesOutletAttended(selectedUserOperations,
                 userOperationsRecyclerAdapter.getAddedValue(),
-                Calendar.getInstance().getTimeInMillis() / 1000);
+                time);
 
-        displayAttendanceSuccessful();
         dropDownUserOperations();
     }
 
@@ -175,11 +188,6 @@ public final class UserBoardFragment extends android.support.v4.app.Fragment imp
 
     private void displayNoOperationSelectedAlert() {
         NoOperationSelectedAlert alert = new NoOperationSelectedAlert(getActivity());
-        alert.show();
-    }
-
-    private void displayAttendanceSuccessful() {
-        AttendanceSuccessfulAlert alert = new AttendanceSuccessfulAlert(getActivity());
         alert.show();
     }
 

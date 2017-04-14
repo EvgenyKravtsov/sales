@@ -31,5 +31,9 @@ public interface UserBoardContract {
         void hideUserOperations();
 
         void displaySelectedSalesOutlet(SalesOutlet selectedSalesOutlet);
+
+        void displaySalesOutletNotInRadius();
+
+        void displayAttendanceSuccessful();
     }
 }

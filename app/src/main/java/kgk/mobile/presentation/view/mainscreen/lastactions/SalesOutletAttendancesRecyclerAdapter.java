@@ -34,10 +34,9 @@ final class SalesOutletAttendancesRecyclerAdapter
         Collections.sort(this.salesOutletAttendances, new Comparator<SalesOutletAttendance>() {
             @Override
             public int compare(SalesOutletAttendance attendance, SalesOutletAttendance t1) {
-                return (int) (attendance.getBeginDateUnixSeconds() - t1.getBeginDateUnixSeconds());
+                return (int) (t1.getBeginDateUnixSeconds() - attendance.getBeginDateUnixSeconds());
             }
         });
-        Log.d(TAG, "setSalesOutletAttendances: " + salesOutletAttendances.size());
     }
 
     //// RECYCLER VIEW ADAPTER

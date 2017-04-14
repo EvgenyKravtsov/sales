@@ -62,28 +62,22 @@ public final class LocationServiceGoogleFusedApi implements
 
     @Override
     public void onConnected(@Nullable Bundle bundle) {
-        Log.d(TAG, "onConnected: ");
         requestLocationUpdates();
     }
 
     @Override
-    public void onConnectionSuspended(int i) {
-        Log.d(TAG, "onConnectionSuspended: ");
-    }
+    public void onConnectionSuspended(int i) {}
 
     //// ON CONNECTION FAILED LISTENER
 
     @Override
-    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-        Log.d(TAG, "onConnectionFailed: ");
-    }
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {}
 
     //// LOCATION LISTENER
 
     @Override
     public void onLocationChanged(Location location) {
-        Log.d(TAG, "onLocationChanged: ");
-        UserLocation userLocation = new UserLocationAndroid(location); // TODO Inject Object Instead Of Creation
+        UserLocation userLocation = new UserLocationAndroid(location);
         for (Listener listener : listeners) listener.onLocationChanged(userLocation);
         this.lastKnownUserLocation = userLocation;
     }
@@ -114,7 +108,6 @@ public final class LocationServiceGoogleFusedApi implements
     //// PRIVATE
 
     private void requestLocationUpdates() {
-        Log.d(TAG, "requestLocationUpdates: ");
         if (!googleApiClient.isConnected()) return;
         if (isLocationUpdateRequested) return;
         if (ContextCompat.checkSelfPermission(context,
@@ -123,9 +116,6 @@ public final class LocationServiceGoogleFusedApi implements
                     locationRequest,
                     this);
             isLocationUpdateRequested = true;
-        }
-        else {
-            // TODO Handle Permission Deny
         }
     }
 }

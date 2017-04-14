@@ -63,6 +63,11 @@ public final class UserStoreAsync
     }
 
     @Override
+    public void unsubscribeForUserLocationUpdate(LocationListener listener) {
+        locationListeners.remove(listener);
+    }
+
+    @Override
     public void requestPreferredMapZoom(final PreferredMapZoomListener listener) {
         float preferredZoom = settingsStorageService.getPreferredMapZoom();
         listener.onPreferredMapZoomReceived(preferredZoom);

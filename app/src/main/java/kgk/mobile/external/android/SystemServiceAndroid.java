@@ -65,9 +65,8 @@ public final class SystemServiceAndroid implements SystemService {
     public String getDeviceId() {
         TelephonyManager telephonyManager = (TelephonyManager)
                 context.getSystemService(Context.TELEPHONY_SERVICE);
-        //return telephonyManager.getDeviceId();
-        // TODO Delete Test Code
-        return "3022606286";
+        return telephonyManager.getDeviceId().substring(5);
+        //return "3022606286";
     }
 
     @Override

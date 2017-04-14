@@ -1,7 +1,5 @@
 package kgk.mobile.presentation.view.mainscreen;
 
-import android.util.Log;
-
 import java.util.List;
 
 
@@ -51,6 +49,7 @@ public final class MainPresenter extends BasePresenterImpl<MainContract.View>
     @Override
     public void detachView() {
         super.detachView();
+        this.userStore.unsubscribeForUserLocationUpdate(this);
         this.systemService.removeListener(this);
     }
 
@@ -61,6 +60,7 @@ public final class MainPresenter extends BasePresenterImpl<MainContract.View>
         this.mapController = mapController;
         this.mapController.addListener(this);
         this.salesOutletStore.addListener(this);
+        this.userStore.subscribeForUserLocationUpdate(this);
 
         threadScheduler.executeBackgroundThread(new Runnable() {
             @Override
@@ -71,16 +71,6 @@ public final class MainPresenter extends BasePresenterImpl<MainContract.View>
         });
 
         view.displayFetchingLocationAlert();
-    }
-
-    @Override
-    public void onLocationPermissionGranted() {
-        userStore.subscribeForUserLocationUpdate(this);
-    }
-
-    @Override
-    public void onPhoneStatePermissionNotGranted() {
-        view.exit();
     }
 
     @Override
@@ -110,7 +100,7 @@ public final class MainPresenter extends BasePresenterImpl<MainContract.View>
         double latitude = userLocation.getLatitude();
         double longitude = userLocation.getLongitude();
         mapController.displayUser(latitude, longitude);
-        mapController.centerCameraOnUser(latitude, longitude, false);
+        mapController.centerCamera(latitude, longitude, false);
         salesOutletStore.isUserInSalesOutletZone(userLocation);
         if (view != null) view.hideFetchingLocationAlert();
     }
@@ -123,8 +113,6 @@ public final class MainPresenter extends BasePresenterImpl<MainContract.View>
             @Override
             public void run() {
                 mapController.displayZoom(zoom, true);
-                view.requestLocationPermission();
-                view.requestPhoneStatePermission();
             }
         });
     }
@@ -166,12 +154,12 @@ public final class MainPresenter extends BasePresenterImpl<MainContract.View>
             @Override
             public void run() {
                 if (status) {
-                    view.displayKgkServiceOfflineAlert();
-                    view.displayInternetServiceOfflineAlert();
-                }
-                else {
                     view.hideKgkServiceOfflineAlert();
                     view.hideInternetServiceOfflineAlert();
+                }
+                else {
+                    view.displayKgkServiceOfflineAlert();
+                    view.displayInternetServiceOfflineAlert();
                 }
             }
         });

@@ -14,8 +14,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import kgk.mobile.domain.SalesOutletAttendance;
+import kgk.mobile.domain.UserLocation;
 import kgk.mobile.domain.UserOperation;
 import kgk.mobile.domain.SalesOutlet;
+import kgk.mobile.domain.service.LocationService;
+import kgk.mobile.domain.service.SettingsStorageService;
 import kgk.mobile.presentation.model.SalesOutletAttendanceStore;
 import kgk.mobile.presentation.model.SalesOutletStore;
 import kgk.mobile.presentation.model.UserStore;
@@ -29,6 +32,7 @@ import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 public final class UserBoardPresenterTest {
 
@@ -40,6 +44,12 @@ public final class UserBoardPresenterTest {
     private UserStore userStoreMock;
     @Mock
     private ThreadScheduler threadSchedulerMock;
+    @Mock
+    private SalesOutletStore salesOutletStoreMock;
+    @Mock
+    LocationService locationServiceMock;
+    @Mock
+    SettingsStorageService settingsStorageServiceMock;
     @Mock
     private SalesOutletAttendanceStore salesOutletAttendanceStoreMock;
 
@@ -53,9 +63,12 @@ public final class UserBoardPresenterTest {
 
     @Before
     public void setUp() {
-        SalesOutletStore salesOutletStoreMock = mock(SalesOutletStore.class);
         presenter = new UserBoardPresenter(salesOutletStoreMock,
-                userStoreMock, threadSchedulerMock, salesOutletAttendanceStoreMock);
+                                           userStoreMock,
+                                           threadSchedulerMock,
+                                           salesOutletAttendanceStoreMock,
+                                           locationServiceMock,
+                                           settingsStorageServiceMock);
         presenter.setMapController(mapControllerMock);
         presenter.attachView(viewMock);
         dummySalesOutlet = createDummySalesOutlet();
@@ -114,48 +127,10 @@ public final class UserBoardPresenterTest {
         verify(viewMock).displayUserOperations(userOperations);
     }
 
-    @Test
-    public void salesOutletAttended_salesOutletAttendanceStored() {
-        List<UserOperation> selectedUserOperations = new ArrayList<>();
-        final SalesOutletAttendance attendance = createDummySalesOutletAttendance();
-        presenter.salesOutletSelectedByUser(createDummySalesOutlet());
-
-        doAnswer(new Answer() {
-            @Override
-            public Object answer(InvocationOnMock invocation) throws Throwable {
-                salesOutletAttendanceStoreMock.put(attendance);
-                return null;
-            }
-        }).when(threadSchedulerMock).executeBackgroundThread(any(Runnable.class));
-
-        presenter.salesOutletAttended(selectedUserOperations, 0, 0);
-
-        verify(salesOutletAttendanceStoreMock).put(attendance);
-    }
-
-    @Test
-    public void salesOutletAttended_noSalesOutletSelected_salesOutletAttendanceNotStored() {
-        List<UserOperation> selectedUserOperations = new ArrayList<>();
-        final SalesOutletAttendance attendance = createDummySalesOutletAttendance();
-        presenter.salesOutletSelectedByUser(null);
-
-        doAnswer(new Answer() {
-            @Override
-            public Object answer(InvocationOnMock invocation) throws Throwable {
-                salesOutletAttendanceStoreMock.put(attendance);
-                return null;
-            }
-        }).when(threadSchedulerMock).executeBackgroundThread(any(Runnable.class));
-
-        presenter.salesOutletAttended(selectedUserOperations, 0, 0);
-
-        verify(salesOutletAttendanceStoreMock, never()).put(attendance);
-    }
-
     //// PRIVATE
 
     private SalesOutlet createDummySalesOutlet() {
-        return new SalesOutlet(0, 0, "test", "test");
+        return new SalesOutlet(0, 0, 0, "test", "test");
     }
 
     private SalesOutletAttendance createDummySalesOutletAttendance() {

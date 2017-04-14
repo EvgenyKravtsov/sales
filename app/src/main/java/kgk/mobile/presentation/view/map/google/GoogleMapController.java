@@ -80,7 +80,7 @@ public final class GoogleMapController implements MapController, GoogleMap.OnCam
     }
 
     @Override
-    public void centerCameraOnUser(double latitude, double longitude, boolean isAnimated) {
+    public void centerCamera(double latitude, double longitude, boolean isAnimated) {
         CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLng(new LatLng(latitude, longitude));
 
         if (!isCameraCenteredOnUser) {
@@ -216,7 +216,4 @@ public final class GoogleMapController implements MapController, GoogleMap.OnCam
             zone.setRadius(settingsStorageService.getSalesOutletEntranceRadius());
         }
     }
-
-    // TODO Test Case: Selected Outlet Gone From User Zone
-    // TODO Test Case: Entered Outlet Gone From User Zone
 }

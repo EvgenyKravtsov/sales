@@ -9,6 +9,7 @@ import org.greenrobot.greendao.annotation.Generated;
 )
 final class SalesOutletEntity {
 
+    private int id;
     private double latitude;
     private double longitude;
     private String code;
@@ -16,9 +17,10 @@ final class SalesOutletEntity {
 
     ////
 
-    @Generated(hash = 1497947492)
-    public SalesOutletEntity(double latitude, double longitude, String code,
+    @Generated(hash = 1084584881)
+    public SalesOutletEntity(int id, double latitude, double longitude, String code,
             String title) {
+        this.id = id;
         this.latitude = latitude;
         this.longitude = longitude;
         this.code = code;
@@ -26,9 +28,20 @@ final class SalesOutletEntity {
     }
 
     @Generated(hash = 1720227137)
-    public SalesOutletEntity() {}
+    public SalesOutletEntity() {
+    }
+
+    
 
     ////
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
 
     double getLatitude() {
     return this.latitude;

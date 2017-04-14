@@ -29,7 +29,6 @@ public final class SharedPreferencesStorage implements SettingsStorageService {
     }
 
     //// SETTINGS STORAGE
-    // TODO Make User Dependent Options
 
     @Override
     public float getPreferredMapZoom() {

@@ -10,11 +10,7 @@ public interface MainContract {
 
         void onMapDisplayed(MapController mapController);
 
-        void onLocationPermissionGranted();
-
         void onMapZoomChanged(float zoom);
-
-        void onPhoneStatePermissionNotGranted();
 
         void onMenuButtonClicked();
 
@@ -26,12 +22,6 @@ public interface MainContract {
     }
 
     interface View extends BaseView {
-
-        void requestLocationPermission();
-
-        void requestPhoneStatePermission();
-
-        void exit();
 
         void displayNavigationMenu();
 

@@ -11,9 +11,15 @@ public interface LoginContract {
         void onClickLoginButton(String login, String password, boolean isUserRemembered);
 
         void onCreateView();
+
+        void onPermissionsDenied();
     }
 
     interface View extends BaseView {
+
+        void requestPermissions();
+
+        void displayPermissionsNeededAlert();
 
         void displayWrongCredentialsAlert();
 

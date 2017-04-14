@@ -20,6 +20,7 @@ public final class JsonSerializer {
     private static final String SELECTED_USER_OPERATIONS_KEY = "selectedUserOperationsKey";
     private static final String ADDED_VALUE_KEY = "addedValue";
 
+    private static final String SALES_OUTLET_ID_KEY = "salesOutletId";
     private static final String SALES_OUTLET_LATITUDE_KEY = "salesOutletLatitude";
     private static final String SALES_OUTLET_LONGITUDE_KEY = "salesOutletLongitude";
     private static final String SALES_OUTLET_CODE_KEY = "salesOutletCode";
@@ -37,6 +38,7 @@ public final class JsonSerializer {
 
         SalesOutlet salesOutlet = attendance.getAttendedSalesOutlet();
         JSONObject attendedSalesOutletJson = new JSONObject();
+        attendedSalesOutletJson.put(SALES_OUTLET_ID_KEY, salesOutlet.getId());
         attendedSalesOutletJson.put(SALES_OUTLET_LATITUDE_KEY, salesOutlet.getLatitude());
         attendedSalesOutletJson.put(SALES_OUTLET_LONGITUDE_KEY, salesOutlet.getLongitude());
         attendedSalesOutletJson.put(SALES_OUTLET_CODE_KEY, salesOutlet.getCode());
@@ -65,6 +67,7 @@ public final class JsonSerializer {
         JSONArray selectedUserOperationsJson = attendanceJson.getJSONArray(SELECTED_USER_OPERATIONS_KEY);
 
         SalesOutlet attendedSalesOutlet = new SalesOutlet(
+                attendedSalesOutletJson.getInt(SALES_OUTLET_ID_KEY),
                 attendedSalesOutletJson.getDouble(SALES_OUTLET_LATITUDE_KEY),
                 attendedSalesOutletJson.getDouble(SALES_OUTLET_LONGITUDE_KEY),
                 attendedSalesOutletJson.getString(SALES_OUTLET_CODE_KEY),

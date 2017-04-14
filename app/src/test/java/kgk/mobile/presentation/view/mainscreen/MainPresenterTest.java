@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import kgk.mobile.domain.service.SystemService;
 import kgk.mobile.external.threading.ThreadScheduler;
 import kgk.mobile.domain.SalesOutlet;
 import kgk.mobile.domain.UserLocation;
@@ -43,6 +44,8 @@ public final class MainPresenterTest {
     @Mock
     private SalesOutletStore salesOutletStoreMock;
     @Mock
+    private SystemService systemServiceMock;
+    @Mock
     private UserLocation userLocationMock;
 
     @Rule
@@ -54,7 +57,10 @@ public final class MainPresenterTest {
 
     @Before
     public void setUp() {
-        mainPresenter = new MainPresenter(userStoreMock, salesOutletStoreMock, threadSchedulerMock);
+        mainPresenter = new MainPresenter(userStoreMock,
+                                          salesOutletStoreMock,
+                                          threadSchedulerMock,
+                                          systemServiceMock);
         mainPresenter.attachView(viewMock);
     }
 
@@ -97,6 +103,12 @@ public final class MainPresenterTest {
     }
 
     @Test
+    public void mapDisplayed_subscribedForLocationUpdates() {
+        mainPresenter.onMapDisplayed(mapControllerMock);
+        verify(userStoreMock).subscribeForUserLocationUpdate(mainPresenter);
+    }
+
+    @Test
     public void mapDisplayed_fetchingLocationAlertDisplayed() {
         mainPresenter.onMapDisplayed(mapControllerMock);
         verify(viewMock).displayFetchingLocationAlert();
@@ -116,28 +128,6 @@ public final class MainPresenterTest {
         mainPresenter.onPreferredMapZoomReceived(PREFERRED_ZOOM);
 
         verify(mapControllerMock).displayZoom(PREFERRED_ZOOM, true);
-    }
-
-    @Test
-    public void onPreferredZoomReceived_locationPermissionRequested() {
-        doAnswer(new Answer() {
-            @Override
-            public Object answer(InvocationOnMock invocation) throws Throwable {
-                viewMock.requestLocationPermission();
-                return null;
-            }
-        }).when(threadSchedulerMock).executeMainThread(any(Runnable.class));
-
-        mainPresenter.onMapDisplayed(mapControllerMock);
-        mainPresenter.onPreferredMapZoomReceived(PREFERRED_ZOOM);
-
-        verify(viewMock).requestLocationPermission();
-    }
-
-    @Test
-    public void locationPermissionGranted_subscribedForUserLocationUpdate() {
-        mainPresenter.onLocationPermissionGranted();
-        verify(userStoreMock).subscribeForUserLocationUpdate(mainPresenter);
     }
 
     @Test
@@ -161,7 +151,7 @@ public final class MainPresenterTest {
         mainPresenter.onMapDisplayed(mapControllerMock);
         mainPresenter.onLocationReceived(userLocationMock);
 
-        verify(mapControllerMock).centerCameraOnUser(anyDouble(), anyDouble(), anyBoolean());
+        verify(mapControllerMock).centerCamera(anyDouble(), anyDouble(), anyBoolean());
     }
 
     @Test
@@ -244,7 +234,7 @@ public final class MainPresenterTest {
     ////
 
     private SalesOutlet createDummySalesOutlet() {
-        return new SalesOutlet(0, 0, "test", "test");
+        return new SalesOutlet(0, 0, 0, "test", "test");
     }
 }
 

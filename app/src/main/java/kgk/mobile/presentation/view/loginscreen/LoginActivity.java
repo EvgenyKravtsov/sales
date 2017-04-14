@@ -1,7 +1,12 @@
 package kgk.mobile.presentation.view.loginscreen;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MotionEvent;
 import android.view.View;
@@ -19,6 +24,7 @@ import kgk.mobile.presentation.view.loginscreen.dialog.DeviceNotAllowedAlert;
 import kgk.mobile.presentation.view.loginscreen.dialog.InternetErrorAlert;
 import kgk.mobile.presentation.view.loginscreen.dialog.LoadingAlert;
 import kgk.mobile.presentation.view.loginscreen.dialog.NoInternetConnectionAlert;
+import kgk.mobile.presentation.view.loginscreen.dialog.PermissionsNeededAlert;
 import kgk.mobile.presentation.view.loginscreen.dialog.UserNotFoundAlert;
 import kgk.mobile.presentation.view.loginscreen.dialog.WrongCredentialsAlert;
 import kgk.mobile.presentation.view.mainscreen.MainActivity;
@@ -33,6 +39,10 @@ public final class LoginActivity extends AppCompatActivity implements LoginContr
     CheckBox rememberMeCheckBox;
     @BindView(R.id.loginActivity_appVersionTextView)
     TextView appVersionTextView;
+
+    private static final int REQUEST_PERMISSIONS_ID = 10;
+    private static final String[] PERMISSIONS = { Manifest.permission.READ_PHONE_STATE,
+                                                  Manifest.permission.ACCESS_FINE_LOCATION };
 
     private LoginContract.Presenter presenter;
     private LoadingAlert loadingAlert;
@@ -83,7 +93,31 @@ public final class LoginActivity extends AppCompatActivity implements LoginContr
         return ret;
     }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           @NonNull String permissions[],
+                                           @NonNull int[] grantResults) {
+        if (!hasPermissions()) presenter.onPermissionsDenied();
+    }
+
     //// LOGIN VIEW
+
+    @Override
+    public void requestPermissions() {
+        if (!hasPermissions()) {
+            ActivityCompat.requestPermissions(this, PERMISSIONS, REQUEST_PERMISSIONS_ID);
+        }
+    }
+
+    @Override
+    public void displayPermissionsNeededAlert() {
+        new PermissionsNeededAlert(this, new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+            }
+        }).show();
+    }
 
     @Override
     public void displayWrongCredentialsAlert() {
@@ -149,5 +183,17 @@ public final class LoginActivity extends AppCompatActivity implements LoginContr
         presenter.onClickLoginButton(loginEditText.getText().toString(),
                                      passwordEditText.getText().toString(),
                                      rememberMeCheckBox.isChecked());
+    }
+
+    //// PRIVATE
+
+    private boolean hasPermissions() {
+        for (String permission : PERMISSIONS) {
+            if (ActivityCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED) {
+                return false;
+            }
+        }
+
+        return true;
     }
 }

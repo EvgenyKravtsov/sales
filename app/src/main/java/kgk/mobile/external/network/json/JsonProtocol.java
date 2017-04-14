@@ -37,8 +37,8 @@ public final class JsonProtocol {
         JSONObject authParameters = new JSONObject();
 
         try {
-            authParameters.put("ID", "3022606286");
-            authParameters.put("VERSION", "0.7.7.10");
+            authParameters.put("ID", systemService.getDeviceId());
+            authParameters.put("VERSION", systemService.getAppVersion());
             messageParameters.put("ID", 0);
             messageParameters.put("TIME", Calendar.getInstance().getTimeInMillis() / 1000);
             messageParameters.put("TYPE", "AUTH");
@@ -109,7 +109,7 @@ public final class JsonProtocol {
                 userOperations.put(userOperationJson);
             }
 
-            additionalParameters.put("POINT_ID", attendance.getAttendedSalesOutlet().getCode());
+            additionalParameters.put("POINT_ID", attendance.getAttendedSalesOutlet().getId());
             additionalParameters.put("TASKS", userOperations);
             additionalParameters.put("HISTORY", true);
             additionalParameters.put("ENTER_TIME", attendance.getBeginDateUnixSeconds());
@@ -276,11 +276,12 @@ public final class JsonProtocol {
 
     private SalesOutlet parseSalesOutletJson(JSONObject salesOutletJson) {
         try {
+            int id = salesOutletJson.getInt("ID");
             double latitude = salesOutletJson.getDouble("LAT");
             double longitude = salesOutletJson.getDouble("LNG");
             String code = salesOutletJson.getString("CODE");
             String title = salesOutletJson.getString("NAME");
-            return new SalesOutlet(latitude, longitude, code, title);
+            return new SalesOutlet(id, latitude, longitude, code, title);
         }
         catch (JSONException e) {
             e.printStackTrace();

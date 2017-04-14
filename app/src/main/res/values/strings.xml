@@ -13,12 +13,14 @@
     <string name="deviceNotAllowedAlert_messageText">Данное устройство не числится за указанным аккаунтом</string>
     <string name="internetErrorAlert_messageText">Ошибка соединения с сервером</string>
     <string name="noInternetConnectionAlert_messageText">Отсутствует интернет-соединение</string>
+    <string name="permissionsNeededAlert_messageText">Не удалось получить необходимые разрешения</string>
 
     <!-- MAIN SCREEN -->
     <string name="noValueEnteredAlert_messageText">Вы не указали сумму</string>
     <string name="noOperationSelectedAlert_messageText">Невозможно сохранить - Вы не выбрали ни одного действия</string>
     <string name="attendanceSuccessfulAlert_messageText">Посещение сохранено</string>
     <string name="fetchingLocationAlert_messageText">Поиск местоположения…</string>
+    <string name="salesOutletNotInRadiusAlert_messageText">Вы вышли из радиуса ТТ</string>
 
     <!-- USER BOARD -->
     <string name="userBoardFragment_userOperationsConfirmButtonText">OK</string>

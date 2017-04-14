@@ -10,8 +10,6 @@ import kgk.mobile.domain.service.DatabaseService;
 import kgk.mobile.domain.service.KgkService;
 import kgk.mobile.presentation.model.SalesOutletAttendanceStore;
 
-// TODO Check Outlet In Range On Exit
-
 public final class SalesOutletAttendanceStoreAsync
         implements SalesOutletAttendanceStore,
         DatabaseService.Listener,

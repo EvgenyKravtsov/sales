@@ -20,7 +20,7 @@ public interface MapController {
 
     void displayUser(double latitude, double longitude);
 
-    void centerCameraOnUser(double latitude, double longitude, boolean isAnimated);
+    void centerCamera(double latitude, double longitude, boolean isAnimated);
 
     void displaySalesOutlets(List<SalesOutlet> salesOutlets);
 

@@ -10,6 +10,7 @@ import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.SocketChannel;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Queue;
@@ -17,6 +18,8 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.TimeUnit;
 
 public final class SocketNio implements Runnable, SocketService {
+
+    // TODO Reconnection
 
     private static final String TAG = SocketNio.class.getSimpleName();
     private static final int SELECTOR_TIMEOUT_MILLISECONDS = 1000;
@@ -27,6 +30,7 @@ public final class SocketNio implements Runnable, SocketService {
     private Queue<byte[]> writeQueue = new ConcurrentLinkedQueue<>();
     private List<Listener> listeners = new ArrayList<>();
     private boolean isConnected;
+    private boolean isSocketThreadAlive = true;
 
     //// SOCKET SERVICE
 
@@ -66,7 +70,7 @@ public final class SocketNio implements Runnable, SocketService {
                     SocketService.SERVER_PORT
             ));
 
-            while(!Thread.interrupted()) {
+            while(isSocketThreadAlive) {
                 selector.select(SELECTOR_TIMEOUT_MILLISECONDS);
                 Iterator<SelectionKey> keys = selector.selectedKeys().iterator();
 
@@ -106,7 +110,6 @@ public final class SocketNio implements Runnable, SocketService {
         }
         catch (Exception e) {
             e.printStackTrace();
-            Log.d(TAG, "run: Exception Socket Client Routine");
             close();
         }
     }
@@ -175,9 +178,6 @@ public final class SocketNio implements Runnable, SocketService {
         for (Listener listener : listeners) listener.onDataReceived(buffer);
     }
 }
-
-// {"EVENT":{"TIME":1492006217,"TYPE":"POINT_EXIT","PARAMS":{"HISTORY":true,"TASKS":[{"ID":7}],"POINT_ID":111148,"DATA":{},"ENTER_TIME":1492006213}}}
-// {"EVENT":{"TIME":1492004718,"TYPE":"POINT_EXIT","PARAMS":{"POINT_ID":100503,"TASKS":[{"ID":1}],"HISTORY":true,"ENTER_TIME":1492004712,"DATA":{}}}}
 
 
 

@@ -75,11 +75,17 @@ public final class LoginPresenter extends BasePresenterImpl<LoginContract.View>
 
     @Override
     public void onCreateView() {
+        view.requestPermissions();
         view.displayAppVersion(systemService.getAppVersion());
 
         if (settingsStorageService.getUserRemembered())
             view.displayUserCredentials(settingsStorageService.getLogin(),
                                         settingsStorageService.getPassword());
+    }
+
+    @Override
+    public void onPermissionsDenied() {
+        view.displayPermissionsNeededAlert();
     }
 
     //// USER LOGIN LISTENER

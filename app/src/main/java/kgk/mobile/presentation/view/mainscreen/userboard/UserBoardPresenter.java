@@ -6,6 +6,9 @@ import java.util.List;
 import kgk.mobile.domain.SalesOutlet;
 import kgk.mobile.domain.SalesOutletAttendance;
 import kgk.mobile.domain.UserOperation;
+import kgk.mobile.domain.service.LocationService;
+import kgk.mobile.domain.service.SettingsStorageService;
+import kgk.mobile.domain.service.SystemService;
 import kgk.mobile.presentation.model.SalesOutletAttendanceStore;
 import kgk.mobile.presentation.model.SalesOutletStore;
 import kgk.mobile.presentation.model.UserStore;
@@ -28,6 +31,8 @@ public final class UserBoardPresenter extends BasePresenterImpl<UserBoardContrac
     private final SalesOutletStore salesOutletStore;
     private final ThreadScheduler threadScheduler;
     private final SalesOutletAttendanceStore salesOutletAttendanceStore;
+    private final LocationService locationService;
+    private final SettingsStorageService settingsStorageService;
 
     ////
 
@@ -35,7 +40,9 @@ public final class UserBoardPresenter extends BasePresenterImpl<UserBoardContrac
             SalesOutletStore salesOutletStore,
             UserStore userStore,
             ThreadScheduler threadScheduler,
-            SalesOutletAttendanceStore salesOutletAttendanceStore) {
+            SalesOutletAttendanceStore salesOutletAttendanceStore,
+            LocationService locationService,
+            SettingsStorageService settingsStorageService) {
 
         this.userStore = userStore;
         this.userStore.addUserOperationsListener(this);
@@ -43,6 +50,8 @@ public final class UserBoardPresenter extends BasePresenterImpl<UserBoardContrac
         this.salesOutletStore.addListener(this);
         this.threadScheduler = threadScheduler;
         this.salesOutletAttendanceStore = salesOutletAttendanceStore;
+        this.locationService = locationService;
+        this.settingsStorageService = settingsStorageService;
     }
 
     //// BASE PRESENTER
@@ -59,8 +68,11 @@ public final class UserBoardPresenter extends BasePresenterImpl<UserBoardContrac
     @Override
     public void salesOutletSelectedByUser(SalesOutlet selectedSalesOutlet) {
         mapController.displaySelectedSalesOutlet(selectedSalesOutlet);
+        mapController.centerCamera(selectedSalesOutlet.getLatitude(),
+                selectedSalesOutlet.getLongitude(),
+                true);
+
         view.displaySelectedSalesOutlet(selectedSalesOutlet);
-        // TODO Center Map Camera On Selected Sales Outlet
 
         if (this.selectedSalesOutlet != null &&
                 this.selectedSalesOutlet.equals(selectedSalesOutlet)) {
@@ -96,6 +108,15 @@ public final class UserBoardPresenter extends BasePresenterImpl<UserBoardContrac
             return;
         }
 
+        // TODO Not Covered Functionality
+        if (!selectedSalesOutlet.isUserInZone(locationService.getLastKnownUserLocation(),
+                                              settingsStorageService)) {
+            view.displaySalesOutletNotInRadius();
+            this.selectedSalesOutlet = null;
+            view.hideUserOperations();
+            return;
+        }
+
         threadScheduler.executeBackgroundThread(new Runnable() {
             @Override
             public void run() {
@@ -108,6 +129,8 @@ public final class UserBoardPresenter extends BasePresenterImpl<UserBoardContrac
                 salesOutletAttendanceStore.put(attendance);
             }
         });
+
+        view.displayAttendanceSuccessful();
     }
 
     //// SALES OUTLET STORE LISTENER

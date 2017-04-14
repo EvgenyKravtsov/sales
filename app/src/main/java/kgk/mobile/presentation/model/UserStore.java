@@ -44,6 +44,8 @@ public interface UserStore {
 
     void subscribeForUserLocationUpdate(LocationListener listener);
 
+    void unsubscribeForUserLocationUpdate(LocationListener listener);
+
     void requestPreferredMapZoom(PreferredMapZoomListener listener);
 
     void savePreferredMapZoom(float zoom);
@@ -54,9 +56,9 @@ public interface UserStore {
 
     void removeUserOperationsListener(UserOperationsListener listener);
 
-    void requestUserLogin(String login, String password);
-
     void addUserLoginListener(UserLoginListener listener);
 
     void removeUserLoginListener(UserLoginListener listener);
+
+    void requestUserLogin(String login, String password);
 }

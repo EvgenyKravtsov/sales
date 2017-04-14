@@ -18,7 +18,8 @@
         android:scaleX="0.5"
         android:scaleY="0.5"
         android:clickable="false"
-        android:button="@drawable/gray_accent_checkbox_selector" />
+        android:button="@drawable/gray_accent_checkbox_selector"
+        tools:ignore="ContentDescription" />
 
     <TextView
         android:id="@+id/userOperationListItem_userOperationTitleTextView"

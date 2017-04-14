@@ -165,7 +165,9 @@ public final class DependencyInjection {
                 provideSalesOutletStore(),
                 provideUserStore(),
                 provideThreadScheduler(),
-                provideSalesOutletAttendanceStore());
+                provideSalesOutletAttendanceStore(),
+                provideLocationService(),
+                provideSettingsStorageService());
     }
 
     public static TechnicalInformationContract.Presenter provideTechnicalInformationPresenter() {

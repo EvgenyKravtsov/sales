@@ -56,6 +56,18 @@ public class LoginPresenterTest {
     ////
 
     @Test
+    public void viewCreated_permissionsRequested() {
+        presenter.onCreateView();
+        verify(viewMock).requestPermissions();
+    }
+
+    @Test
+    public void permissionsDenied_permissionsNeededAlertDisplayed() {
+        presenter.onPermissionsDenied();
+        verify(viewMock).displayPermissionsNeededAlert();
+    }
+
+    @Test
     public void viewCreated_userRemembered_userCredentialsDisplayed() {
         when(settingsStorageServiceMock.getUserRemembered()).thenReturn(true);
         when(settingsStorageServiceMock.getLogin()).thenReturn(login);
