@@ -77,6 +77,7 @@ public final class LoginPresenter extends BasePresenterImpl<LoginContract.View>
     public void onCreateView() {
         view.requestPermissions();
         view.displayAppVersion(systemService.getAppVersion());
+        view.displayDeviceId(systemService.getDeviceId()); // TODO Not Covered Functionality
 
         if (settingsStorageService.getUserRemembered())
             view.displayUserCredentials(settingsStorageService.getLogin(),

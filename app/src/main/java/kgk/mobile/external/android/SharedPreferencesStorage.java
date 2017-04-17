@@ -3,9 +3,15 @@ package kgk.mobile.external.android;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.support.annotation.Nullable;
 import android.util.Log;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import kgk.mobile.domain.SalesOutlet;
 import kgk.mobile.domain.service.SettingsStorageService;
+import kgk.mobile.external.greendao.JsonSerializer;
 
 public final class SharedPreferencesStorage implements SettingsStorageService {
 
@@ -19,6 +25,8 @@ public final class SharedPreferencesStorage implements SettingsStorageService {
     private static final String USER_REMEMBERED_KEY = "user_remembered_key";
     private static final String LOGIN_KEY = "login_key";
     private static final String PASSWORD_KEY = "password_key";
+    private static final String SELECTED_SALES_OUTLET_KEY = "selected_sales_outlet_key";
+    private static final String SALES_OUTLET_ATTENDANCE_BEGIN_DATE_UNIX_SECONDS_KEY = "sales_outlet_attendance_begin_date_unix_seconds_key";
 
     private final SharedPreferences sharedPreferences;
 
@@ -88,6 +96,43 @@ public final class SharedPreferencesStorage implements SettingsStorageService {
     public void setPassword(String password) {
         sharedPreferences.edit()
                 .putString(PASSWORD_KEY, password)
+                .apply();
+    }
+
+    @Override
+    public SalesOutlet getSelectedSalesOutlet() {
+        String salesOutletAsString = sharedPreferences.getString(SELECTED_SALES_OUTLET_KEY, "");
+        if (salesOutletAsString.equals("")) return null;
+
+        try { return new JsonSerializer().deserializeSalesOutlet(new JSONObject(salesOutletAsString)); }
+        catch (JSONException e) { return null; }
+    }
+
+    @Override
+    public void setSelectedSalesOutlet(SalesOutlet salesOutlet) {
+        String salesOutletAsString = "";
+
+        if (salesOutlet != null) {
+            try { salesOutletAsString = new JsonSerializer().serializeSalesOutlet(salesOutlet).toString(); }
+            catch (JSONException e) { e.printStackTrace(); }
+        }
+
+        sharedPreferences.edit()
+                .putString(SELECTED_SALES_OUTLET_KEY, salesOutletAsString)
+                .apply();
+    }
+
+    @Override
+    public long getSalesOutletAttendanceBeginDateUnixSeconds() {
+        return sharedPreferences.getLong(SALES_OUTLET_ATTENDANCE_BEGIN_DATE_UNIX_SECONDS_KEY, 0);
+    }
+
+    @Override
+    public void setSalesOutletAttendanceBeginDateUnixSeconds(long salesOutletAttendanceBeginDateUnixSeconds) {
+        sharedPreferences.edit()
+                .putLong(
+                        SALES_OUTLET_ATTENDANCE_BEGIN_DATE_UNIX_SECONDS_KEY,
+                        salesOutletAttendanceBeginDateUnixSeconds)
                 .apply();
     }
 }

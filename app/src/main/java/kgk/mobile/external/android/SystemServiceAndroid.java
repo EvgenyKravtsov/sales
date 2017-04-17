@@ -63,10 +63,18 @@ public final class SystemServiceAndroid implements SystemService {
     @SuppressLint("HardwareIds")
     @Override
     public String getDeviceId() {
-        TelephonyManager telephonyManager = (TelephonyManager)
-                context.getSystemService(Context.TELEPHONY_SERVICE);
-        return telephonyManager.getDeviceId().substring(5);
-        //return "3022606286";
+        try {
+            TelephonyManager telephonyManager = (TelephonyManager)
+                    context.getSystemService(Context.TELEPHONY_SERVICE);
+            //return telephonyManager.getDeviceId().substring(5);
+            //return "5069079725";
+            return "3022606286";
+            //return "5080468365";
+        }
+        catch (SecurityException e) {
+            e.printStackTrace();
+            return "";
+        }
     }
 
     @Override

@@ -89,4 +89,27 @@ public final class JsonSerializer {
                 selectedUserOperations,
                 attendanceJson.getInt(ADDED_VALUE_KEY));
     }
+
+    public JSONObject serializeSalesOutlet(SalesOutlet salesOutlet) throws JSONException {
+        if (salesOutlet != null) {
+            JSONObject salesOutletJson = new JSONObject();
+            salesOutletJson.put(SALES_OUTLET_ID_KEY, salesOutlet.getId());
+            salesOutletJson.put(SALES_OUTLET_LATITUDE_KEY, salesOutlet.getLatitude());
+            salesOutletJson.put(SALES_OUTLET_LONGITUDE_KEY, salesOutlet.getLongitude());
+            salesOutletJson.put(SALES_OUTLET_CODE_KEY, salesOutlet.getCode());
+            salesOutletJson.put(SALES_OUTLET_TITLE_KEY, salesOutlet.getTitle());
+            return salesOutletJson;
+        }
+
+        return null;
+    }
+
+    public SalesOutlet deserializeSalesOutlet(JSONObject salesOutletJson) throws JSONException {
+        return new SalesOutlet(
+                salesOutletJson.getInt(SALES_OUTLET_ID_KEY),
+                salesOutletJson.getDouble(SALES_OUTLET_LATITUDE_KEY),
+                salesOutletJson.getDouble(SALES_OUTLET_LONGITUDE_KEY),
+                salesOutletJson.getString(SALES_OUTLET_CODE_KEY),
+                salesOutletJson.getString(SALES_OUTLET_TITLE_KEY));
+    }
 }

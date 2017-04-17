@@ -1,6 +1,8 @@
 package kgk.mobile.domain.service;
 
 
+import kgk.mobile.domain.SalesOutlet;
+
 public interface SettingsStorageService {
 
     int SALES_OUTLET_ENTRANCE_RADIUS_MIN_METERS = 25;
@@ -27,4 +29,12 @@ public interface SettingsStorageService {
     String getPassword();
 
     void setPassword(String password);
+
+    SalesOutlet getSelectedSalesOutlet();
+
+    void setSelectedSalesOutlet(SalesOutlet salesOutlet);
+
+    long getSalesOutletAttendanceBeginDateUnixSeconds();
+
+    void setSalesOutletAttendanceBeginDateUnixSeconds(long salesOutletAttendanceBeginDateUnixSeconds);
 }

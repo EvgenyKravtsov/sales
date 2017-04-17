@@ -7,6 +7,7 @@ import kgk.mobile.domain.service.SystemService;
 import kgk.mobile.external.threading.ThreadScheduler;
 import kgk.mobile.domain.SalesOutlet;
 import kgk.mobile.domain.UserLocation;
+import kgk.mobile.presentation.model.SalesOutletAttendanceStore;
 import kgk.mobile.presentation.model.SalesOutletStore;
 import kgk.mobile.presentation.model.UserStore;
 import kgk.mobile.presentation.view.base.BasePresenterImpl;
@@ -89,8 +90,13 @@ public final class MainPresenter extends BasePresenterImpl<MainContract.View>
     }
 
     @Override
-    public void onClickHardwareBack() {
+    public void onHardwareBackClicked() {
         mapController.redrawMapObjects();
+    }
+
+    @Override
+    public void onHelpButtonClicked() {
+        view.navigateToHelp();
     }
 
     //// USER LOCATION LISTENER
@@ -146,7 +152,7 @@ public final class MainPresenter extends BasePresenterImpl<MainContract.View>
         });
     }
 
-    //// SYSTEM SERVICE LISTENER // TODO Write Test For This Functions
+    //// SYSTEM SERVICE LISTENER // TODO Not Covered Functionality
 
     @Override
     public void onInternetConnectionStatusChanged(final boolean status) {

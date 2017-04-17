@@ -43,4 +43,10 @@
     <string name="lastActionsFragment_salesOutletCodeText">(%s)</string>
     <string name="lastActionsFragment_attendanceDateText" formatted="false">с %s до %s</string>
 
+    <!-- HELP -->
+    <string name="helpFragment_toDoForAttendance">Для записи данных о посещении ТТ необходимо:</string>
+    <string name="helpFragment_attendanceStep1">Войти в радиус интересующей ТТ. На карте радиус входа отмечен окружностью.</string>
+    <string name="helpFragment_attendanceStep2">Выбрать необходимую ТТ из списка доступных точек в правом верхнем углу. Сразу после выбора активная ТТ будет выделена оранжевым цветом, и зафиксируется время начала посещения.</string>
+    <string name="helpFragment_attendanceStep3">По завершении посещения отметить проведенные операции в списке и нажать ОК - при этом вы увидите подтверждающее сообщение. После этого данные о посещении сохраняются на устройстве. Они будут отправлены на сервер, как только появится интернет-соединениние.</string>
+
 </resources>

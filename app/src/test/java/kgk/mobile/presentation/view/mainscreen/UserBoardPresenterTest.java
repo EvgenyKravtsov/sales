@@ -19,6 +19,7 @@ import kgk.mobile.domain.UserOperation;
 import kgk.mobile.domain.SalesOutlet;
 import kgk.mobile.domain.service.LocationService;
 import kgk.mobile.domain.service.SettingsStorageService;
+import kgk.mobile.presentation.model.SalesOutletAttendanceBegin;
 import kgk.mobile.presentation.model.SalesOutletAttendanceStore;
 import kgk.mobile.presentation.model.SalesOutletStore;
 import kgk.mobile.presentation.model.UserStore;
@@ -78,8 +79,12 @@ public final class UserBoardPresenterTest {
 
     @Test
     public void salesOutletsEnteredByUserReceived_enteredSalesOutletsDisplayed() {
+        when(salesOutletAttendanceStoreMock.getSalesOutletAttendanceBegin())
+                .thenReturn(new SalesOutletAttendanceBegin(null, 0));
         List<SalesOutlet> salesOutletsEntered = new ArrayList<>();
+
         presenter.salesOutletsEnteredByUser(salesOutletsEntered);
+
         verify(viewMock).displayEnteredSalesOutlets(salesOutletsEntered);
     }
 

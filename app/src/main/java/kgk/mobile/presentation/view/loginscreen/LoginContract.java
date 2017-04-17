@@ -40,5 +40,7 @@ public interface LoginContract {
         void displayInternetErrorAlert();
 
         void displayNoInternetConnectionAlert();
+
+        void displayDeviceId(String text);
     }
 }

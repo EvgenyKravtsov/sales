@@ -24,7 +24,7 @@ public final class SocketNio implements Runnable, SocketService {
     private static final String TAG = SocketNio.class.getSimpleName();
     private static final int SELECTOR_TIMEOUT_MILLISECONDS = 1000;
     private static final int SOCKET_THREAD_SLEEP_TIME_MILLISECONDS = 1000;
-    private static final int READ_BUFFER_SIZE_BYTES = 8096;
+    private static final int READ_BUFFER_SIZE_BYTES = 32384;
 
     private Selector selector;
     private Queue<byte[]> writeQueue = new ConcurrentLinkedQueue<>();

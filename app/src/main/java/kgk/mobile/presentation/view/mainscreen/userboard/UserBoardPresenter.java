@@ -8,7 +8,7 @@ import kgk.mobile.domain.SalesOutletAttendance;
 import kgk.mobile.domain.UserOperation;
 import kgk.mobile.domain.service.LocationService;
 import kgk.mobile.domain.service.SettingsStorageService;
-import kgk.mobile.domain.service.SystemService;
+import kgk.mobile.presentation.model.SalesOutletAttendanceBegin;
 import kgk.mobile.presentation.model.SalesOutletAttendanceStore;
 import kgk.mobile.presentation.model.SalesOutletStore;
 import kgk.mobile.presentation.model.UserStore;
@@ -78,6 +78,7 @@ public final class UserBoardPresenter extends BasePresenterImpl<UserBoardContrac
                 this.selectedSalesOutlet.equals(selectedSalesOutlet)) {
 
             this.selectedSalesOutlet = null;
+            salesOutletAttendanceBeginDateUnixSeconds = 0;
             view.hideUserOperations();
         }
         else {
@@ -92,6 +93,11 @@ public final class UserBoardPresenter extends BasePresenterImpl<UserBoardContrac
                 }
             });
         }
+
+        // TODO Not Covered Functionality
+        salesOutletAttendanceStore.setSalesOutletAttendanceBegin(new SalesOutletAttendanceBegin(
+                this.selectedSalesOutlet,
+                this.salesOutletAttendanceBeginDateUnixSeconds));
     }
 
     @Override
@@ -130,6 +136,8 @@ public final class UserBoardPresenter extends BasePresenterImpl<UserBoardContrac
             }
         });
 
+        salesOutletSelectedByUser(selectedSalesOutlet);
+
         view.displayAttendanceSuccessful();
     }
 
@@ -143,6 +151,32 @@ public final class UserBoardPresenter extends BasePresenterImpl<UserBoardContrac
     @Override
     public void salesOutletsEnteredByUser(List<SalesOutlet> salesOutletsEntered) {
         view.displayEnteredSalesOutlets(salesOutletsEntered);
+
+        // TODO Not Covered Functionality
+        SalesOutletAttendanceBegin salesOutletAttendanceBegin =
+                salesOutletAttendanceStore.getSalesOutletAttendanceBegin();
+
+        if (salesOutletAttendanceBegin.getSelectedSalesOutlet() == null) return;
+
+        SalesOutlet selectedSalesOutlet = salesOutletAttendanceBegin.getSelectedSalesOutlet();
+        for (SalesOutlet enteredSalesOutlet : salesOutletsEntered) {
+            if (enteredSalesOutlet.getCode().equals(selectedSalesOutlet.getCode())) {
+                this.selectedSalesOutlet = selectedSalesOutlet;
+                this.salesOutletAttendanceBeginDateUnixSeconds =
+                        salesOutletAttendanceBegin.getSalesOutletAttendanceBeginDateUnixSeconds();
+
+                salesOutletSelectedByUser(this.selectedSalesOutlet);
+
+                threadScheduler.executeBackgroundThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        userStore.requestUserOperations();
+                    }
+                });
+
+                view.displaySelectedSalesOutlet(this.selectedSalesOutlet);
+            }
+        }
     }
 
     //// USER OPERATIONS LISTENER
@@ -157,3 +191,35 @@ public final class UserBoardPresenter extends BasePresenterImpl<UserBoardContrac
         });
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

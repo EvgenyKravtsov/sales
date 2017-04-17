@@ -51,17 +51,17 @@ public final class MainPresenterTest {
     @Rule
     public MockitoRule mockitoRule = MockitoJUnit.rule();
 
-    private MainPresenter mainPresenter;
+    private MainPresenter presenter;
 
     ////
 
     @Before
     public void setUp() {
-        mainPresenter = new MainPresenter(userStoreMock,
+        presenter = new MainPresenter(userStoreMock,
                                           salesOutletStoreMock,
                                           threadSchedulerMock,
                                           systemServiceMock);
-        mainPresenter.attachView(viewMock);
+        presenter.attachView(viewMock);
     }
 
     ////
@@ -71,14 +71,14 @@ public final class MainPresenterTest {
         doAnswer(new Answer() {
             @Override
             public Object answer(InvocationOnMock invocation) throws Throwable {
-                userStoreMock.requestPreferredMapZoom(mainPresenter);
+                userStoreMock.requestPreferredMapZoom(presenter);
                 return null;
             }
         }).when(threadSchedulerMock).executeBackgroundThread(any(Runnable.class));
 
-        mainPresenter.onMapDisplayed(mapControllerMock);
+        presenter.onMapDisplayed(mapControllerMock);
 
-        verify(userStoreMock).requestPreferredMapZoom(mainPresenter);
+        verify(userStoreMock).requestPreferredMapZoom(presenter);
     }
 
     @Test
@@ -91,26 +91,26 @@ public final class MainPresenterTest {
             }
         }).when(threadSchedulerMock).executeBackgroundThread(any(Runnable.class));
 
-        mainPresenter.onMapDisplayed(mapControllerMock);
+        presenter.onMapDisplayed(mapControllerMock);
 
         verify(salesOutletStoreMock).requestSalesOutlets();
     }
 
     @Test
     public void mapDisplayed_startedListenToMapEvents() {
-        mainPresenter.onMapDisplayed(mapControllerMock);
-        verify(mapControllerMock).addListener(mainPresenter);
+        presenter.onMapDisplayed(mapControllerMock);
+        verify(mapControllerMock).addListener(presenter);
     }
 
     @Test
     public void mapDisplayed_subscribedForLocationUpdates() {
-        mainPresenter.onMapDisplayed(mapControllerMock);
-        verify(userStoreMock).subscribeForUserLocationUpdate(mainPresenter);
+        presenter.onMapDisplayed(mapControllerMock);
+        verify(userStoreMock).subscribeForUserLocationUpdate(presenter);
     }
 
     @Test
     public void mapDisplayed_fetchingLocationAlertDisplayed() {
-        mainPresenter.onMapDisplayed(mapControllerMock);
+        presenter.onMapDisplayed(mapControllerMock);
         verify(viewMock).displayFetchingLocationAlert();
     }
 
@@ -124,40 +124,40 @@ public final class MainPresenterTest {
             }
         }).when(threadSchedulerMock).executeMainThread(any(Runnable.class));
 
-        mainPresenter.onMapDisplayed(mapControllerMock);
-        mainPresenter.onPreferredMapZoomReceived(PREFERRED_ZOOM);
+        presenter.onMapDisplayed(mapControllerMock);
+        presenter.onPreferredMapZoomReceived(PREFERRED_ZOOM);
 
         verify(mapControllerMock).displayZoom(PREFERRED_ZOOM, true);
     }
 
     @Test
     public void userLocationReceived_userDisplayedOnMap() {
-        mainPresenter.onMapDisplayed(mapControllerMock);
-        mainPresenter.onLocationReceived(Mockito.mock(UserLocation.class));
+        presenter.onMapDisplayed(mapControllerMock);
+        presenter.onLocationReceived(Mockito.mock(UserLocation.class));
 
         verify(mapControllerMock).displayUser(anyDouble(), anyDouble());
     }
 
     @Test
     public void userLocationReceived_fetchingLocationAlertHidden() {
-        mainPresenter.onMapDisplayed(mapControllerMock);
-        mainPresenter.onLocationReceived(Mockito.mock(UserLocation.class));
+        presenter.onMapDisplayed(mapControllerMock);
+        presenter.onLocationReceived(Mockito.mock(UserLocation.class));
 
         verify(viewMock).hideFetchingLocationAlert();
     }
 
     @Test
     public void userLocationReceived_mapCameraCenteredOnUser() {
-        mainPresenter.onMapDisplayed(mapControllerMock);
-        mainPresenter.onLocationReceived(userLocationMock);
+        presenter.onMapDisplayed(mapControllerMock);
+        presenter.onLocationReceived(userLocationMock);
 
         verify(mapControllerMock).centerCamera(anyDouble(), anyDouble(), anyBoolean());
     }
 
     @Test
     public void userLocationReceived_isUserInSalesOutletZoneChecked() {
-        mainPresenter.onMapDisplayed(mapControllerMock);
-        mainPresenter.onLocationReceived(userLocationMock);
+        presenter.onMapDisplayed(mapControllerMock);
+        presenter.onLocationReceived(userLocationMock);
 
         verify(salesOutletStoreMock).isUserInSalesOutletZone(userLocationMock);
     }
@@ -174,8 +174,8 @@ public final class MainPresenterTest {
             }
         }).when(threadSchedulerMock).executeMainThread(any(Runnable.class));
 
-        mainPresenter.onMapDisplayed(mapControllerMock);
-        mainPresenter.onSalesOutletsReceived(outlets);
+        presenter.onMapDisplayed(mapControllerMock);
+        presenter.onSalesOutletsReceived(outlets);
 
         verify(mapControllerMock).displaySalesOutlets(outlets);
     }
@@ -184,8 +184,8 @@ public final class MainPresenterTest {
     public void salesOutletsEnteredByUserReceived_enteredSalesOutletsDisplayedOnMap() {
         List<SalesOutlet> salesOutletsEntered = new ArrayList<>();
 
-        mainPresenter.onMapDisplayed(mapControllerMock);
-        mainPresenter.salesOutletsEnteredByUser(salesOutletsEntered);
+        presenter.onMapDisplayed(mapControllerMock);
+        presenter.salesOutletsEnteredByUser(salesOutletsEntered);
 
         verify(mapControllerMock).displayEnteredSalesOutlets(salesOutletsEntered);
     }
@@ -200,35 +200,41 @@ public final class MainPresenterTest {
             }
         }).when(threadSchedulerMock).executeBackgroundThread(any(Runnable.class));
 
-        mainPresenter.onMapZoomChanged(PREFERRED_ZOOM);
+        presenter.onMapZoomChanged(PREFERRED_ZOOM);
 
         verify(userStoreMock).savePreferredMapZoom(PREFERRED_ZOOM);
     }
 
     @Test
     public void menuButtonClicked_navigationMenuDisplayed() {
-        mainPresenter.onMenuButtonClicked();
+        presenter.onMenuButtonClicked();
         verify(viewMock).displayNavigationMenu();
     }
 
     @Test
     public void navigateToTechnicalInformationButtonClicked_navigatedToTechnicalInformation() {
-        mainPresenter.onNavigateToTechnicalInformationButtonClicked();
+        presenter.onNavigateToTechnicalInformationButtonClicked();
         verify(viewMock).navigateToTechnicalInformation();
     }
 
     @Test
     public void navigateToLastActionsButtonClicked_navigatedToLastActions() {
-        mainPresenter.onNavigateToLastActionsButtonClicked();
+        presenter.onNavigateToLastActionsButtonClicked();
         verify(viewMock).navigateToLastActions();
     }
 
     @Test
     public void backHardwareButtonPressed_mapObjectsRedrawn() {
-        mainPresenter.onMapDisplayed(mapControllerMock);
-        mainPresenter.onClickHardwareBack();
+        presenter.onMapDisplayed(mapControllerMock);
+        presenter.onHardwareBackClicked();
 
         verify(mapControllerMock).redrawMapObjects();
+    }
+
+    @Test
+    public void helpButtonClicked_navigatedToHelp() {
+        presenter.onHelpButtonClicked();
+        verify(viewMock).navigateToHelp();
     }
 
     ////

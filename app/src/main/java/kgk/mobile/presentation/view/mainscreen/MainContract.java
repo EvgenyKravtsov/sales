@@ -18,7 +18,9 @@ public interface MainContract {
 
         void onNavigateToLastActionsButtonClicked();
 
-        void onClickHardwareBack();
+        void onHardwareBackClicked();
+
+        void onHelpButtonClicked();
     }
 
     interface View extends BaseView {
@@ -40,5 +42,7 @@ public interface MainContract {
         void displayInternetServiceOfflineAlert();
 
         void hideInternetServiceOfflineAlert();
+
+        void navigateToHelp();
     }
 }

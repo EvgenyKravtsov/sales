@@ -12,6 +12,20 @@
         android:layout_height="match_parent" />
 
     <ImageButton
+        android:id="@+id/mainActivity_helpImageButton"
+        android:layout_width="56dp"
+        android:layout_height="56dp"
+        android:src="@drawable/help_icon"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginLeft="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginBottom="24dp"
+        android:background="@drawable/map_button_selector"
+        tools:ignore="ContentDescription" />
+
+    <ImageButton
         android:id="@+id/mainActivity_menuImageButton"
         android:layout_width="56dp"
         android:layout_height="56dp"
@@ -39,7 +53,7 @@
         android:background="@color/accent_light_gray"
         android:paddingBottom="16dp"
         android:visibility="gone"
-        tools:visibility="visible">
+        tools:visibility="gone">
 
         <ImageButton
             android:id="@+id/mainActivity_navigationMenuDropDownImageButton"

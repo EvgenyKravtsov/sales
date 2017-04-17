@@ -4,6 +4,7 @@ package kgk.mobile.presentation.view.mainscreen.userboard;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -44,6 +45,18 @@ final class EnteredSalesOutletsRecyclerAdapter
 
     public void setSalesOutletsEntered(List<SalesOutlet> salesOutletsEntered) {
         this.salesOutletsEntered = salesOutletsEntered;
+    }
+
+    void deselectSalesOutlets() {
+        Log.d(TAG, "deselectSalesOutlets: ");
+        selectedSalesOutletCode = "";
+        notifyDataSetChanged();
+    }
+
+    void selectSalesOutlet(String selectedSalesOutletCode) {
+        Log.d(TAG, "selectSalesOutlet: " + selectedSalesOutletCode);
+        this.selectedSalesOutletCode = selectedSalesOutletCode;
+        notifyDataSetChanged();
     }
 
     //// RECYCLER VIEW ADAPTER

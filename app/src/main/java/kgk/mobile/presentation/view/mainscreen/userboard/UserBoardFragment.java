@@ -117,7 +117,10 @@ public final class UserBoardFragment extends android.support.v4.app.Fragment imp
 
     @Override
     public void displaySelectedSalesOutlet(SalesOutlet selectedSalesOutlet) {
-        salesOutletTitleTextView.setText(selectedSalesOutlet.getTitle());
+        if (selectedSalesOutlet != null) {
+            enteredSalesOutletsRecyclerAdapter.selectSalesOutlet(selectedSalesOutlet.getCode());
+            salesOutletTitleTextView.setText(selectedSalesOutlet.getTitle());
+        }
     }
 
     @Override
@@ -155,6 +158,7 @@ public final class UserBoardFragment extends android.support.v4.app.Fragment imp
                 time);
 
         dropDownUserOperations();
+        enteredSalesOutletsRecyclerAdapter.deselectSalesOutlets();
     }
 
     //// PRIVATE

@@ -1,11 +1,6 @@
 package kgk.mobile.presentation.view.mainscreen;
 
-import android.Manifest;
-import android.content.pm.PackageManager;
-import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -23,6 +18,7 @@ import butterknife.OnClick;
 import kgk.mobile.DependencyInjection;
 import kgk.mobile.R;
 import kgk.mobile.presentation.view.mainscreen.dialog.FetchingLocationAlert;
+import kgk.mobile.presentation.view.mainscreen.help.HelpFragment;
 import kgk.mobile.presentation.view.mainscreen.lastactions.LastActionsFragment;
 import kgk.mobile.presentation.view.mainscreen.technicalinformation.TechnicalInformationFragment;
 import kgk.mobile.presentation.view.mainscreen.userboard.UserBoardFragment;
@@ -43,6 +39,7 @@ public final class MainActivity extends AppCompatActivity
     private static final String USER_BOARD_FRAGMENT_BACKSTACK_ID = "UserBoardFragment";
     private static final String TECHNICAL_INFORMATION_FRAGMENT_BACKSTACK_ID = "TechnicalInformationFragment";
     private static final String LAST_ACTIONS_FRAGMENT_BACKSTACK_ID = "LastActionsFragment";
+    private static final String HELP_FRAGMENT_BACKSTACK_ID = "HelpFragment";
 
     private MainContract.Presenter presenter;
     private FetchingLocationAlert fetchingLocationAlert;
@@ -85,7 +82,7 @@ public final class MainActivity extends AppCompatActivity
                     .commit();
         }
 
-        presenter.onClickHardwareBack();
+        presenter.onHardwareBackClicked();
     }
 
     //// ON MAP READY
@@ -183,6 +180,21 @@ public final class MainActivity extends AppCompatActivity
         internetServiceOfflineImageView.setVisibility(View.GONE);
     }
 
+    @Override
+    public void navigateToHelp() {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        HelpFragment helpFragment = new HelpFragment();
+
+        UserBoardFragment userBoardFragment = (UserBoardFragment) fragmentManager
+                .findFragmentByTag(USER_BOARD_FRAGMENT_BACKSTACK_ID);
+
+        fragmentManager.beginTransaction()
+                .hide(userBoardFragment)
+                .add(R.id.mainActivity_contentFragmentContainer, helpFragment)
+                .addToBackStack(HELP_FRAGMENT_BACKSTACK_ID)
+                .commit();
+    }
+
     //// PRIVATE
 
     private void setupMap() {
@@ -222,5 +234,10 @@ public final class MainActivity extends AppCompatActivity
     @OnClick(R.id.mainActivity_navigateToLastActionsButton)
     public void onClickNavigateToLastActionsButton() {
         presenter.onNavigateToLastActionsButtonClicked();
+    }
+
+    @OnClick(R.id.mainActivity_helpImageButton)
+    public void onClickHelpButton() {
+        presenter.onHelpButtonClicked();
     }
 }

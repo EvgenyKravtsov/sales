@@ -8,6 +8,8 @@ import kgk.mobile.domain.SalesOutletAttendance;
 import kgk.mobile.domain.UserOperation;
 import kgk.mobile.domain.service.DatabaseService;
 import kgk.mobile.domain.service.KgkService;
+import kgk.mobile.domain.service.SettingsStorageService;
+import kgk.mobile.presentation.model.SalesOutletAttendanceBegin;
 import kgk.mobile.presentation.model.SalesOutletAttendanceStore;
 
 public final class SalesOutletAttendanceStoreAsync
@@ -21,11 +23,13 @@ public final class SalesOutletAttendanceStoreAsync
 
     private final DatabaseService databaseService;
     private final KgkService kgkService;
+    private final SettingsStorageService settingsStorageService;
 
     ////
 
     public SalesOutletAttendanceStoreAsync(DatabaseService databaseService,
-                                           KgkService kgkService) {
+                                           KgkService kgkService,
+                                           SettingsStorageService settingsStorageService) {
         this.databaseService = databaseService;
         this.databaseService.addListener(this);
 
@@ -34,6 +38,8 @@ public final class SalesOutletAttendanceStoreAsync
 
         isSynchronizationThreadActive = true;
         startPeriodicSynchronizationWithRemoteStorage();
+
+        this.settingsStorageService = settingsStorageService;
     }
 
     //// SALES OUTLET ATTENDANCE STORE
@@ -41,6 +47,22 @@ public final class SalesOutletAttendanceStoreAsync
     @Override
     public void put(SalesOutletAttendance attendance) {
         databaseService.insertSalesOutletAttendance(attendance);
+    }
+
+    @Override
+    public SalesOutletAttendanceBegin getSalesOutletAttendanceBegin() {
+        return new SalesOutletAttendanceBegin(
+                settingsStorageService.getSelectedSalesOutlet(),
+                settingsStorageService.getSalesOutletAttendanceBeginDateUnixSeconds()
+        );
+    }
+
+    @Override
+    public void setSalesOutletAttendanceBegin(SalesOutletAttendanceBegin salesOutletAttendanceBegin) {
+        settingsStorageService.setSelectedSalesOutlet(
+                salesOutletAttendanceBegin.getSelectedSalesOutlet());
+        settingsStorageService.setSalesOutletAttendanceBeginDateUnixSeconds(
+                salesOutletAttendanceBegin.getSalesOutletAttendanceBeginDateUnixSeconds());
     }
 
     //// DATABASE SERVICE LISTENER

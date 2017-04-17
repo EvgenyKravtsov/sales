@@ -15,6 +15,7 @@ import java.util.List;
 import kgk.mobile.domain.SalesOutletAttendance;
 import kgk.mobile.domain.service.DatabaseService;
 import kgk.mobile.domain.service.KgkService;
+import kgk.mobile.domain.service.SettingsStorageService;
 
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -26,6 +27,8 @@ public final class SalesOutletAttendanceStoreAsyncTest {
     private DatabaseService databaseServiceMock;
     @Mock
     private KgkService kgkService;
+    @Mock
+    private SettingsStorageService settingsStorageServiceMock;
 
     @Rule
     public MockitoRule mockitoRule = MockitoJUnit.rule();
@@ -38,7 +41,8 @@ public final class SalesOutletAttendanceStoreAsyncTest {
     public void setUp() {
         salesOutletAttendanceStoreAsync = new SalesOutletAttendanceStoreAsync(
                 databaseServiceMock,
-                kgkService);
+                kgkService,
+                settingsStorageServiceMock);
     }
 
     ////

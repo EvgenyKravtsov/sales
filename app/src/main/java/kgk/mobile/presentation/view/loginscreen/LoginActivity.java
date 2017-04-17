@@ -39,6 +39,8 @@ public final class LoginActivity extends AppCompatActivity implements LoginContr
     CheckBox rememberMeCheckBox;
     @BindView(R.id.loginActivity_appVersionTextView)
     TextView appVersionTextView;
+    @BindView(R.id.loginActivity_deviceIdTextView)
+    TextView deviceIdTextView;
 
     private static final int REQUEST_PERMISSIONS_ID = 10;
     private static final String[] PERMISSIONS = { Manifest.permission.READ_PHONE_STATE,
@@ -174,6 +176,11 @@ public final class LoginActivity extends AppCompatActivity implements LoginContr
     @Override
     public void displayNoInternetConnectionAlert() {
         new NoInternetConnectionAlert(this).show();
+    }
+
+    @Override
+    public void displayDeviceId(String text) {
+        deviceIdTextView.setText(text);
     }
 
     //// CONTROL CALLBACKS

@@ -130,4 +130,16 @@
         android:textSize="12sp"
         tools:text="1.7.0.8" />
 
+    <TextView
+        android:id="@+id/loginActivity_deviceIdTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:textSize="12sp"
+        tools:text="0000000000"
+        tools:ignore="RelativeOverlap" />
+
 </RelativeLayout>

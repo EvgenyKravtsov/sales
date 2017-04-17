@@ -145,7 +145,8 @@ public final class DependencyInjection {
         if (salesOutletAttendanceStore == null) {
             salesOutletAttendanceStore = new SalesOutletAttendanceStoreAsync(
                     provideDatabaseService(),
-                    provideKgkService());
+                    provideKgkService(),
+                    provideSettingsStorageService());
         }
 
         return salesOutletAttendanceStore;
