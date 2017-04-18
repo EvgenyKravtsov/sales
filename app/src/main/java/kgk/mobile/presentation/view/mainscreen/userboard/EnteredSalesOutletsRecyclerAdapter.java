@@ -1,8 +1,5 @@
 package kgk.mobile.presentation.view.mainscreen.userboard;
 
-
-import android.graphics.Color;
-import android.graphics.drawable.Drawable;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -15,7 +12,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindColor;
-import butterknife.BindDrawable;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import kgk.mobile.R;
@@ -117,7 +113,7 @@ final class EnteredSalesOutletsRecyclerAdapter
         @BindColor(R.color.accent_orange_transparent)
         int colorAccentOrangeTransparent;
 
-        @BindView(R.id.enteredSalesOutletListItem_parentLinearLayout)
+        @BindView(R.id.enteredSalesOutletListItem_rootLinearLayout)
         LinearLayout parentLinearLayout;
         @BindView(R.id.enteredSalesOutletListItem_salesOutletTitleTextView)
         TextView salesOutletTitleTextView;

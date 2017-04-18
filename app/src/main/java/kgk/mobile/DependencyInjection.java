@@ -55,7 +55,7 @@ public final class DependencyInjection {
         return App.getAppContext();
     }
 
-    private static ThreadScheduler provideThreadScheduler() {
+    public static ThreadScheduler provideThreadScheduler() {
         if (threadScheduler == null) {
             threadScheduler = new ThreadSchedulerThreadPool(provideAppContext());
         }
@@ -65,7 +65,7 @@ public final class DependencyInjection {
 
     //// SERVICE
 
-    private static LocationService provideLocationService() {
+    public static LocationService provideLocationService() {
         if (locationService == null) {
             locationService = new LocationServiceGoogleFusedApi(provideAppContext());
         }
@@ -81,7 +81,7 @@ public final class DependencyInjection {
         return new SocketNio();
     }
 
-    private static KgkService provideKgkService() {
+    public static KgkService provideKgkService() {
         if (kgkService == null) {
             kgkService = new KgkApi(new JsonProtocol(provideSystemService()),
                                     provideSocketService(),
@@ -91,7 +91,7 @@ public final class DependencyInjection {
         return kgkService;
     }
 
-    private static DatabaseService provideDatabaseService() {
+    public static DatabaseService provideDatabaseService() {
         if (databaseService == null) {
             databaseService = new GreenDaoSqlite(provideAppContext(),
                                                  provideSystemService(),

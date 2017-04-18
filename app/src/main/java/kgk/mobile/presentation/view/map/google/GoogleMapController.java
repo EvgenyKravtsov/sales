@@ -136,6 +136,12 @@ public final class GoogleMapController implements MapController, GoogleMap.OnCam
     }
 
     @Override
+    public void hideSelectedSalesOutlet() {
+        selectedSalesOutletCode = "";
+        redrawSalesOutletMarkers();
+    }
+
+    @Override
     public void redrawMapObjects() {
         redrawSalesOutletMarkers();
     }

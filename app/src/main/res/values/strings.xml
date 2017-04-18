@@ -21,6 +21,8 @@
     <string name="attendanceSuccessfulAlert_messageText">Посещение сохранено</string>
     <string name="fetchingLocationAlert_messageText">Поиск местоположения…</string>
     <string name="salesOutletNotInRadiusAlert_messageText">Вы вышли из радиуса ТТ</string>
+    <string name="loadingSalesOutletsAlert_messageText">Загрузка списка точек…</string>
+    <string name="loadingUserOperationsAlert_messageText">Загрузка списка действий…</string>
 
     <!-- USER BOARD -->
     <string name="userBoardFragment_userOperationsConfirmButtonText">OK</string>

@@ -1,4 +1,4 @@
-package kgk.mobile.presentation.view.loginscreen.dialog;
+package kgk.mobile.presentation.view.common.dialog;
 
 import android.app.Activity;
 

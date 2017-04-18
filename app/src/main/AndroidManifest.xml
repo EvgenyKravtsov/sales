@@ -20,6 +20,9 @@
         <activity android:name=".presentation.view.mainscreen.MainActivity"
             android:screenOrientation="portrait"/>
 
+        <activity android:name=".presentation.view.mainactivitynew.MainActivity_new"
+            android:screenOrientation="portrait" />
+
         <activity android:name=".presentation.view.loginscreen.LoginActivity"
             android:screenOrientation="portrait">
             <intent-filter>

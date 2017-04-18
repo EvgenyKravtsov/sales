@@ -3,7 +3,6 @@ package kgk.mobile.presentation.view.loginscreen;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
@@ -22,12 +21,12 @@ import kgk.mobile.DependencyInjection;
 import kgk.mobile.R;
 import kgk.mobile.presentation.view.loginscreen.dialog.DeviceNotAllowedAlert;
 import kgk.mobile.presentation.view.loginscreen.dialog.InternetErrorAlert;
-import kgk.mobile.presentation.view.loginscreen.dialog.LoadingAlert;
+import kgk.mobile.presentation.view.common.dialog.LoadingAlert;
 import kgk.mobile.presentation.view.loginscreen.dialog.NoInternetConnectionAlert;
 import kgk.mobile.presentation.view.loginscreen.dialog.PermissionsNeededAlert;
 import kgk.mobile.presentation.view.loginscreen.dialog.UserNotFoundAlert;
 import kgk.mobile.presentation.view.loginscreen.dialog.WrongCredentialsAlert;
-import kgk.mobile.presentation.view.mainscreen.MainActivity;
+import kgk.mobile.presentation.view.mainactivitynew.MainActivity_new;
 
 public final class LoginActivity extends AppCompatActivity implements LoginContract.View {
 
@@ -140,7 +139,7 @@ public final class LoginActivity extends AppCompatActivity implements LoginContr
 
     @Override
     public void navigateToMainScreen() {
-        Intent intent = new Intent(this, MainActivity.class);
+        Intent intent = new Intent(this, MainActivity_new.class);
         startActivity(intent);
     }
 

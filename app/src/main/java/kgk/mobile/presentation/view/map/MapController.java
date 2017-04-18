@@ -28,5 +28,7 @@ public interface MapController {
 
     void displaySelectedSalesOutlet(SalesOutlet selectedSalesOutlet);
 
+    void hideSelectedSalesOutlet();
+
     void redrawMapObjects();
 }
