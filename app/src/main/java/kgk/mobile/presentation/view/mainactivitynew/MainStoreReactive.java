@@ -21,8 +21,6 @@ import kgk.mobile.external.threading.ThreadScheduler;
 class MainStoreReactive implements MainStore, LocationService.Listener,
         KgkService.Listener, DatabaseService.Listener {
 
-    // TODO Disable Logging
-
     private static final String TAG = MainStoreReactive.class.getSimpleName();
     private static final int REMOTE_STORAGE_SYNCHRONIZATION_INTERVAL_SECONDS = 10;
 
@@ -159,6 +157,7 @@ class MainStoreReactive implements MainStore, LocationService.Listener,
         this.userLocation = userLocation;
         for (Listener listener : listeners) listener.onUserLocationChanged();
         updateEnteredSalesOutlets(userLocation);
+        updateSelectedSalesOutlet();
     }
 
     //// KGK SERVICE LISTENER
@@ -171,8 +170,6 @@ class MainStoreReactive implements MainStore, LocationService.Listener,
             databaseService.updateSalesOutlets(salesOutlets);
             updateSalesOutlets(salesOutlets);
         }
-
-        Log.d(TAG, "onSalesOutletsReceivedFromRemoteStorage: " + salesOutlets.size());
     }
 
     @Override
@@ -183,8 +180,6 @@ class MainStoreReactive implements MainStore, LocationService.Listener,
             databaseService.updateUserOperations(userOperations);
             updateUserOperations(userOperations);
         }
-
-        Log.d(TAG, "onUserOperationsReceivedFromRemoteStorage: " + userOperations.size());
     }
 
     @Override
@@ -211,8 +206,6 @@ class MainStoreReactive implements MainStore, LocationService.Listener,
         // Method Called On Background Thread
 
         if (salesOutlets.size() != 0) updateSalesOutlets(salesOutlets);
-
-        Log.d(TAG, "onSalesOutletsReceivedFromLocalStorage: " + salesOutlets.size());
     }
 
     @Override
@@ -220,15 +213,11 @@ class MainStoreReactive implements MainStore, LocationService.Listener,
         // Method Called On Background Thread
 
         if (userOperations.size() != 0) updateUserOperations(userOperations);
-
-        Log.d(TAG, "onUserOperationsReceivedFromLocalStorage: " + userOperations.size());
     }
 
     @Override
     public void onNonSynchronizedSalesOutletAttendancesReceivedFromLocalStorage(List<SalesOutletAttendance> attendances) {
         // Method Called On Background Thread
-
-        Log.d(TAG, "onNonSynchronizedSalesOutletAttendancesReceivedFromLocalStorage: " + attendances.size());
 
         if (kgkService.isAvailable()) {
             kgkService.sendSalesOutletAttendances(attendances);
@@ -265,7 +254,6 @@ class MainStoreReactive implements MainStore, LocationService.Listener,
                     MainStoreReactive.this.salesOutlets.clear();
                     MainStoreReactive.this.salesOutlets.addAll(salesOutlets);
                     for (Listener listener : listeners) listener.onSalesOutletChanged();
-                    Log.d(TAG, "updateSalesOutlets: SalesOutletsUpdated");
                 }
             }
         });
@@ -280,13 +268,10 @@ class MainStoreReactive implements MainStore, LocationService.Listener,
             }
         }
 
-        if (salesOutletsInRadius.size() == 0) return;
-
         if (enteredSalesOutlets.size() == 0) {
             enteredSalesOutlets.addAll(salesOutletsInRadius);
             for (Listener listener : listeners) listener.onEnteredSalesOutletChanged();
             if (!previouslySelectedSalesOutletUpdated) updatePreviouslySelectedSalesOutlet();
-            Log.d(TAG, "updateEnteredSalesOutlets: ");
             return;
         }
 
@@ -295,7 +280,6 @@ class MainStoreReactive implements MainStore, LocationService.Listener,
             enteredSalesOutlets.addAll(salesOutletsInRadius);
             for (Listener listener : listeners) listener.onEnteredSalesOutletChanged();
             if (!previouslySelectedSalesOutletUpdated) updatePreviouslySelectedSalesOutlet();
-            Log.d(TAG, "updateEnteredSalesOutlets: ");
         }
     }
 
@@ -306,8 +290,6 @@ class MainStoreReactive implements MainStore, LocationService.Listener,
         salesOutletsState.addAll(salesOutletsL);
         salesOutletsState.removeAll(salesOutletsR);
         if (salesOutletsState.size() != 0) return true;
-
-        Log.d(TAG, "isThereDifferenceBetweenSalesOutlets: No Difference");
 
         return false;
     }
@@ -322,10 +304,17 @@ class MainStoreReactive implements MainStore, LocationService.Listener,
                     MainStoreReactive.this.userOperations.clear();
                     MainStoreReactive.this.userOperations.addAll(userOperations);
                     for (Listener listener : listeners) listener.onUserOperationsChanged();
-                    Log.d(TAG, "updateUserOperations: UserOperationsUpdated");
                 }
             }
         });
+    }
+
+    private void updateSelectedSalesOutlet() {
+        if (!enteredSalesOutlets.contains(selectedSalesOutlet)) {
+            selectedSalesOutlet = null;
+            salesOutletAttendanceBeginDateUnixSeconds = 0;
+            for (Listener listener : listeners) listener.onSelectedSalesOutletChanged();
+        }
     }
 
     private void updatePreviouslySelectedSalesOutlet() {

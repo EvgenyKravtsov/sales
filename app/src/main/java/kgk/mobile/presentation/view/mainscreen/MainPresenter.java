@@ -7,7 +7,6 @@ import kgk.mobile.domain.service.SystemService;
 import kgk.mobile.external.threading.ThreadScheduler;
 import kgk.mobile.domain.SalesOutlet;
 import kgk.mobile.domain.UserLocation;
-import kgk.mobile.presentation.model.SalesOutletAttendanceStore;
 import kgk.mobile.presentation.model.SalesOutletStore;
 import kgk.mobile.presentation.model.UserStore;
 import kgk.mobile.presentation.view.base.BasePresenterImpl;
@@ -106,7 +105,7 @@ public final class MainPresenter extends BasePresenterImpl<MainContract.View>
         double latitude = userLocation.getLatitude();
         double longitude = userLocation.getLongitude();
         mapController.displayUser(latitude, longitude);
-        mapController.centerCamera(latitude, longitude, false);
+        mapController.centerCameraOnUser(latitude, longitude, false);
         salesOutletStore.isUserInSalesOutletZone(userLocation);
         if (view != null) view.hideFetchingLocationAlert();
     }

@@ -22,6 +22,8 @@ public interface MapController {
 
     void centerCamera(double latitude, double longitude, boolean isAnimated);
 
+    void centerCameraOnUser(double latitude, double longitude, boolean isAnimated);
+
     void displaySalesOutlets(List<SalesOutlet> salesOutlets);
 
     void displayEnteredSalesOutlets(List<SalesOutlet> salesOutletsEntered);

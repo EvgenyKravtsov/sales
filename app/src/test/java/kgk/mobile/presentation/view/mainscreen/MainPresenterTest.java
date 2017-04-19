@@ -151,7 +151,7 @@ public final class MainPresenterTest {
         presenter.onMapDisplayed(mapControllerMock);
         presenter.onLocationReceived(userLocationMock);
 
-        verify(mapControllerMock).centerCamera(anyDouble(), anyDouble(), anyBoolean());
+        verify(mapControllerMock).centerCameraOnUser(anyDouble(), anyDouble(), anyBoolean());
     }
 
     @Test

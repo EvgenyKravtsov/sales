@@ -17,7 +17,6 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 
-import java.util.Calendar;
 import java.util.List;
 
 import butterknife.BindView;
@@ -116,6 +115,7 @@ public final class MainActivity_new extends AppCompatActivity
         googleMap.getUiSettings().setMapToolbarEnabled(false);
         googleMap.getUiSettings().setZoomControlsEnabled(false);
         googleMap.getUiSettings().setCompassEnabled(false);
+        googleMap.setPadding(0, 0, 0, ImageCreator.dpToPx(92));
 
         mapController = new GoogleMapController(
                 googleMap,
@@ -128,7 +128,7 @@ public final class MainActivity_new extends AppCompatActivity
 
     @Override
     public void displayUserLocation(UserLocation userLocation) {
-        mapController.centerCamera(userLocation.getLatitude(), userLocation.getLongitude(), false);
+        mapController.centerCameraOnUser(userLocation.getLatitude(), userLocation.getLongitude(), false);
         mapController.displayUser(userLocation.getLatitude(), userLocation.getLongitude());
     }
 
@@ -159,20 +159,13 @@ public final class MainActivity_new extends AppCompatActivity
 
     @Override
     public void displayEnteredSalesOutlets(List<SalesOutlet> enteredSalesOutlet) {
-        // Display On Recycler
-        if (enteredSalesOutlet.size() == 0) {
-            enteredSalesOutletsRecyclerView.setVisibility(View.GONE);
-            enteredSalesOutletsRecyclerAdapter.updateEnteredSalesOutlets(enteredSalesOutlet);
-            return;
-        }
+        mapController.displayEnteredSalesOutlets(enteredSalesOutlet);
 
-        enteredSalesOutletsRecyclerView.setVisibility(View.VISIBLE);
+        // Display On Recycler
+        enteredSalesOutletsRecyclerAdapter.updateEnteredSalesOutlets(enteredSalesOutlet);
+        enteredSalesOutletsRecyclerView.setVisibility(enteredSalesOutlet.size() == 0 ? View.GONE : View.VISIBLE);
         if (enteredSalesOutlet.size() > 3) setViewHeight(enteredSalesOutletsRecyclerView, 210);
         else setViewHeight(enteredSalesOutletsRecyclerView, WRAP_CONTENT_CODE);
-        enteredSalesOutletsRecyclerAdapter.updateEnteredSalesOutlets(enteredSalesOutlet);
-
-        // Display On Map
-        mapController.displayEnteredSalesOutlets(enteredSalesOutlet);
     }
 
     @Override
@@ -206,6 +199,8 @@ public final class MainActivity_new extends AppCompatActivity
                                            long salesOutletAttendanceBeginDateUnixSeconds) {
 
         mapController.displaySelectedSalesOutlet(selectedSalesOutlet);
+        mapController.centerCamera(selectedSalesOutlet.getLatitude(), selectedSalesOutlet.getLongitude(), true);
+
         enteredSalesOutletsRecyclerAdapter.updateSelectedSalesOutlet(
                 selectedSalesOutlet,
                 salesOutletAttendanceBeginDateUnixSeconds);
@@ -225,7 +220,7 @@ public final class MainActivity_new extends AppCompatActivity
             userOperationsRecyclerView.setVisibility(View.VISIBLE);
             userOperationsRecyclerAdapter.updateUserOperations(userOperations);
 
-            if (userOperations.size() > 4) setViewHeight(userOperationsRecyclerView, 270);
+            if (userOperations.size() > 3) setViewHeight(userOperationsRecyclerView, 182);
             else setViewHeight(userOperationsRecyclerView, WRAP_CONTENT_CODE);
         }
     }
@@ -331,6 +326,4 @@ public final class MainActivity_new extends AppCompatActivity
         layoutParams.height = height;
         view.setLayoutParams(layoutParams);
     }
-
-
 }

@@ -68,7 +68,7 @@ public final class UserBoardPresenter extends BasePresenterImpl<UserBoardContrac
     @Override
     public void salesOutletSelectedByUser(SalesOutlet selectedSalesOutlet) {
         mapController.displaySelectedSalesOutlet(selectedSalesOutlet);
-        mapController.centerCamera(selectedSalesOutlet.getLatitude(),
+        mapController.centerCameraOnUser(selectedSalesOutlet.getLatitude(),
                 selectedSalesOutlet.getLongitude(),
                 true);
 

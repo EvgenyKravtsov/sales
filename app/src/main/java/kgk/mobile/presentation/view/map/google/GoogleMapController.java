@@ -82,6 +82,12 @@ public final class GoogleMapController implements MapController, GoogleMap.OnCam
     @Override
     public void centerCamera(double latitude, double longitude, boolean isAnimated) {
         CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLng(new LatLng(latitude, longitude));
+        moveCamera(cameraUpdate, isAnimated);
+    }
+
+    @Override
+    public void centerCameraOnUser(double latitude, double longitude, boolean isAnimated) {
+        CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLng(new LatLng(latitude, longitude));
 
         if (!isCameraCenteredOnUser) {
             moveCamera(cameraUpdate, isAnimated);
