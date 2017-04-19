@@ -12,6 +12,7 @@ import kgk.mobile.domain.UserOperation;
 import kgk.mobile.domain.service.KgkService;
 import kgk.mobile.domain.service.LocationService;
 import kgk.mobile.domain.service.SettingsStorageService;
+import kgk.mobile.domain.service.SystemService;
 import kgk.mobile.external.threading.ThreadScheduler;
 import kgk.mobile.external.util.DateFormatter;
 import kgk.mobile.presentation.view.base.BasePresenterImpl;
@@ -29,19 +30,22 @@ public final class TechnicalInformationPresenter extends BasePresenterImpl<Techn
     private final KgkService kgkService;
     private final ThreadScheduler threadScheduler;
     private final SettingsStorageService settingsStorageService;
+    private final SystemService systemService;
 
     ////
 
     public TechnicalInformationPresenter(LocationService locationService,
                                          KgkService kgkService,
                                          ThreadScheduler threadScheduler,
-                                         SettingsStorageService settingsStorageService) {
+                                         SettingsStorageService settingsStorageService,
+                                         SystemService systemService) {
         this.locationService = locationService;
         this.locationService.addListener(this);
         this.kgkService = kgkService;
         this.kgkService.addListener(this);
         this.threadScheduler = threadScheduler;
         this.settingsStorageService = settingsStorageService;
+        this.systemService = systemService;
     }
 
     //// BASE PRESENTER
@@ -81,6 +85,9 @@ public final class TechnicalInformationPresenter extends BasePresenterImpl<Techn
 
         int salesOutletEntranceRadius = settingsStorageService.getSalesOutletEntranceRadius();
         view.displaySalesOutletEntranceRadius(String.valueOf(salesOutletEntranceRadius));
+
+        view.displayDeviceId(systemService.getDeviceId());
+        view.displayAppVersion(systemService.getAppVersion());
     }
 
     @Override

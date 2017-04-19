@@ -26,7 +26,7 @@ import kgk.mobile.presentation.view.loginscreen.dialog.NoInternetConnectionAlert
 import kgk.mobile.presentation.view.loginscreen.dialog.PermissionsNeededAlert;
 import kgk.mobile.presentation.view.loginscreen.dialog.UserNotFoundAlert;
 import kgk.mobile.presentation.view.loginscreen.dialog.WrongCredentialsAlert;
-import kgk.mobile.presentation.view.mainactivitynew.MainActivity_new;
+import kgk.mobile.presentation.view.mainscreen.MainActivity;
 
 public final class LoginActivity extends AppCompatActivity implements LoginContract.View {
 
@@ -139,7 +139,7 @@ public final class LoginActivity extends AppCompatActivity implements LoginContr
 
     @Override
     public void navigateToMainScreen() {
-        Intent intent = new Intent(this, MainActivity_new.class);
+        Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
     }
 

@@ -1,48 +1,91 @@
 package kgk.mobile.presentation.view.mainscreen;
 
-import kgk.mobile.presentation.view.base.BasePresenter;
-import kgk.mobile.presentation.view.base.BaseView;
-import kgk.mobile.presentation.view.map.MapController;
+
+import java.util.List;
+
+import kgk.mobile.domain.SalesOutlet;
+import kgk.mobile.domain.UserLocation;
+import kgk.mobile.domain.UserOperation;
 
 public interface MainContract {
 
-    interface Presenter extends BasePresenter<View> {
+    interface Presenter {
 
-        void onMapDisplayed(MapController mapController);
+        void attachView(View view);
+
+        void detachView();
+
+        void onViewReady();
 
         void onMapZoomChanged(float zoom);
 
-        void onMenuButtonClicked();
+        void onClickNavigationMenuButton();
 
-        void onNavigateToTechnicalInformationButtonClicked();
+        void onClickNavigationMenuDropDownButton();
 
-        void onNavigateToLastActionsButtonClicked();
+        void onClickTechnicalInformationButton();
 
-        void onHardwareBackClicked();
+        void onClickLastActionsButton();
 
-        void onHelpButtonClicked();
+        void onClickHelpButton();
+
+        void onClickEnteredSalesOutlet(SalesOutlet selectedSalesOutlet);
+
+        void onClickUserOperationsConfirmButton(List<UserOperation> selectedUserOperations,
+                                                int attendanceAddedValue);
+        void onPermissionsDenied();
+
+        void onPermissionGranted();
     }
 
-    interface View extends BaseView {
+    ////
+
+    interface View {
+
+        void displayUserLocation(UserLocation userLocation);
+
+        void displayUserLocationFetchingAlert();
+
+        void hideUserLocationFetchingAlert();
+
+        void displaySalesOutlets(List<SalesOutlet> salesOutlets);
+
+        void displayLoadingSalesOutletsAlert();
+
+        void hidLoadingSalesOutletsAlert();
+
+        void displayEnteredSalesOutlets(List<SalesOutlet> enteredSalesOutlet);
+
+        void displayMapZoom(float zoom);
 
         void displayNavigationMenu();
+
+        void hideNavigationMenu();
 
         void navigateToTechnicalInformation();
 
         void navigateToLastActions();
 
-        void displayFetchingLocationAlert();
-
-        void hideFetchingLocationAlert();
-
-        void displayKgkServiceOfflineAlert();
-
-        void hideKgkServiceOfflineAlert();
-
-        void displayInternetServiceOfflineAlert();
-
-        void hideInternetServiceOfflineAlert();
-
         void navigateToHelp();
+
+        void displaySelectedSalesOutlet(SalesOutlet selectedSalesOutlet,
+                                        long salesOutletAttendanceBeginDateUnixSeconds);
+        void displayUserOperations(List<UserOperation> userOperations);
+
+        void hideSelectedSalesOutlet();
+
+        void displayLoadingAuthorizationAlert();
+
+        void hideLoadingAuthorizationAlert();
+
+        void displayAuthorizationDeniedAlert();
+
+        void displayAuthorizationDenied();
+
+        void hideAuthorizationDenied();
+
+        void requestPermissions();
+
+        void displayPermissionsNeededAlert();
     }
 }

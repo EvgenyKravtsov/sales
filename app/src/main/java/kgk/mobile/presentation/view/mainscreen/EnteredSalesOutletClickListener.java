@@ -1,4 +1,4 @@
-package kgk.mobile.presentation.view.mainactivitynew;
+package kgk.mobile.presentation.view.mainscreen;
 
 
 import kgk.mobile.domain.SalesOutlet;

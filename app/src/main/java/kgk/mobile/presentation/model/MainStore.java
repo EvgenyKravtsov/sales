@@ -1,4 +1,4 @@
-package kgk.mobile.presentation.view.mainactivitynew;
+package kgk.mobile.presentation.model;
 
 
 import java.util.List;
@@ -6,8 +6,9 @@ import java.util.List;
 import kgk.mobile.domain.SalesOutlet;
 import kgk.mobile.domain.UserLocation;
 import kgk.mobile.domain.UserOperation;
+import kgk.mobile.external.network.Authorization;
 
-interface MainStore {
+public interface MainStore {
 
     interface Listener {
 
@@ -20,9 +21,13 @@ interface MainStore {
         void onSelectedSalesOutletChanged();
 
         void onUserOperationsChanged();
+
+        void onAuthorizationChanged();
     }
 
     ////
+
+    void setup();
 
     void addListener(Listener listener);
 
@@ -47,4 +52,6 @@ interface MainStore {
     long getSalesOutletAttendanceBeginDateUnixSeconds();
 
     void salesOutletAttended(List<UserOperation> selectedUserOperations, int attendanceAddedValue);
+
+    Authorization getAuthorization();
 }

@@ -31,5 +31,9 @@ public interface TechnicalInformationContract {
         void displayInvalidLastSendingDate();
 
         void displaySalesOutletEntranceRadius(String text);
+
+        void displayDeviceId(String text);
+
+        void displayAppVersion(String text);
     }
 }

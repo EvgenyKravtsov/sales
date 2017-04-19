@@ -12,6 +12,8 @@ public interface SocketService {
         void onConnected();
 
         void onDataReceived(byte[] data);
+
+        void onDisconnected();
     }
 
     ////

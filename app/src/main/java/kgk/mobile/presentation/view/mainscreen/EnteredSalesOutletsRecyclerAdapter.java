@@ -1,4 +1,4 @@
-package kgk.mobile.presentation.view.mainactivitynew;
+package kgk.mobile.presentation.view.mainscreen;
 
 
 import android.support.v7.widget.RecyclerView;
@@ -9,7 +9,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 
 import butterknife.BindColor;

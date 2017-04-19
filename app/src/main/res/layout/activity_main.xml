@@ -6,11 +6,58 @@
     android:layout_height="match_parent"
     tools:context=".presentation.view.mainscreen.MainActivity">
 
+    <!-- MAP -->
     <FrameLayout
         android:id="@+id/mainActivity_mapFragmentContainer"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
+    <!-- ENTERED SALES OUTLET LIST -->
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/mainActivity_enteredSalesOutletsRecyclerView"
+        android:scrollbars="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="56dp"
+        android:layout_marginStart="56dp"
+        android:layout_alignParentTop="true"
+        android:paddingTop="-1dp"
+        android:visibility="gone"
+        tools:visibility="gone" />
+
+    <!-- INTERNET AND KGK SERVICES INDICATORS -->
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_centerInParent="true"
+        android:layout_marginLeft="8dp"
+        android:layout_marginStart="8dp"
+        android:orientation="vertical">
+
+        <ImageView
+            android:id="@+id/mainActivity_kgkServiceOfflineImageView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:src="@drawable/kgk_service_offline_icon"
+            android:visibility="gone"
+            tools:visibility="gone"
+            tools:ignore="ContentDescription" />
+
+        <ImageView
+            android:id="@+id/mainActivity_internetServiceOfflineImageView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/internet_service_offline_icon"
+            android:visibility="gone"
+            tools:visibility="gone"
+            tools:ignore="ContentDescription" />
+
+    </LinearLayout>
+
+    <!-- HELP BUTTON -->
     <ImageButton
         android:id="@+id/mainActivity_helpImageButton"
         android:layout_width="56dp"
@@ -25,8 +72,9 @@
         android:background="@drawable/map_button_selector"
         tools:ignore="ContentDescription" />
 
+    <!-- NAVIGATION MENU BUTTON -->
     <ImageButton
-        android:id="@+id/mainActivity_menuImageButton"
+        android:id="@+id/mainActivity_navigationMenuImageButton"
         android:layout_width="56dp"
         android:layout_height="56dp"
         android:layout_alignParentRight="true"
@@ -39,11 +87,84 @@
         android:background="@drawable/map_button_selector"
         tools:ignore="ContentDescription" />
 
+    <!-- AUTHORIZATION DENIED -->
+    <TextView
+        android:id="@+id/mainActivity_authorizationDeniedTextVew"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:padding="8dp"
+        android:gravity="center"
+        android:textSize="17sp"
+        android:textColor="@android:color/black"
+        android:text="@string/authorizationDenied_messageText"
+        android:visibility="gone"
+        tools:visibility="visible"/>
+
+    <!-- FRAGMENT CONTAINER -->
     <FrameLayout
         android:id="@+id/mainActivity_contentFragmentContainer"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
+    <!-- USER OPERATIONS MENU -->
+    <LinearLayout
+        android:id="@+id/mainActivity_userOperationsLinearLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_alignParentBottom="true"
+        android:background="@color/accent_light_gray"
+        android:visibility="gone"
+        tools:visibility="gone">
+
+        <ImageButton
+            android:id="@+id/mainActivity_userOperationsDropDownImageButton"
+            android:layout_width="match_parent"
+            android:layout_height="24dp"
+            android:background="@color/accent_light_gray"
+            android:src="@drawable/drop_down_image"
+            tools:ignore="ContentDescription" />
+
+        <TextView
+            android:id="@+id/mainActivity_selectedSalesOutletTitleTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:textColor="@android:color/black"
+            android:textSize="20sp"
+            tools:text="Test Text For Sales Outlet"/>
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/mainActivity_userOperationsRecyclerView"
+            android:scrollbars="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginEnd="16dp"
+            android:padding="1dp"
+            android:background="@drawable/gray_accent_border_all_sides_white_background" />
+
+        <Button
+            android:id="@+id/mainActivity_userOperationsConfirmButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_gravity="end"
+            android:textColor="@android:color/black"
+            android:textSize="20sp"
+            android:text="@string/userBoardFragment_userOperationsConfirmButtonText"
+            android:background="@drawable/general_button_selector"/>
+
+    </LinearLayout>
+
+    <!-- NAVIGATION MENU -->
     <LinearLayout
         android:id="@+id/mainActivity_navigationMenuLinearLayout"
         android:layout_width="match_parent"
@@ -65,7 +186,7 @@
             tools:ignore="ContentDescription" />
 
         <Button
-            android:id="@+id/mainActivity_navigateToTechnicalInformationButton"
+            android:id="@+id/mainActivity_technicalInformationButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="24dp"
@@ -76,7 +197,7 @@
             android:text="@string/technicalInformationFragment_technicalInformationText" />
 
         <Button
-            android:id="@+id/mainActivity_navigateToLastActionsButton"
+            android:id="@+id/mainActivity_lastActionsButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="24dp"
@@ -89,34 +210,150 @@
 
     </LinearLayout>
 
+    <!-- ALERTS -->
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
+        android:orientation="vertical"
         android:layout_centerInParent="true"
-        android:layout_marginLeft="8dp"
-        android:layout_marginStart="8dp"
-        android:orientation="vertical">
+        tools:visibility="visible">
 
-        <ImageView
-            android:id="@+id/mainActivity_kgkServiceOfflineImageView"
+        <!-- FETCHING USER LOCATION ALERT -->
+        <LinearLayout
+            android:id="@+id/mainActivity_fetchingUserLocationAlertLinearLayout"
+            android:layout_width="256dp"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingTop="16dp"
+            android:paddingLeft="24dp"
+            android:paddingStart="24dp"
+            android:paddingBottom="16dp"
+            android:paddingRight="24dp"
+            android:paddingEnd="24dp"
+            android:background="@drawable/gray_accent_border_all_sides_white_background"
+            android:visibility="gone"
+            tools:visibility="visible">
+
+            <ProgressBar
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_gravity="center_vertical"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="8dp"
+                android:layout_marginStart="8dp"
+                android:textSize="17sp"
+                android:textColor="@android:color/black"
+                android:text="@string/fetchingLocationAlert_messageText"/>
+
+        </LinearLayout>
+
+        <!-- LOADING SALES OUTLETS ALERT -->
+        <LinearLayout
+            android:id="@+id/mainActivity_loadingSalesOutletsAlertLinearLayout"
+            android:layout_width="256dp"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="16dp"
+            android:paddingTop="16dp"
+            android:paddingLeft="24dp"
+            android:paddingStart="24dp"
+            android:paddingBottom="16dp"
+            android:paddingRight="24dp"
+            android:paddingEnd="24dp"
+            android:background="@drawable/gray_accent_border_all_sides_white_background"
+            android:visibility="gone"
+            tools:visibility="visible">
+
+            <ProgressBar
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_gravity="center_vertical"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="8dp"
+                android:layout_marginStart="8dp"
+                android:textSize="17sp"
+                android:textColor="@android:color/black"
+                android:text="@string/loadingSalesOutletsAlert_messageText"/>
+
+        </LinearLayout>
+
+        <!-- LOADING AUTHORIZATION ALERT -->
+        <LinearLayout
+            android:id="@+id/mainActivity_loadingAuthorizationAlertLinearLayout"
+            android:layout_width="256dp"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="16dp"
+            android:paddingTop="16dp"
+            android:paddingLeft="24dp"
+            android:paddingStart="24dp"
+            android:paddingBottom="16dp"
+            android:paddingRight="24dp"
+            android:paddingEnd="24dp"
+            android:background="@drawable/gray_accent_border_all_sides_white_background"
+            android:visibility="gone"
+            tools:visibility="visible">
+
+            <ProgressBar
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_gravity="center_vertical"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="8dp"
+                android:layout_marginStart="8dp"
+                android:textSize="17sp"
+                android:textColor="@android:color/black"
+                android:text="@string/loadingAuthorizationAlert_messageText"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <!-- FETCHING USER LOCATION ALERT -->
+    <LinearLayout
+        android:id="@+id/mainActivity_loadingUserOperationsAlertLinearLayout"
+        android:layout_width="256dp"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="80dp"
+        android:orientation="horizontal"
+        android:paddingTop="16dp"
+        android:paddingLeft="24dp"
+        android:paddingStart="24dp"
+        android:paddingBottom="16dp"
+        android:paddingRight="24dp"
+        android:paddingEnd="24dp"
+        android:background="@drawable/gray_accent_border_all_sides_white_background"
+        android:visibility="gone"
+        tools:visibility="gone">
+
+        <ProgressBar
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_gravity="center_vertical"/>
+
+        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:src="@drawable/kgk_service_offline_icon"
-            android:visibility="gone"
-            tools:visibility="visible"
-            tools:ignore="ContentDescription" />
-
-        <ImageView
-            android:id="@+id/mainActivity_internetServiceOfflineImageView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/internet_service_offline_icon"
-            android:visibility="gone"
-            tools:visibility="visible"
-            tools:ignore="ContentDescription" />
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="8dp"
+            android:layout_marginStart="8dp"
+            android:textSize="17sp"
+            android:textColor="@android:color/black"
+            android:text="@string/loadingUserOperationsAlert_messageText"/>
 
     </LinearLayout>
 

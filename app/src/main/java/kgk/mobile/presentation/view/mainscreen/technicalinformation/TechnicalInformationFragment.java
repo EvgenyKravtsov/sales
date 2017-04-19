@@ -34,6 +34,10 @@ public final class TechnicalInformationFragment extends Fragment
     String lastSendingDateText;
     @BindString(R.string.technicalInformationFragment_salesOutletEntranceRadiusText)
     String salesOutletEntranceRadiusText;
+    @BindString(R.string.technicalInformationFragment_deviceIdText)
+    String deviceIdText;
+    @BindString(R.string.technicalInformationFragment_appVersionText)
+    String appVersionText;
 
     @BindView(R.id.technicalInformationFragment_lastLocationDateTextView)
     TextView lastLocationTextView;
@@ -47,6 +51,10 @@ public final class TechnicalInformationFragment extends Fragment
     TextView salesOutletEntranceTextView;
     @BindView(R.id.technicalInformationFragment_salesOutletEntranceRadiusSeekBar)
     SeekBar salesOutletEntranceRadiusSeekBar;
+    @BindView(R.id.technicalInformationFragment_deviceIdTextView)
+    TextView deviceIdTextView;
+    @BindView(R.id.technicalInformationFragment_appVersionTextView)
+    TextView appVersionTextView;
 
     private TechnicalInformationContract.Presenter presenter;
 
@@ -126,6 +134,16 @@ public final class TechnicalInformationFragment extends Fragment
     public void displaySalesOutletEntranceRadius(String text) {
         salesOutletEntranceTextView.setText(String.format(salesOutletEntranceRadiusText, text));
         salesOutletEntranceRadiusSeekBar.setProgress(Integer.valueOf(text));
+    }
+
+    @Override
+    public void displayDeviceId(String text) {
+        deviceIdTextView.setText(String.format(deviceIdText, text));
+    }
+
+    @Override
+    public void displayAppVersion(String text) {
+        appVersionTextView.setText(String.format(appVersionText, text));
     }
 
     //// PRIVATE

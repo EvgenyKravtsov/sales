@@ -52,12 +52,17 @@ public final class KgkApi implements KgkService, SocketService.Listener, Locatio
         this.jsonProtocol = jsonProtocol;
         this.socketService = socketService;
         this.socketService.addListener(this);
-        this.socketService.connect();
 
         locationService.addListener(this);
     }
 
     //// KGK SERVICE
+
+    @Override
+    public void connect() {
+        Log.d(TAG, "connect: ");
+        this.socketService.connect();
+    }
 
     @Override
     public boolean isAvailable() {
@@ -162,6 +167,10 @@ public final class KgkApi implements KgkService, SocketService.Listener, Locatio
             case Authentication:
                 isAuthenticated = jsonProtocol
                         .parseAuthenticationAnswer(jsonAnswer.getMessage());
+
+                LoginAnswerType loginAnswerType = isAuthenticated ? LoginAnswerType.Success : LoginAnswerType.DeviceNotAllowed;
+                for (Listener listener : listeners) listener.onLoginAnswerReceived(loginAnswerType);
+
                 break;
             case SalesOutlets:
                 List<SalesOutlet> salesOutlets = jsonProtocol
@@ -181,6 +190,11 @@ public final class KgkApi implements KgkService, SocketService.Listener, Locatio
                     listener.onPointExitIdReceivedFromRemoteStorage(eventId);
                 break;
         }
+    }
+
+    @Override
+    public void onDisconnected() {
+
     }
 
     //// LOCATION SERVICE LISTENER

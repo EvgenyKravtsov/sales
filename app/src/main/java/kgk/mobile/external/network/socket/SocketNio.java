@@ -10,7 +10,6 @@ import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.SocketChannel;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Queue;
@@ -25,12 +24,14 @@ public final class SocketNio implements Runnable, SocketService {
     private static final int SELECTOR_TIMEOUT_MILLISECONDS = 1000;
     private static final int SOCKET_THREAD_SLEEP_TIME_MILLISECONDS = 1000;
     private static final int READ_BUFFER_SIZE_BYTES = 32384;
+    private static final int TIME_TO_RECONNECTION_SECONDS = 30;
 
+    private Thread socketThread;
+    private int timeToReconnectionAttemptSeconds = 30;
     private Selector selector;
     private Queue<byte[]> writeQueue = new ConcurrentLinkedQueue<>();
     private List<Listener> listeners = new ArrayList<>();
     private boolean isConnected;
-    private boolean isSocketThreadAlive = true;
 
     //// SOCKET SERVICE
 
@@ -41,7 +42,10 @@ public final class SocketNio implements Runnable, SocketService {
 
     @Override
     public void connect() {
-        new Thread(this).start();
+        if (socketThread == null) {
+            socketThread = new Thread(this);
+            socketThread.start();
+        }
     }
 
     @Override
@@ -58,55 +62,33 @@ public final class SocketNio implements Runnable, SocketService {
 
     @Override
     public void run() {
-        SocketChannel socketChannel;
         Log.d(TAG, "run: Socket Started");
         try {
             selector = Selector.open();
-            socketChannel = SocketChannel.open();
-            socketChannel.configureBlocking(false);
-            socketChannel.register(selector, SelectionKey.OP_CONNECT);
-            socketChannel.connect(new InetSocketAddress(
-                    SocketService.SERVER_ADDRESS,
-                    SocketService.SERVER_PORT
-            ));
-
-            while(isSocketThreadAlive) {
+            engageConnection();
+            while(!Thread.currentThread().isInterrupted()) {
                 selector.select(SELECTOR_TIMEOUT_MILLISECONDS);
                 Iterator<SelectionKey> keys = selector.selectedKeys().iterator();
-
-                Log.d(TAG, "run: Number Of Keys = " + keys.hasNext() + "====" + writeQueue.size());
 
                 while (keys.hasNext()) {
                     SelectionKey selectionKey = keys.next();
 
-                    if (!selectionKey.isValid()) {
-                        Log.d(TAG, "run: Selection Key Is Not Valid");
-                        continue;
-                    }
-
-                    if (selectionKey.isConnectable()) {
-                        Log.d(TAG, "run: Connection Established");
-                        connect(selectionKey);
-                    }
+                    if (!selectionKey.isValid()) continue;
+                    if (selectionKey.isConnectable()) setupConnection(selectionKey);
 
                     if (selectionKey.isWritable()) {
-                        Log.d(TAG, "run: Writable Key");
                         byte[] data = writeQueue.poll();
                         if (data != null) write(selectionKey, data);
-                        else Log.d(TAG, "run: Nothing To Send");
                     }
 
-                    if (selectionKey.isReadable()) {
-                        Log.d(TAG, "run: Readable Key");
-                        read(selectionKey);
-                    }
+                    if (selectionKey.isReadable()) read(selectionKey);
 
                     keys.remove();
+                    timeToReconnectionAttemptSeconds -= 1;
+
                     TimeUnit.MILLISECONDS.sleep(SOCKET_THREAD_SLEEP_TIME_MILLISECONDS);
                 }
             }
-
-            Log.d(TAG, "run: Socket Loop Stopped");
         }
         catch (Exception e) {
             e.printStackTrace();
@@ -126,8 +108,25 @@ public final class SocketNio implements Runnable, SocketService {
         }
     }
 
-    private void connect(SelectionKey selectionKey) throws IOException {
-        Log.d(TAG, "connect: Connecting...");
+    private void engageConnection() {
+        try {
+            SocketChannel socketChannel;
+            socketChannel = SocketChannel.open();
+            socketChannel.configureBlocking(false);
+            socketChannel.register(selector, SelectionKey.OP_CONNECT);
+            socketChannel.connect(new InetSocketAddress(
+                    SocketService.SERVER_ADDRESS,
+                    SocketService.SERVER_PORT
+            ));
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+            Log.d(TAG, "engageConnection: Exception");
+        }
+    }
+
+    private void setupConnection(SelectionKey selectionKey) throws IOException {
+        Log.d(TAG, "setupConnection: Connecting...");
         SocketChannel socketChannel = (SocketChannel) selectionKey.channel();
 
         if (socketChannel.isConnectionPending()) {
@@ -174,6 +173,7 @@ public final class SocketNio implements Runnable, SocketService {
         readBuffer.flip();
         byte[] buffer = new byte[READ_BUFFER_SIZE_BYTES];
         readBuffer.get(buffer, 0, length);
+        timeToReconnectionAttemptSeconds = TIME_TO_RECONNECTION_SECONDS;
         Log.d(TAG, "read: From Server: " + new String(buffer).trim());
         for (Listener listener : listeners) listener.onDataReceived(buffer);
     }

@@ -23,6 +23,9 @@
     <string name="salesOutletNotInRadiusAlert_messageText">Вы вышли из радиуса ТТ</string>
     <string name="loadingSalesOutletsAlert_messageText">Загрузка списка точек…</string>
     <string name="loadingUserOperationsAlert_messageText">Загрузка списка действий…</string>
+    <string name="loadingAuthorizationAlert_messageText">Авторизация…</string>
+    <string name="authorizationDeniedAlert_messageText">Данное устройство (ID - %s) не зарегистрировано в системе Мониторинга КГК. Для подключения обратитесь в компанию КГК - <a>https://www.kgk-global.com</a></string>
+    <string name="authorizationDenied_messageText">Авторизация не пройдена. Приложение работает в ограниченном режиме</string>
 
     <!-- USER BOARD -->
     <string name="userBoardFragment_userOperationsConfirmButtonText">OK</string>
@@ -38,6 +41,8 @@
     <string name="technicalInformationFragment_speedText">Скорость: %s</string>
     <string name="technicalInformationFragment_lastSendingDateText">Посл.отправка: %s</string>
     <string name="technicalInformationFragment_salesOutletEntranceRadiusText">Радиус входа в ТТ - %s м</string>
+    <string name="technicalInformationFragment_deviceIdText">ID устройства: %s</string>
+    <string name="technicalInformationFragment_appVersionText">Версия приложения: %s</string>
 
     <!-- LAST ACTIONS -->
     <string name="lastActionsFragment_lastActionsText">Последние действия</string>

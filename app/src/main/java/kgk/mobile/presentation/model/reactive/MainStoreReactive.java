@@ -1,5 +1,4 @@
-package kgk.mobile.presentation.view.mainactivitynew;
-
+package kgk.mobile.presentation.model.reactive;
 
 import android.util.Log;
 
@@ -16,9 +15,11 @@ import kgk.mobile.domain.service.DatabaseService;
 import kgk.mobile.domain.service.KgkService;
 import kgk.mobile.domain.service.LocationService;
 import kgk.mobile.domain.service.SettingsStorageService;
+import kgk.mobile.external.network.Authorization;
 import kgk.mobile.external.threading.ThreadScheduler;
+import kgk.mobile.presentation.model.MainStore;
 
-class MainStoreReactive implements MainStore, LocationService.Listener,
+public class MainStoreReactive implements MainStore, LocationService.Listener,
         KgkService.Listener, DatabaseService.Listener {
 
     private static final String TAG = MainStoreReactive.class.getSimpleName();
@@ -32,34 +33,41 @@ class MainStoreReactive implements MainStore, LocationService.Listener,
     private final KgkService kgkService;
     private final DatabaseService databaseService;
     private final SettingsStorageService settingsStorageService;
+    private final LocationService locationService;
 
     private UserLocation userLocation;
     private SalesOutlet selectedSalesOutlet;
     private long salesOutletAttendanceBeginDateUnixSeconds;
     private boolean previouslySelectedSalesOutletUpdated;
+    private Authorization authorization;
 
     ////
 
-    MainStoreReactive(LocationService locationService,
+    public MainStoreReactive(LocationService locationService,
                       ThreadScheduler threadScheduler,
                       KgkService kgkService,
                       DatabaseService databaseService,
                       SettingsStorageService settingsStorageService) {
-        locationService.addListener(this);
-        locationService.startLocationUpdate();
-
+        this.locationService = locationService;
+        this.locationService.addListener(this);
         this.threadScheduler = threadScheduler;
         this.kgkService = kgkService;
         this.kgkService.addListener(this);
         this.databaseService = databaseService;
         this.databaseService.addListener(this);
         this.settingsStorageService = settingsStorageService;
-
-        setupInitialState();
-        startPeriodicSynchronizationWithRemoteStorage();
     }
 
     //// MAIN STORE
+
+    @Override
+    public void setup() {
+        threadScheduler.executeBackgroundThread(new Runnable() {
+            @Override
+            public void run() { kgkService.connect(); }
+        });
+        locationService.startLocationUpdate();
+    }
 
     @Override
     public void addListener(Listener listener) {
@@ -148,6 +156,11 @@ class MainStoreReactive implements MainStore, LocationService.Listener,
         });
     }
 
+    @Override
+    public Authorization getAuthorization() {
+        return authorization;
+    }
+
     //// LOCATION SERVICE LISTENER
 
     @Override
@@ -196,7 +209,46 @@ class MainStoreReactive implements MainStore, LocationService.Listener,
 
     @Override
     public void onLoginAnswerReceived(KgkService.LoginAnswerType answerType) {
-        // Not Used
+        // Method Called On Background Thread
+
+        Authorization authorization = null;
+
+        switch (answerType) {
+            case Success:
+                authorization = new Authorization(true);
+                setupInitialState();
+                startPeriodicSynchronizationWithRemoteStorage();
+                break;
+            case DeviceNotAllowed:
+                authorization = new Authorization(false);
+                break;
+        }
+
+        if (authorization == null) return;
+
+        if (this.authorization == null) {
+            this.authorization = authorization;
+
+            threadScheduler.executeMainThread(new Runnable() {
+                @Override
+                public void run() {
+                    for (Listener listener : listeners) listener.onAuthorizationChanged();
+                }
+            });
+
+            return;
+        }
+
+        if (this.authorization.isAuthorized() != authorization.isAuthorized()) {
+            this.authorization = authorization;
+
+            threadScheduler.executeMainThread(new Runnable() {
+                @Override
+                public void run() {
+                    for (Listener listener : listeners) listener.onAuthorizationChanged();
+                }
+            });
+        }
     }
 
     //// DATABASE SERVICE LISTENER
@@ -268,7 +320,7 @@ class MainStoreReactive implements MainStore, LocationService.Listener,
             }
         }
 
-        if (enteredSalesOutlets.size() == 0) {
+        if (enteredSalesOutlets.size() == 0 && salesOutletsInRadius.size() != 0) {
             enteredSalesOutlets.addAll(salesOutletsInRadius);
             for (Listener listener : listeners) listener.onEnteredSalesOutletChanged();
             if (!previouslySelectedSalesOutletUpdated) updatePreviouslySelectedSalesOutlet();

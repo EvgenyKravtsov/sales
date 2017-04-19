@@ -1,172 +1,206 @@
 package kgk.mobile.presentation.view.mainscreen;
 
+
+import android.util.Log;
+
 import java.util.List;
 
-
-import kgk.mobile.domain.service.SystemService;
-import kgk.mobile.external.threading.ThreadScheduler;
 import kgk.mobile.domain.SalesOutlet;
 import kgk.mobile.domain.UserLocation;
-import kgk.mobile.presentation.model.SalesOutletStore;
-import kgk.mobile.presentation.model.UserStore;
-import kgk.mobile.presentation.view.base.BasePresenterImpl;
-import kgk.mobile.presentation.view.map.MapController;
+import kgk.mobile.domain.UserOperation;
+import kgk.mobile.external.network.Authorization;
+import kgk.mobile.presentation.model.MainStore;
 
+public final class MainPresenter implements MainContract.Presenter, MainStore.Listener {
 
-public final class MainPresenter extends BasePresenterImpl<MainContract.View>
-        implements MainContract.Presenter,
-        UserStore.LocationListener,
-        UserStore.PreferredMapZoomListener,
-        SalesOutletStore.Listener,
-        MapController.Listener,
-        SystemService.Listener {
+    private final static String TAG = MainPresenter.class.getSimpleName();
 
-    private static final String TAG = MainPresenter.class.getSimpleName();
+    private final MainStore store;
 
-    private final UserStore userStore;
-    private final SalesOutletStore salesOutletStore;
-    private final ThreadScheduler threadScheduler;
-    private final SystemService systemService;
-
-    private MapController mapController;
+    private MainContract.View view;
 
     ////
 
-    public MainPresenter(UserStore userStore,
-                         SalesOutletStore salesOutletStore,
-                         ThreadScheduler threadScheduler,
-                         SystemService systemService) {
-
-        this.userStore = userStore;
-        this.salesOutletStore = salesOutletStore;
-        this.threadScheduler = threadScheduler;
-        this.systemService = systemService;
-        this.systemService.addListener(this);
-    }
-
-    //// BASE PRESENTER
-
-    @Override
-    public void detachView() {
-        super.detachView();
-        this.userStore.unsubscribeForUserLocationUpdate(this);
-        this.systemService.removeListener(this);
+    public MainPresenter(MainStore store) {
+        this.store = store;
     }
 
     //// MAIN PRESENTER
 
     @Override
-    public void onMapDisplayed(MapController mapController) {
-        this.mapController = mapController;
-        this.mapController.addListener(this);
-        this.salesOutletStore.addListener(this);
-        this.userStore.subscribeForUserLocationUpdate(this);
-
-        threadScheduler.executeBackgroundThread(new Runnable() {
-            @Override
-            public void run() {
-                userStore.requestPreferredMapZoom(MainPresenter.this);
-                salesOutletStore.requestSalesOutlets();
-            }
-        });
-
-        view.displayFetchingLocationAlert();
+    public void attachView(MainContract.View view) {
+        this.view = view;
     }
 
     @Override
-    public void onMenuButtonClicked() {
+    public void detachView() {
+        this.view = null;
+        this.store.removeListener(this);
+    }
+
+    @Override
+    public void onViewReady() {
+        store.addListener(this);
+        view.requestPermissions();
+        view.displayMapZoom(store.getMapZoom());
+
+        // Authorization
+        Authorization authorization = store.getAuthorization();
+        if (authorization == null) view.displayLoadingAuthorizationAlert();
+        else setupAuthorization(authorization);
+
+        // Displaying User Location
+        UserLocation userLocation = store.getUserLocation();
+        if (userLocation != null) view.displayUserLocation(userLocation);
+        else view.displayUserLocationFetchingAlert();
+    }
+
+    @Override
+    public void onMapZoomChanged(float zoom) {
+        store.setMapZoom(zoom);
+    }
+
+    @Override
+    public void onClickNavigationMenuButton() {
         view.displayNavigationMenu();
     }
 
     @Override
-    public void onNavigateToTechnicalInformationButtonClicked() {
+    public void onClickNavigationMenuDropDownButton() {
+        view.hideNavigationMenu();
+    }
+
+    @Override
+    public void onClickTechnicalInformationButton() {
+        view.hideNavigationMenu();
         view.navigateToTechnicalInformation();
     }
 
     @Override
-    public void onNavigateToLastActionsButtonClicked() {
+    public void onClickLastActionsButton() {
+        view.hideNavigationMenu();
         view.navigateToLastActions();
     }
 
     @Override
-    public void onHardwareBackClicked() {
-        mapController.redrawMapObjects();
-    }
-
-    @Override
-    public void onHelpButtonClicked() {
+    public void onClickHelpButton() {
         view.navigateToHelp();
     }
 
-    //// USER LOCATION LISTENER
-
     @Override
-    public void onLocationReceived(UserLocation userLocation) {
-        double latitude = userLocation.getLatitude();
-        double longitude = userLocation.getLongitude();
-        mapController.displayUser(latitude, longitude);
-        mapController.centerCameraOnUser(latitude, longitude, false);
-        salesOutletStore.isUserInSalesOutletZone(userLocation);
-        if (view != null) view.hideFetchingLocationAlert();
-    }
-
-    //// USER PREFERRED MAP ZOOM LISTENER
-
-    @Override
-    public void onPreferredMapZoomReceived(final float zoom) {
-        threadScheduler.executeMainThread(new Runnable() {
-            @Override
-            public void run() {
-                mapController.displayZoom(zoom, true);
-            }
-        });
-    }
-
-    //// SALES OUTLET STORE LISTENER
-
-    @Override
-    public void onSalesOutletsReceived(final List<SalesOutlet> outlets) {
-        threadScheduler.executeMainThread(new Runnable() {
-            @Override
-            public void run() {
-                mapController.displaySalesOutlets(outlets);
-            }
-        });
+    public void onClickEnteredSalesOutlet(SalesOutlet selectedSalesOutlet) {
+        store.setSelectedSalesOutlet(selectedSalesOutlet);
     }
 
     @Override
-    public void salesOutletsEnteredByUser(List<SalesOutlet> salesOutletsEntered) {
-        mapController.displayEnteredSalesOutlets(salesOutletsEntered);
+    public void onClickUserOperationsConfirmButton(List<UserOperation> selectedUserOperations,
+                                                   int attendanceAddedValue) {
+        store.salesOutletAttended(selectedUserOperations, attendanceAddedValue);
+    }
+    @Override
+    public void onPermissionsDenied() {
+        view.displayPermissionsNeededAlert();
     }
 
-    //// MAP CONTROLLER LISTENER
-
     @Override
-    public void onMapZoomChanged(final float zoom) {
-        threadScheduler.executeBackgroundThread(new Runnable() {
-            @Override
-            public void run() {
-                userStore.savePreferredMapZoom(zoom);
-            }
-        });
+    public void onPermissionGranted() {
+        Log.d(TAG, "onPermissionGranted: ");
+        store.setup();
     }
 
-    //// SYSTEM SERVICE LISTENER // TODO Not Covered Functionality
+    //// MAIN STORE LISTENER
 
     @Override
-    public void onInternetConnectionStatusChanged(final boolean status) {
-        threadScheduler.executeMainThread(new Runnable() {
-            @Override
-            public void run() {
-                if (status) {
-                    view.hideKgkServiceOfflineAlert();
-                    view.hideInternetServiceOfflineAlert();
-                }
-                else {
-                    view.displayKgkServiceOfflineAlert();
-                    view.displayInternetServiceOfflineAlert();
-                }
-            }
-        });
+    public void onUserLocationChanged() {
+        view.hideUserLocationFetchingAlert();
+        view.displayUserLocation(store.getUserLocation());
+    }
+
+    @Override
+    public void onSalesOutletChanged() {
+        view.hidLoadingSalesOutletsAlert();
+        view.displaySalesOutlets(store.getSalesOutlets());
+    }
+
+    @Override
+    public void onEnteredSalesOutletChanged() {
+        view.displayEnteredSalesOutlets(store.getEnteredSalesOutlets());
+    }
+
+    @Override
+    public void onSelectedSalesOutletChanged() {
+        SalesOutlet selectedSalesOutlet = store.getSelectedSalesOutlet();
+
+        if (selectedSalesOutlet != null) {
+            view.displaySelectedSalesOutlet(
+                    store.getSelectedSalesOutlet(),
+                    store.getSalesOutletAttendanceBeginDateUnixSeconds());
+            view.displayUserOperations(store.getUserOperations());
+        }
+        else {
+            view.hideSelectedSalesOutlet();
+        }
+    }
+
+    @Override
+    public void onUserOperationsChanged() {
+        view.displayUserOperations(store.getUserOperations());
+    }
+
+    @Override
+    public void onAuthorizationChanged() {
+        setupAuthorization(store.getAuthorization());
+    }
+
+    //// PRIVATE
+
+    private void setupAuthorization(Authorization authorization) {
+        view.hideLoadingAuthorizationAlert();
+
+        if (authorization.isAuthorized()) {
+            List<SalesOutlet> salesOutlets = store.getSalesOutlets();
+            if (salesOutlets.size() == 0) view.displayLoadingSalesOutletsAlert();
+            view.displaySalesOutlets(store.getSalesOutlets());
+            view.hideAuthorizationDenied();
+        }
+        else {
+            view.displayAuthorizationDeniedAlert();
+            view.displayAuthorizationDenied();
+        }
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

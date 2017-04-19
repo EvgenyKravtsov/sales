@@ -1,4 +1,4 @@
-package kgk.mobile.presentation.view.mainscreen.userboard;
+package kgk.mobile.presentation.view.mainscreen;
 
 
 import android.app.Activity;
@@ -8,7 +8,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -21,9 +20,7 @@ import kgk.mobile.domain.UserOperation;
 import kgk.mobile.presentation.view.mainscreen.dialog.AddedValueDialog;
 
 final class UserOperationsRecyclerAdapter
-        extends RecyclerView.Adapter<UserOperationsRecyclerAdapter.ViewHolder> {
-
-    private static final String TAG = UserOperationsRecyclerAdapter.class.getSimpleName();
+        extends RecyclerView.Adapter<UserOperationsRecyclerAdapter.ViewHolder>{
 
     private List<UserOperation> userOperations = new ArrayList<>();
     private List<UserOperation> selectedUserOperations = new ArrayList<>();
@@ -50,8 +47,9 @@ final class UserOperationsRecyclerAdapter
 
     ////
 
-    void setUserOperations(List<UserOperation> userOperations) {
+    void updateUserOperations(List<UserOperation> userOperations) {
         this.userOperations = userOperations;
+        notifyDataSetChanged();
     }
 
     List<UserOperation> getSelectedUserOperations() {

@@ -9,20 +9,29 @@
     android:background="@android:color/white"
     tools:ignore="RtlSymmetry">
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="24sp"
+        android:paddingLeft="16dp"
+        android:paddingStart="16dp"
+        android:textColor="@android:color/black"
+        android:textStyle="bold"
+        android:text="@string/technicalInformationFragment_technicalInformationText" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        android:background="@color/accent_gray" />
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:paddingLeft="16dp"
         android:paddingStart="16dp">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="24sp"
-            android:textColor="@android:color/black"
-            android:textStyle="bold"
-            android:text="@string/technicalInformationFragment_technicalInformationText" />
 
         <TextView
             android:id="@+id/technicalInformationFragment_lastLocationDateTextView"
@@ -49,6 +58,7 @@
             android:layout_marginTop="4dp"
             android:textSize="14sp"
             android:textColor="@android:color/black"
+            android:visibility="gone"
             tools:text="Скорость: 0.00 км/ч" />
 
         <TextView
@@ -129,6 +139,40 @@
                 tools:ignore="HardcodedText" />
 
         </RelativeLayout>
+
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        android:background="@color/accent_gray" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingLeft="16dp"
+        android:paddingStart="16dp">
+
+        <TextView
+            android:id="@+id/technicalInformationFragment_deviceIdTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:textSize="14sp"
+            android:textColor="@android:color/black"
+            tools:text="ID устройства: 1234567890" />
+
+        <TextView
+            android:id="@+id/technicalInformationFragment_appVersionTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:textSize="14sp"
+            android:textColor="@android:color/black"
+            tools:text="Версия приложения: 1.0.1.0" />
 
     </LinearLayout>
 

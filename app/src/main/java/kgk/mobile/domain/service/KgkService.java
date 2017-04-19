@@ -28,6 +28,8 @@ public interface KgkService {
 
     ////
 
+    void connect();
+
     boolean isAvailable();
 
     void addListener(Listener listener);
