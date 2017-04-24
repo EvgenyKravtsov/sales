@@ -77,43 +77,7 @@ public final class LocationServiceGoogleFusedApi implements
 
     @Override
     public void onLocationChanged(Location location) {
-        //UserLocation userLocation = new UserLocationAndroid(location);
-        UserLocation userLocation = new UserLocation() {
-            @Override
-            public double getLatitude() {
-                return 55.643069;
-            }
-
-            @Override
-            public double getLongitude() {
-                return 37.473313;
-            }
-
-            @Override
-            public int distanceToInMeters(double latitude, double longitude) {
-                return 2;
-            }
-
-            @Override
-            public long getLocationTime() {
-                return 0;
-            }
-
-            @Override
-            public int getAltitude() {
-                return 0;
-            }
-
-            @Override
-            public int getAzimut() {
-                return 0;
-            }
-
-            @Override
-            public double getSpeed() {
-                return 0;
-            }
-        };
+        UserLocation userLocation = new UserLocationAndroid(location);
         for (Listener listener : listeners) listener.onLocationChanged(userLocation);
         this.lastKnownUserLocation = userLocation;
     }
