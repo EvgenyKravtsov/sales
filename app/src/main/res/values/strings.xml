@@ -43,6 +43,9 @@
     <string name="technicalInformationFragment_salesOutletEntranceRadiusText">Радиус входа в ТТ - %s м</string>
     <string name="technicalInformationFragment_deviceIdText">ID устройства: %s</string>
     <string name="technicalInformationFragment_appVersionText">Версия приложения: %s</string>
+    <string name="technicalInformationFragment_modeText">Режим работы приложения</string>
+    <string name="technicalInformationFragment_gpsModeText">GPS Трекер</string>
+    <string name="technicalInformationFragment_telephoneModeText">Телефонный звонок</string>
 
     <!-- LAST ACTIONS -->
     <string name="lastActionsFragment_lastActionsText">Последние действия</string>
@@ -53,7 +56,7 @@
     <!-- HELP -->
     <string name="helpFragment_toDoForAttendance">Для записи данных о посещении ТТ необходимо:</string>
     <string name="helpFragment_attendanceStep1">Войти в радиус интересующей ТТ. На карте радиус входа отмечен окружностью.</string>
-    <string name="helpFragment_attendanceStep2">Выбрать необходимую ТТ из списка доступных точек в правом верхнем углу. Сразу после выбора активная ТТ будет выделена оранжевым цветом, и зафиксируется время начала посещения.</string>
+    <string name="helpFragment_attendanceStep2">Выбрать необходимую ТТ из списка доступных точек в правом верхнем углу. Сразу после выбора активная ТТ будет выделена оранжевым цветом, и зафиксируется время начала посещения. Повторное нажатие на название ТТ отменяет вход. </string>
     <string name="helpFragment_attendanceStep3">По завершении посещения отметить проведенные операции в списке и нажать ОК - при этом вы увидите подтверждающее сообщение. После этого данные о посещении сохраняются на устройстве. Они будут отправлены на сервер, как только появится интернет-соединениние.</string>
 
 </resources>

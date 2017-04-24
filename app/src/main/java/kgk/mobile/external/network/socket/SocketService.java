@@ -1,6 +1,8 @@
 package kgk.mobile.external.network.socket;
 
 
+import org.json.JSONException;
+
 import java.util.List;
 
 import kgk.mobile.domain.SalesOutlet;
@@ -11,7 +13,7 @@ public interface SocketService {
 
         void onConnected();
 
-        void onDataReceived(byte[] data);
+        void onDataReceived(byte[] data) throws Exception ;
 
         void onDisconnected();
     }

@@ -76,7 +76,7 @@ public final class DependencyInjection {
         return new SharedPreferencesStorage(provideAppContext());
     }
 
-    private static SocketService provideSocketService() {
+    public static SocketService provideSocketService() {
         return new SocketNio();
     }
 
@@ -169,7 +169,8 @@ public final class DependencyInjection {
                 provideKgkService(),
                 provideThreadScheduler(),
                 provideSettingsStorageService(),
-                provideSystemService());
+                provideSystemService(),
+                provideMainStore());
     }
 
     public static LastActionsContract.Presenter provideLastActionsPresenter() {

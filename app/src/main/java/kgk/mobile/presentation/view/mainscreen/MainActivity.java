@@ -188,7 +188,7 @@ public final class MainActivity extends AppCompatActivity
         // Display On Recycler
         enteredSalesOutletsRecyclerAdapter.updateEnteredSalesOutlets(enteredSalesOutlet);
         enteredSalesOutletsRecyclerView.setVisibility(enteredSalesOutlet.size() == 0 ? View.GONE : View.VISIBLE);
-        if (enteredSalesOutlet.size() > 3) setViewHeight(enteredSalesOutletsRecyclerView, 210);
+        if (enteredSalesOutlet.size() > 3) setViewHeight(enteredSalesOutletsRecyclerView, 176);
         else setViewHeight(enteredSalesOutletsRecyclerView, WRAP_CONTENT_CODE);
     }
 

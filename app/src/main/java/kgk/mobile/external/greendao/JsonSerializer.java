@@ -12,6 +12,9 @@ import kgk.mobile.domain.SalesOutlet;
 import kgk.mobile.domain.SalesOutletAttendance;
 import kgk.mobile.domain.UserOperation;
 
+import static kgk.mobile.domain.Mode.intToMode;
+import static kgk.mobile.domain.Mode.modeToInt;
+
 public final class JsonSerializer {
 
     private static final String BEGIN_DATE_UNIX_SECONDS_KEY = "beginDateUnixSeconds";
@@ -19,6 +22,7 @@ public final class JsonSerializer {
     private static final String ATTENDED_SALES_OUTLET_KEY = "attendedSalesOutlet";
     private static final String SELECTED_USER_OPERATIONS_KEY = "selectedUserOperationsKey";
     private static final String ADDED_VALUE_KEY = "addedValue";
+    private static final String MODE_KEY = "modeKey";
 
     private static final String SALES_OUTLET_ID_KEY = "salesOutletId";
     private static final String SALES_OUTLET_LATITUDE_KEY = "salesOutletLatitude";
@@ -58,6 +62,7 @@ public final class JsonSerializer {
 
         attendanceJson.put(SELECTED_USER_OPERATIONS_KEY, userOperationsJson);
         attendanceJson.put(ADDED_VALUE_KEY, attendance.getAddedValue());
+        attendanceJson.put(MODE_KEY, modeToInt(attendance.getMode()));
 
         return attendanceJson;
     }
@@ -87,7 +92,8 @@ public final class JsonSerializer {
                 attendanceJson.getLong(END_DATE_UNIX_SECONDS_KEY),
                 attendedSalesOutlet,
                 selectedUserOperations,
-                attendanceJson.getInt(ADDED_VALUE_KEY));
+                attendanceJson.getInt(ADDED_VALUE_KEY),
+                intToMode(attendanceJson.getInt(MODE_KEY)));
     }
 
     public JSONObject serializeSalesOutlet(SalesOutlet salesOutlet) throws JSONException {

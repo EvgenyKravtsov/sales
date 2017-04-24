@@ -7,10 +7,16 @@ public interface TechnicalInformationContract {
 
     interface Presenter extends BasePresenter<View> {
 
-        void onCreateView();
+        void onViewReady();
 
         void onSalesOutletEntranceRadiusChanged(int radius);
+
+        void onClickGpsModeToggleButton();
+
+        void onClickTelephoneModeToggleButton();
     }
+
+    ////
 
     interface View extends BaseView {
 
@@ -35,5 +41,13 @@ public interface TechnicalInformationContract {
         void displayDeviceId(String text);
 
         void displayAppVersion(String text);
+
+        void displayGpsModeOn();
+
+        void displayGpsModeOff();
+
+        void displayTelephoneModeOn();
+
+        void displayTelephoneModeOff();
     }
 }

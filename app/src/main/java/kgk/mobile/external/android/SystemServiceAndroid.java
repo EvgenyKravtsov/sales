@@ -70,7 +70,6 @@ public final class SystemServiceAndroid implements SystemService {
             //return "5069079725";
             //return "3022606286";
             //return "5080468365";
-            //return "00004078022";
         }
         catch (SecurityException e) {
             e.printStackTrace();

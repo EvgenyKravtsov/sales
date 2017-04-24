@@ -2,6 +2,7 @@ package kgk.mobile.external.network.socket;
 
 
 import android.util.Log;
+import android.util.StringBuilderPrinter;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -10,6 +11,8 @@ import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.SocketChannel;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Queue;
@@ -18,20 +21,18 @@ import java.util.concurrent.TimeUnit;
 
 public final class SocketNio implements Runnable, SocketService {
 
-    // TODO Reconnection
-
     private static final String TAG = SocketNio.class.getSimpleName();
     private static final int SELECTOR_TIMEOUT_MILLISECONDS = 1000;
     private static final int SOCKET_THREAD_SLEEP_TIME_MILLISECONDS = 1000;
-    private static final int READ_BUFFER_SIZE_BYTES = 32384;
+    private static final int READ_BUFFER_SIZE_BYTES = 2048;
     private static final int TIME_TO_RECONNECTION_SECONDS = 30;
 
-    private Thread socketThread;
-    private int timeToReconnectionAttemptSeconds = 30;
+    private int timeToReconnectionAttemptSeconds = TIME_TO_RECONNECTION_SECONDS;
     private Selector selector;
     private Queue<byte[]> writeQueue = new ConcurrentLinkedQueue<>();
     private List<Listener> listeners = new ArrayList<>();
     private boolean isConnected;
+    private StringBuilder readString = new StringBuilder();
 
     //// SOCKET SERVICE
 
@@ -42,10 +43,7 @@ public final class SocketNio implements Runnable, SocketService {
 
     @Override
     public void connect() {
-        if (socketThread == null) {
-            socketThread = new Thread(this);
-            socketThread.start();
-        }
+        new Thread(this).start();
     }
 
     @Override
@@ -62,10 +60,11 @@ public final class SocketNio implements Runnable, SocketService {
 
     @Override
     public void run() {
-        Log.d(TAG, "run: Socket Started");
         try {
+            readString.append("");
             selector = Selector.open();
             engageConnection();
+
             while(!Thread.currentThread().isInterrupted()) {
                 selector.select(SELECTOR_TIMEOUT_MILLISECONDS);
                 Iterator<SelectionKey> keys = selector.selectedKeys().iterator();
@@ -84,7 +83,13 @@ public final class SocketNio implements Runnable, SocketService {
                     if (selectionKey.isReadable()) read(selectionKey);
 
                     keys.remove();
+
                     timeToReconnectionAttemptSeconds -= 1;
+
+                    if (timeToReconnectionAttemptSeconds == 0) {
+                        for (Listener listener : listeners) listener.onDisconnected();
+                        Thread.currentThread().interrupt();
+                    }
 
                     TimeUnit.MILLISECONDS.sleep(SOCKET_THREAD_SLEEP_TIME_MILLISECONDS);
                 }
@@ -126,7 +131,6 @@ public final class SocketNio implements Runnable, SocketService {
     }
 
     private void setupConnection(SelectionKey selectionKey) throws IOException {
-        Log.d(TAG, "setupConnection: Connecting...");
         SocketChannel socketChannel = (SocketChannel) selectionKey.channel();
 
         if (socketChannel.isConnectionPending()) {
@@ -146,36 +150,43 @@ public final class SocketNio implements Runnable, SocketService {
         Log.d(TAG, "write: " + new String(data));
     }
 
-    private void read(SelectionKey selectionKey) throws IOException {
-        SocketChannel socketChannel = (SocketChannel) selectionKey.channel();
-        ByteBuffer readBuffer = ByteBuffer.allocate(READ_BUFFER_SIZE_BYTES);
-        readBuffer.clear();
-        int length;
-
+    private void read(SelectionKey selectionKey) {
         try {
-            length = socketChannel.read(readBuffer);
-            Log.d(TAG, "read: length = " + length);
-        }
-        catch (IOException e) {
-            Log.d(TAG, "read: Exception During Socket Reading");
-            selectionKey.cancel();
-            socketChannel.close();
-            return;
-        }
+            SocketChannel socketChannel = (SocketChannel) selectionKey.channel();
+            ByteBuffer readBuffer = ByteBuffer.allocate(READ_BUFFER_SIZE_BYTES);
+            readBuffer.clear();
+            int length;
 
-        if (length == -1) {
-            Log.d(TAG, "read: Nothing Was Read From Socket");
-            selectionKey.cancel();
-            socketChannel.close();
-            return;
-        }
+            try {
+                length = socketChannel.read(readBuffer);
+            } catch (IOException e) {
+                Log.d(TAG, "read: Exception During Socket Reading");
+                selectionKey.cancel();
+                socketChannel.close();
+                return;
+            }
 
-        readBuffer.flip();
-        byte[] buffer = new byte[READ_BUFFER_SIZE_BYTES];
-        readBuffer.get(buffer, 0, length);
-        timeToReconnectionAttemptSeconds = TIME_TO_RECONNECTION_SECONDS;
-        Log.d(TAG, "read: From Server: " + new String(buffer).trim());
-        for (Listener listener : listeners) listener.onDataReceived(buffer);
+            if (length == -1) {
+                Log.d(TAG, "read: Nothing Was Read From Socket");
+                selectionKey.cancel();
+                socketChannel.close();
+                return;
+            }
+
+            readBuffer.flip();
+            byte[] buffer = new byte[READ_BUFFER_SIZE_BYTES];
+            readBuffer.get(buffer, 0, length);
+            readString.append(new String(buffer).trim());
+            Log.d(TAG, "read: Read String: " + readString.toString());
+            for (Listener listener : listeners) listener.onDataReceived(readString.toString().getBytes());
+            readString.setLength(0);
+
+            timeToReconnectionAttemptSeconds = TIME_TO_RECONNECTION_SECONDS;
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            Log.d(TAG, "read: Exception");
+        }
     }
 }
 

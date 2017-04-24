@@ -3,6 +3,7 @@ package kgk.mobile.presentation.model;
 
 import java.util.List;
 
+import kgk.mobile.domain.Mode;
 import kgk.mobile.domain.SalesOutlet;
 import kgk.mobile.domain.UserLocation;
 import kgk.mobile.domain.UserOperation;
@@ -54,4 +55,8 @@ public interface MainStore {
     void salesOutletAttended(List<UserOperation> selectedUserOperations, int attendanceAddedValue);
 
     Authorization getAuthorization();
+
+    Mode getMode();
+
+    void setMode(Mode mode);
 }

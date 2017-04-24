@@ -7,6 +7,7 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import kgk.mobile.domain.Mode;
 import kgk.mobile.domain.SalesOutlet;
 import kgk.mobile.domain.SalesOutletAttendance;
 import kgk.mobile.domain.UserLocation;
@@ -40,6 +41,7 @@ public class MainStoreReactive implements MainStore, LocationService.Listener,
     private long salesOutletAttendanceBeginDateUnixSeconds;
     private boolean previouslySelectedSalesOutletUpdated;
     private Authorization authorization;
+    private Mode mode;
 
     ////
 
@@ -62,11 +64,12 @@ public class MainStoreReactive implements MainStore, LocationService.Listener,
 
     @Override
     public void setup() {
+        mode = settingsStorageService.getMode();
+        locationService.startLocationUpdate();
         threadScheduler.executeBackgroundThread(new Runnable() {
             @Override
             public void run() { kgkService.connect(); }
         });
-        locationService.startLocationUpdate();
     }
 
     @Override
@@ -146,7 +149,8 @@ public class MainStoreReactive implements MainStore, LocationService.Listener,
                 Calendar.getInstance().getTimeInMillis() / 1000,
                 selectedSalesOutlet,
                 selectedUserOperations,
-                attendanceAddedValue);
+                attendanceAddedValue,
+                mode);
 
         threadScheduler.executeBackgroundThread(new Runnable() {
             @Override
@@ -155,10 +159,22 @@ public class MainStoreReactive implements MainStore, LocationService.Listener,
             }
         });
     }
-
     @Override
     public Authorization getAuthorization() {
         return authorization;
+    }
+
+    @Override
+    public Mode getMode() {
+        return mode;
+    }
+
+    @Override
+    public void setMode(Mode mode) {
+        this.mode = mode;
+        this.settingsStorageService.setMode(mode);
+        updateEnteredSalesOutlets(locationService.getLastKnownUserLocation());
+        updateSelectedSalesOutlet();
     }
 
     //// LOCATION SERVICE LISTENER
@@ -169,6 +185,7 @@ public class MainStoreReactive implements MainStore, LocationService.Listener,
 
         this.userLocation = userLocation;
         for (Listener listener : listeners) listener.onUserLocationChanged();
+
         updateEnteredSalesOutlets(userLocation);
         updateSelectedSalesOutlet();
     }
@@ -312,27 +329,26 @@ public class MainStoreReactive implements MainStore, LocationService.Listener,
     }
 
     private void updateEnteredSalesOutlets(UserLocation userLocation) {
-        List<SalesOutlet> salesOutletsInRadius = new ArrayList<>();
+        final List<SalesOutlet> salesOutletsInRadius = setupSalesOutletInRadius(userLocation);
 
-        for (SalesOutlet salesOutlet : salesOutlets) {
-            if (salesOutlet.isUserInZone(userLocation, settingsStorageService)) {
-                salesOutletsInRadius.add(salesOutlet);
+        threadScheduler.executeMainThread(new Runnable() {
+            @Override
+            public void run() {
+                if (enteredSalesOutlets.size() == 0 && salesOutletsInRadius.size() != 0) {
+                    enteredSalesOutlets.addAll(salesOutletsInRadius);
+                    for (Listener listener : listeners) listener.onEnteredSalesOutletChanged();
+                    if (!previouslySelectedSalesOutletUpdated) updatePreviouslySelectedSalesOutlet();
+                    return;
+                }
+
+                if (isThereDifferenceBetweenSalesOutlets(enteredSalesOutlets, salesOutletsInRadius)) {
+                    enteredSalesOutlets.clear();
+                    enteredSalesOutlets.addAll(salesOutletsInRadius);
+                    for (Listener listener : listeners) listener.onEnteredSalesOutletChanged();
+                    if (!previouslySelectedSalesOutletUpdated) updatePreviouslySelectedSalesOutlet();
+                }
             }
-        }
-
-        if (enteredSalesOutlets.size() == 0 && salesOutletsInRadius.size() != 0) {
-            enteredSalesOutlets.addAll(salesOutletsInRadius);
-            for (Listener listener : listeners) listener.onEnteredSalesOutletChanged();
-            if (!previouslySelectedSalesOutletUpdated) updatePreviouslySelectedSalesOutlet();
-            return;
-        }
-
-        if (isThereDifferenceBetweenSalesOutlets(enteredSalesOutlets, salesOutletsInRadius)) {
-            enteredSalesOutlets.clear();
-            enteredSalesOutlets.addAll(salesOutletsInRadius);
-            for (Listener listener : listeners) listener.onEnteredSalesOutletChanged();
-            if (!previouslySelectedSalesOutletUpdated) updatePreviouslySelectedSalesOutlet();
-        }
+        });
     }
 
     private boolean isThereDifferenceBetweenSalesOutlets(List<SalesOutlet> salesOutletsL, List<SalesOutlet> salesOutletsR) {
@@ -402,6 +418,23 @@ public class MainStoreReactive implements MainStore, LocationService.Listener,
                 }
             }
         });
+    }
+
+    private List<SalesOutlet> setupSalesOutletInRadius(UserLocation userLocation) {
+        List<SalesOutlet> salesOutletsInRadius = new ArrayList<>();
+
+        switch (mode) {
+            case Gps:
+                for (SalesOutlet salesOutlet : salesOutlets)
+                    if (salesOutlet.isUserInZone(userLocation, settingsStorageService))
+                        salesOutletsInRadius.add(salesOutlet);
+                break;
+            case Telephone:
+                salesOutletsInRadius.addAll(salesOutlets);
+                break;
+        }
+
+        return salesOutletsInRadius;
     }
 }
 

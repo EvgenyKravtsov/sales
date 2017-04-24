@@ -14,7 +14,9 @@ import kgk.mobile.domain.UserLocation;
 import kgk.mobile.domain.service.KgkService;
 import kgk.mobile.domain.service.LocationService;
 import kgk.mobile.domain.service.SettingsStorageService;
+import kgk.mobile.domain.service.SystemService;
 import kgk.mobile.external.threading.ThreadScheduler;
+import kgk.mobile.presentation.model.MainStore;
 import kgk.mobile.presentation.view.mainscreen.technicalinformation.TechnicalInformationContract;
 import kgk.mobile.presentation.view.mainscreen.technicalinformation.TechnicalInformationPresenter;
 
@@ -38,6 +40,10 @@ public final class TechnicalInformationPresenterTest {
     private ThreadScheduler threadSchedulerMock;
     @Mock
     private SettingsStorageService settingsStorageServiceMock;
+    @Mock
+    private SystemService systemServiceMock;
+    @Mock
+    private MainStore mainStoreMock;
 
     @Rule
     public MockitoRule mockitoRule = MockitoJUnit.rule();
@@ -52,7 +58,9 @@ public final class TechnicalInformationPresenterTest {
         presenter = new TechnicalInformationPresenter(locationServiceMock,
                                                      kgkServiceMock,
                                                      threadSchedulerMock,
-                                                     settingsStorageServiceMock);
+                                                     settingsStorageServiceMock,
+                                                     systemServiceMock,
+                                                     mainStoreMock);
         presenter.attachView(viewMock);
     }
 
@@ -61,14 +69,14 @@ public final class TechnicalInformationPresenterTest {
     @Test
     public void viewCreated_locationIsValid_lastLocationDateDisplayed() {
         when(locationServiceMock.getLastKnownUserLocation()).thenReturn(userLocationMock);
-        presenter.onCreateView();
+        presenter.onViewReady();
         verify(viewMock).displayLastLocationDate(anyString());
     }
 
     @Test
     public void viewCreated_locationIsInvalid_invalidLastLocationDateDisplayed() {
         when(locationServiceMock.getLastKnownUserLocation()).thenReturn(null);
-        presenter.onCreateView();
+        presenter.onViewReady();
         verify(viewMock).displayInvalidLastLocationDate();
     }
 
@@ -81,14 +89,14 @@ public final class TechnicalInformationPresenterTest {
     @Test
     public void viewCreated_locationIsValid_lastCoordinatesDisplayed() {
         when(locationServiceMock.getLastKnownUserLocation()).thenReturn(userLocationMock);
-        presenter.onCreateView();
+        presenter.onViewReady();
         verify(viewMock).displayLastCoordinates(anyString());
     }
 
     @Test
     public void viewCreated_locationIsInvalid_invalidLastCoordinatesDisplayed() {
         when(locationServiceMock.getLastKnownUserLocation()).thenReturn(null);
-        presenter.onCreateView();
+        presenter.onViewReady();
         verify(viewMock).displayInvalidLastCoordinates();
     }
 
@@ -101,14 +109,14 @@ public final class TechnicalInformationPresenterTest {
     @Test
     public void viewCreated_locationIsValid_speedDisplayed() {
         when(locationServiceMock.getLastKnownUserLocation()).thenReturn(userLocationMock);
-        presenter.onCreateView();
+        presenter.onViewReady();
         verify(viewMock).displaySpeed(anyString());
     }
 
     @Test
     public void viewCreated_locationIsInvalid_invalidSpeedDisplayed() {
         when(locationServiceMock.getLastKnownUserLocation()).thenReturn(null);
-        presenter.onCreateView();
+        presenter.onViewReady();
         verify(viewMock).displayInvalidSpeed();
     }
 
@@ -121,7 +129,7 @@ public final class TechnicalInformationPresenterTest {
     @Test
     public void viewCreated_lastSendingDateIsValid_lastSendingDateDisplayed() {
         when(kgkServiceMock.getLastSendingDate()).thenReturn(validLastSendingDateUnixSeconds);
-        presenter.onCreateView();
+        presenter.onViewReady();
         verify(viewMock).displayLastSendingDate(anyString());
     }
 
@@ -130,7 +138,7 @@ public final class TechnicalInformationPresenterTest {
         long dateUnixSeconds = 0;
         when(kgkServiceMock.getLastSendingDate()).thenReturn(dateUnixSeconds);
 
-        presenter.onCreateView();
+        presenter.onViewReady();
 
         verify(viewMock).displayInvalidLastSendingDate();
     }
@@ -155,7 +163,7 @@ public final class TechnicalInformationPresenterTest {
         int radius = 10;
         when(settingsStorageServiceMock.getSalesOutletEntranceRadius()).thenReturn(radius);
 
-        presenter.onCreateView();
+        presenter.onViewReady();
 
         verify(viewMock).displaySalesOutletEntranceRadius(String.valueOf(radius));
     }

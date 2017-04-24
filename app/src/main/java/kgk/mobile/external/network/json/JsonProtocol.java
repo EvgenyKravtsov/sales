@@ -6,10 +6,12 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
+import kgk.mobile.domain.Mode;
 import kgk.mobile.domain.SalesOutlet;
 import kgk.mobile.domain.SalesOutletAttendance;
 import kgk.mobile.domain.UserLocation;
@@ -113,7 +115,10 @@ public final class JsonProtocol {
             additionalParameters.put("TASKS", userOperations);
             additionalParameters.put("HISTORY", true);
             additionalParameters.put("ENTER_TIME", attendance.getBeginDateUnixSeconds());
-            additionalParameters.put("DATA", new JSONObject());
+
+            JSONObject modeJson = new JSONObject();
+            if (attendance.getMode() == Mode.Telephone) modeJson.put("PHONE_FLAG", true);
+            additionalParameters.put("DATA", modeJson);
 
             messageParameters.put("TIME", attendance.getEndDateUnixSeconds());
             messageParameters.put("TYPE", "POINT_EXIT");
@@ -159,29 +164,22 @@ public final class JsonProtocol {
         return locationMessage;
     }
 
-    public JsonAnswer parseAnswer(byte[] data) {
+    public JsonAnswer parseAnswer(byte[] data) throws JSONException {
         String answer = new String(data).trim();
 
-        try {
-            JSONObject answerJson = new JSONObject(answer);
+        JSONObject answerJson = new JSONObject(answer);
 
-            if (answerJson.has("ANSWER")) {
-                return parseStandardAnswer(answerJson);
-            }
-            else if (answerJson.has("CONFIRM")) {
-                Log.d(TAG, "parseAnswer: Location Message Received By Server");
-            }
-            else if (answerJson.has("EVENT_ANSWER")) {
-                return parseEventAnswer(answerJson);
-            }
+        if (answerJson.has("ANSWER")) {
+            return parseStandardAnswer(answerJson);
+        }
+        else if (answerJson.has("CONFIRM")) {
+            Log.d(TAG, "parseAnswer: Location Message Received By Server");
+        }
+        else if (answerJson.has("EVENT_ANSWER")) {
+            return parseEventAnswer(answerJson);
+        }
 
-            return null;
-        }
-        catch (JSONException e) {
-            e.printStackTrace();
-            Log.d(TAG, "parseAnswer: Exception");
-            return null;
-        }
+        return null;
     }
 
     public boolean parseAuthenticationAnswer(JSONObject answerJson) {

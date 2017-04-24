@@ -9,6 +9,7 @@
     android:background="@android:color/white"
     tools:ignore="RtlSymmetry">
 
+    <!-- TECHNICAL INFORMATION -->
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -22,8 +23,8 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="0.5dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="8dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="16dp"
         android:background="@color/accent_gray" />
 
     <LinearLayout
@@ -75,8 +76,8 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="0.5dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="8dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="16dp"
         android:background="@color/accent_gray" />
 
     <!-- SALES OUTLET ENTRANCE RADIUS -->
@@ -145,10 +146,62 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="0.5dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="8dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="16dp"
         android:background="@color/accent_gray" />
 
+    <!-- MODE -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="24sp"
+        android:paddingLeft="16dp"
+        android:paddingStart="16dp"
+        android:textColor="@android:color/black"
+        android:textStyle="bold"
+        android:text="@string/technicalInformationFragment_modeText" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="4dp"
+        android:layout_gravity="center_horizontal">
+
+        <Button
+            android:id="@+id/technicalInformationFragment_gpsModeButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textSize="14sp"
+            android:text="@string/technicalInformationFragment_gpsModeText"
+            android:textColor="@drawable/text_active_white_inactive_black_selector"
+            android:layout_margin="4dp"
+            android:background="@drawable/mode_button_background_selector"
+            tools:ignore="ButtonStyle" />
+
+        <Button
+            android:id="@+id/technicalInformationFragment_telephoneModeButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textSize="14sp"
+            android:text="@string/technicalInformationFragment_telephoneModeText"
+            android:textColor="@drawable/text_active_white_inactive_black_selector"
+            android:layout_margin="4dp"
+            android:background="@drawable/mode_button_background_selector"
+            tools:ignore="ButtonStyle" />
+
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="16dp"
+        android:background="@color/accent_gray" />
+
+    <!-- DEVICE INFORMATION -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

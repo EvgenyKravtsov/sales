@@ -1,11 +1,10 @@
 package kgk.mobile.presentation.view.mainscreen.technicalinformation;
 
 
-import android.util.Log;
-
 import java.util.List;
 import java.util.Locale;
 
+import kgk.mobile.domain.Mode;
 import kgk.mobile.domain.SalesOutlet;
 import kgk.mobile.domain.UserLocation;
 import kgk.mobile.domain.UserOperation;
@@ -15,7 +14,11 @@ import kgk.mobile.domain.service.SettingsStorageService;
 import kgk.mobile.domain.service.SystemService;
 import kgk.mobile.external.threading.ThreadScheduler;
 import kgk.mobile.external.util.DateFormatter;
+import kgk.mobile.presentation.model.MainStore;
 import kgk.mobile.presentation.view.base.BasePresenterImpl;
+
+import static kgk.mobile.domain.Mode.Gps;
+import static kgk.mobile.domain.Mode.Telephone;
 
 public final class TechnicalInformationPresenter extends BasePresenterImpl<TechnicalInformationContract.View>
         implements TechnicalInformationContract.Presenter,
@@ -31,6 +34,7 @@ public final class TechnicalInformationPresenter extends BasePresenterImpl<Techn
     private final ThreadScheduler threadScheduler;
     private final SettingsStorageService settingsStorageService;
     private final SystemService systemService;
+    private final MainStore mainStore;
 
     ////
 
@@ -38,7 +42,8 @@ public final class TechnicalInformationPresenter extends BasePresenterImpl<Techn
                                          KgkService kgkService,
                                          ThreadScheduler threadScheduler,
                                          SettingsStorageService settingsStorageService,
-                                         SystemService systemService) {
+                                         SystemService systemService,
+                                         MainStore mainStore) {
         this.locationService = locationService;
         this.locationService.addListener(this);
         this.kgkService = kgkService;
@@ -46,6 +51,7 @@ public final class TechnicalInformationPresenter extends BasePresenterImpl<Techn
         this.threadScheduler = threadScheduler;
         this.settingsStorageService = settingsStorageService;
         this.systemService = systemService;
+        this.mainStore = mainStore;
     }
 
     //// BASE PRESENTER
@@ -60,9 +66,10 @@ public final class TechnicalInformationPresenter extends BasePresenterImpl<Techn
     //// MENU PRESENTER
 
     @Override
-    public void onCreateView() {
+    public void onViewReady() {
         UserLocation lastKnownUserLocation = locationService.getLastKnownUserLocation();
 
+        // Entrance Radius
         if (lastKnownUserLocation != null) {
             view.displayLastLocationDate(formatValidLastKnownUserLocation(lastKnownUserLocation));
             view.displayLastCoordinates(formatValidLastCoordinates(lastKnownUserLocation));
@@ -86,6 +93,19 @@ public final class TechnicalInformationPresenter extends BasePresenterImpl<Techn
         int salesOutletEntranceRadius = settingsStorageService.getSalesOutletEntranceRadius();
         view.displaySalesOutletEntranceRadius(String.valueOf(salesOutletEntranceRadius));
 
+        // Mode
+        switch (mainStore.getMode()) {
+            case Gps:
+                view.displayGpsModeOn();
+                view.displayTelephoneModeOff();
+                break;
+            case Telephone:
+                view.displayGpsModeOff();
+                view.displayTelephoneModeOn();
+                break;
+        }
+
+        // Device Information
         view.displayDeviceId(systemService.getDeviceId());
         view.displayAppVersion(systemService.getAppVersion());
     }
@@ -94,6 +114,21 @@ public final class TechnicalInformationPresenter extends BasePresenterImpl<Techn
     public void onSalesOutletEntranceRadiusChanged(int radius) {
         settingsStorageService.setSalesOutletEntranceRadius(radius);
         view.displaySalesOutletEntranceRadius(String.valueOf(radius));
+    }
+
+    @Override
+    public void onClickGpsModeToggleButton() {
+        mainStore.setMode(Gps);
+        view.displayGpsModeOn();
+        view.displayTelephoneModeOff();
+    }
+
+    @Override
+    public void onClickTelephoneModeToggleButton() {
+        mainStore.setMode(Telephone);
+        view.displayGpsModeOff();
+        view.displayTelephoneModeOn();
+
     }
 
     //// LOCATION SERVICE LISTENER

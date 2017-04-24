@@ -1,17 +1,21 @@
 package kgk.mobile.presentation.view.mainscreen.technicalinformation;
 
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
+import butterknife.BindColor;
+import butterknife.BindDrawable;
 import butterknife.BindString;
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import kgk.mobile.DependencyInjection;
 import kgk.mobile.R;
 import kgk.mobile.domain.service.SettingsStorageService;
@@ -39,6 +43,16 @@ public final class TechnicalInformationFragment extends Fragment
     @BindString(R.string.technicalInformationFragment_appVersionText)
     String appVersionText;
 
+    @BindColor(android.R.color.white)
+    int whiteColor;
+    @BindColor(android.R.color.black)
+    int blackColor;
+
+    @BindDrawable(R.drawable.black_border_all_sides_transparent_background)
+    Drawable blackBorderAllSidesTransparentBackgroundDrawable;
+    @BindDrawable(R.drawable.black_background)
+    Drawable blackBackgroundDrawable;
+
     @BindView(R.id.technicalInformationFragment_lastLocationDateTextView)
     TextView lastLocationTextView;
     @BindView(R.id.technicalInformationFragment_lastCoordinatesTextView)
@@ -55,6 +69,10 @@ public final class TechnicalInformationFragment extends Fragment
     TextView deviceIdTextView;
     @BindView(R.id.technicalInformationFragment_appVersionTextView)
     TextView appVersionTextView;
+    @BindView(R.id.technicalInformationFragment_gpsModeButton)
+    Button gpsModeToggleButton;
+    @BindView(R.id.technicalInformationFragment_telephoneModeButton)
+    Button telephoneModeToggleButton;
 
     private TechnicalInformationContract.Presenter presenter;
 
@@ -79,7 +97,7 @@ public final class TechnicalInformationFragment extends Fragment
     @Override
     public void onResume() {
         super.onResume();
-        presenter.onCreateView();
+        presenter.onViewReady();
     }
 
     @Override
@@ -88,7 +106,7 @@ public final class TechnicalInformationFragment extends Fragment
         presenter.detachView();
     }
 
-    //// MENU VIEW
+    //// TECHNICAL INFORMATION VIEW
 
     @Override
     public void displayLastLocationDate(String text) {
@@ -144,6 +162,42 @@ public final class TechnicalInformationFragment extends Fragment
     @Override
     public void displayAppVersion(String text) {
         appVersionTextView.setText(String.format(appVersionText, text));
+    }
+
+    @Override
+    public void displayGpsModeOn() {
+        gpsModeToggleButton.setBackgroundDrawable(blackBackgroundDrawable);
+        gpsModeToggleButton.setTextColor(whiteColor);
+    }
+
+    @Override
+    public void displayGpsModeOff() {
+        gpsModeToggleButton.setBackgroundDrawable(blackBorderAllSidesTransparentBackgroundDrawable);
+        gpsModeToggleButton.setTextColor(blackColor);
+    }
+
+    @Override
+    public void displayTelephoneModeOn() {
+        telephoneModeToggleButton.setBackgroundDrawable(blackBackgroundDrawable);
+        telephoneModeToggleButton.setTextColor(whiteColor);
+    }
+
+    @Override
+    public void displayTelephoneModeOff() {
+        telephoneModeToggleButton.setBackgroundDrawable(blackBorderAllSidesTransparentBackgroundDrawable);
+        telephoneModeToggleButton.setTextColor(blackColor);
+    }
+
+    //// CONTROL CALLBACKS
+
+    @OnClick(R.id.technicalInformationFragment_gpsModeButton)
+    public void onClickGpsModeToggleButton() {
+        presenter.onClickGpsModeToggleButton();
+    }
+
+    @OnClick(R.id.technicalInformationFragment_telephoneModeButton)
+    public void onClickTelephoneModeToggleButton() {
+        presenter.onClickTelephoneModeToggleButton();
     }
 
     //// PRIVATE

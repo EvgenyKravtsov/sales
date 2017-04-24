@@ -28,6 +28,7 @@ import kgk.mobile.domain.SalesOutlet;
 import kgk.mobile.domain.service.LocationService;
 import kgk.mobile.external.network.json.JsonAnswer;
 import kgk.mobile.external.network.json.JsonProtocol;
+import kgk.mobile.external.network.socket.SocketNio;
 import kgk.mobile.external.network.socket.SocketService;
 
 import static android.provider.ContactsContract.CommonDataKinds.Website.URL;
@@ -37,9 +38,9 @@ public final class KgkApi implements KgkService, SocketService.Listener, Locatio
     private static final String TAG = KgkApi.class.getSimpleName();
 
     private final JsonProtocol jsonProtocol;
-    private final SocketService socketService;
     private final List<Listener> listeners = new ArrayList<>();
 
+    private SocketService socketService;
     private boolean isAuthenticated;
     private long lastSendingDate;
 
@@ -60,7 +61,6 @@ public final class KgkApi implements KgkService, SocketService.Listener, Locatio
 
     @Override
     public void connect() {
-        Log.d(TAG, "connect: ");
         this.socketService.connect();
     }
 
@@ -159,7 +159,7 @@ public final class KgkApi implements KgkService, SocketService.Listener, Locatio
     }
 
     @Override
-    public void onDataReceived(byte[] data) {
+    public void onDataReceived(byte[] data) throws Exception {
         JsonAnswer jsonAnswer = jsonProtocol.parseAnswer(data);
         if (jsonAnswer == null) return;
 
@@ -194,7 +194,9 @@ public final class KgkApi implements KgkService, SocketService.Listener, Locatio
 
     @Override
     public void onDisconnected() {
-
+        socketService = DependencyInjection.provideSocketService();
+        socketService.addListener(this);
+        socketService.connect();
     }
 
     //// LOCATION SERVICE LISTENER

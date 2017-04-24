@@ -12,6 +12,7 @@ import org.mockito.junit.MockitoRule;
 import java.util.ArrayList;
 import java.util.List;
 
+import kgk.mobile.domain.Mode;
 import kgk.mobile.domain.SalesOutletAttendance;
 import kgk.mobile.domain.service.DatabaseService;
 import kgk.mobile.domain.service.KgkService;
@@ -82,7 +83,7 @@ public final class SalesOutletAttendanceStoreAsyncTest {
     //// PRIVATE
 
     private SalesOutletAttendance createDummySalesOutletAttendance() {
-        return new SalesOutletAttendance(0, 0, null, null, 0);
+        return new SalesOutletAttendance(0, 0, null, null, 0, Mode.Gps);
     }
 }
 

@@ -1,6 +1,7 @@
 package kgk.mobile.domain.service;
 
 
+import kgk.mobile.domain.Mode;
 import kgk.mobile.domain.SalesOutlet;
 
 public interface SettingsStorageService {
@@ -37,4 +38,8 @@ public interface SettingsStorageService {
     long getSalesOutletAttendanceBeginDateUnixSeconds();
 
     void setSalesOutletAttendanceBeginDateUnixSeconds(long salesOutletAttendanceBeginDateUnixSeconds);
+
+    Mode getMode();
+
+    void setMode(Mode mode);
 }

@@ -10,6 +10,7 @@ public final class SalesOutletAttendance {
     private final SalesOutlet attendedSalesOutlet;
     private final List<UserOperation> selectedUserOperations;
     private final int addedValue;
+    private final Mode mode;
 
     ////
 
@@ -17,13 +18,15 @@ public final class SalesOutletAttendance {
                                  long endDateUnixSeconds,
                                  SalesOutlet attendedSalesOutlet,
                                  List<UserOperation> selectedUserOperations,
-                                 int addedValue) {
+                                 int addedValue,
+                                 Mode mode) {
 
         this.beginDateUnixSeconds = beginDateUnixSeconds;
         this.endDateUnixSeconds = endDateUnixSeconds;
         this.attendedSalesOutlet = attendedSalesOutlet;
         this.selectedUserOperations = selectedUserOperations;
         this.addedValue = addedValue;
+        this.mode = mode;
     }
 
 
@@ -47,5 +50,9 @@ public final class SalesOutletAttendance {
 
     public int getAddedValue() {
         return addedValue;
+    }
+
+    public Mode getMode() {
+        return mode;
     }
 }

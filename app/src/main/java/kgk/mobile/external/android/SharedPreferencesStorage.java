@@ -3,15 +3,17 @@ package kgk.mobile.external.android;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.support.annotation.Nullable;
-import android.util.Log;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import kgk.mobile.domain.Mode;
 import kgk.mobile.domain.SalesOutlet;
 import kgk.mobile.domain.service.SettingsStorageService;
 import kgk.mobile.external.greendao.JsonSerializer;
+
+import static kgk.mobile.domain.Mode.intToMode;
+import static kgk.mobile.domain.Mode.modeToInt;
 
 public final class SharedPreferencesStorage implements SettingsStorageService {
 
@@ -27,6 +29,7 @@ public final class SharedPreferencesStorage implements SettingsStorageService {
     private static final String PASSWORD_KEY = "password_key";
     private static final String SELECTED_SALES_OUTLET_KEY = "selected_sales_outlet_key";
     private static final String SALES_OUTLET_ATTENDANCE_BEGIN_DATE_UNIX_SECONDS_KEY = "sales_outlet_attendance_begin_date_unix_seconds_key";
+    private static final String MODE_KEY = "mode_key";
 
     private final SharedPreferences sharedPreferences;
 
@@ -133,6 +136,18 @@ public final class SharedPreferencesStorage implements SettingsStorageService {
                 .putLong(
                         SALES_OUTLET_ATTENDANCE_BEGIN_DATE_UNIX_SECONDS_KEY,
                         salesOutletAttendanceBeginDateUnixSeconds)
+                .apply();
+    }
+
+    @Override
+    public Mode getMode() {
+        return intToMode(sharedPreferences.getInt(MODE_KEY, 0));
+    }
+
+    @Override
+    public void setMode(Mode mode) {
+        sharedPreferences.edit()
+                .putInt(MODE_KEY, modeToInt(mode))
                 .apply();
     }
 }
