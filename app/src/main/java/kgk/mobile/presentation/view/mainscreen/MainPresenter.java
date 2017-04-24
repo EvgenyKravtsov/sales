@@ -53,6 +53,14 @@ public final class MainPresenter implements MainContract.Presenter, MainStore.Li
         UserLocation userLocation = store.getUserLocation();
         if (userLocation != null) view.displayUserLocation(userLocation);
         else view.displayUserLocationFetchingAlert();
+
+        List<SalesOutlet> enteredSalesOutlet = store.getEnteredSalesOutlets();
+        if (enteredSalesOutlet.size() > 0) view.displayEnteredSalesOutlets(enteredSalesOutlet);
+
+        SalesOutlet selectedSalesOutlet = store.getSelectedSalesOutlet();
+        if (selectedSalesOutlet != null) view.displaySelectedSalesOutlet(
+                selectedSalesOutlet,
+                store.getSalesOutletAttendanceBeginDateUnixSeconds());
     }
 
     @Override

@@ -3,13 +3,13 @@ apply plugin: 'org.greenrobot.greendao'
 
 android {
     compileSdkVersion 25
-    buildToolsVersion '25.0.1'
+    buildToolsVersion '25.0.2'
     defaultConfig {
         applicationId "kgk.mobile"
         minSdkVersion 14
         targetSdkVersion 25
-        versionCode 112
-        versionName "1.0.2.0"
+        versionCode 113
+        versionName "1.0.2.1"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {

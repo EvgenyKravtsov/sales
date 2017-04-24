@@ -206,7 +206,7 @@ public class MainStoreReactive implements MainStore, LocationService.Listener,
     public void onUserOperationsReceivedFromRemoteStorage(List<UserOperation> userOperations) {
         // Method Called On Background Thread
 
-        if (salesOutlets.size() != 0) {
+        if (userOperations.size() != 0) {
             databaseService.updateUserOperations(userOperations);
             updateUserOperations(userOperations);
         }
@@ -344,9 +344,10 @@ public class MainStoreReactive implements MainStore, LocationService.Listener,
                 if (isThereDifferenceBetweenSalesOutlets(enteredSalesOutlets, salesOutletsInRadius)) {
                     enteredSalesOutlets.clear();
                     enteredSalesOutlets.addAll(salesOutletsInRadius);
-                    for (Listener listener : listeners) listener.onEnteredSalesOutletChanged();
                     if (!previouslySelectedSalesOutletUpdated) updatePreviouslySelectedSalesOutlet();
                 }
+
+                for (Listener listener : listeners) listener.onEnteredSalesOutletChanged();
             }
         });
     }
@@ -363,16 +364,12 @@ public class MainStoreReactive implements MainStore, LocationService.Listener,
     }
 
     private void updateUserOperations(final List<UserOperation> userOperations) {
-        final boolean needToUpdate = this.userOperations.size() == 0;
-
         threadScheduler.executeMainThread(new Runnable() {
             @Override
             public void run() {
-                if (needToUpdate) {
-                    MainStoreReactive.this.userOperations.clear();
-                    MainStoreReactive.this.userOperations.addAll(userOperations);
-                    for (Listener listener : listeners) listener.onUserOperationsChanged();
-                }
+                MainStoreReactive.this.userOperations.clear();
+                MainStoreReactive.this.userOperations.addAll(userOperations);
+                for (Listener listener : listeners) listener.onUserOperationsChanged();
             }
         });
     }

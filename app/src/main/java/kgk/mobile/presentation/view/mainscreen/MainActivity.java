@@ -116,7 +116,7 @@ public final class MainActivity extends AppCompatActivity
         int count = getSupportFragmentManager().getBackStackEntryCount();
 
         if (count == 0) {
-            super.onBackPressed();
+            finish();
         }
         else {
             getSupportFragmentManager().popBackStack();
@@ -146,6 +146,7 @@ public final class MainActivity extends AppCompatActivity
                 DependencyInjection.provideSettingsStorageService());
         mapController.addListener(this);
         presenter.onViewReady();
+        Log.d(TAG, "onMapReady: ");
     }
 
     //// MAIN VIEW
